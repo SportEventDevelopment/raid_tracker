@@ -1,0 +1,8 @@
+// generer base
+php bin/console doctrine:database:create
+
+
+//MAJ base
+
+bootstrap
+https://www.jbnet.fr/developpement/symfony/symfony-integrer-bootstrap.html
