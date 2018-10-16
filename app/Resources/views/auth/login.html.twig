@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-
-
 {% block body %}
 <div class="container">
     <div class="row">
+  {#  <div class="page-header"><div class="panel panel-default">Login gt</div></div>#}
+
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
+                <div class="panel-heading">Login gt</div>
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{ path('security_login_check') }}">
                         {% if error %}
@@ -37,14 +37,9 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-btn fa-sign-in"></i> se connecter
                                 </button>
-
-                      
-
-
-<button type="button" class="btn btn-outline-success and-all-other-classes">
-<a href="http://localhost/raid_tracker/web/app_dev.php/register">Création de compte</a>
+                                <button type="button" class="btn btn-outline-success and-all-other-classes">
+<a href="./register">Création de compte</a>
 </button>
-
                             </div>
                         </div>
                     </form>
