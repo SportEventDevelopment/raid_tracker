@@ -35,4 +35,27 @@ class RaidController extends Controller
 
         return new JsonResponse($formatted);
     }
+
+    /**
+     * @Route("/api/raids/{id_raid}", name="raids_one")
+     * @Method({"GET"})
+     */
+    public function getRaidAction(Request $request)
+    {
+        $raid = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Raid')
+                ->find($request->get('id_raid'));
+        /* @var $raid Raid */
+
+        $formatted = [
+            'idRaid' => $raid->getIdRaid(),
+            'nom' => $raid->getNom(),
+            'date' => $raid->getDate(),
+            'lieu' => $raid->getLieu(),
+            'edition' => $raid->getEdition(),
+            'equipeOrganisatrice' => $raid->getEquipeorganisatrice()    
+        ];
+
+        return new JsonResponse($formatted);
+    }
 }
