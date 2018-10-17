@@ -10,9 +10,6 @@ use AppBundle\Entity\User;
 
 class UserController extends Controller
 {
-
-     // code de getUsersAction
-
     /**
      * @Route("/api/users/", name="users")
      * @Method({"GET"})
@@ -26,7 +23,7 @@ class UserController extends Controller
         /* @var $users users */
         $formatted = [];
         foreach ($users as $user) {
-            $formatted = [
+            $formatted[] = [
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'name' => $user->getName(),
@@ -34,6 +31,29 @@ class UserController extends Controller
                 'password ' => $user->getPassword()
             ];
         }
+
+        return new JsonResponse($formatted);
+    }
+
+
+    /**
+     * @Route("/api/users/{id_user}", name="users_one")
+     * @Method({"GET"})
+     */
+    public function getUserAction(Request $request)
+    {
+        $user = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:User')
+                ->find($request->get('id_user'));
+        /* @var $user User */
+
+        $formatted = [
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'name' => $user->getName(),
+            'role' => $user->getRole(),
+            'password ' => $user->getPassword()
+        ];
 
         return new JsonResponse($formatted);
     }

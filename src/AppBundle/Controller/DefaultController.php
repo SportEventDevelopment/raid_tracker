@@ -32,10 +32,9 @@ else {
       * @Route("/sucess", name="success")
       */
  public function ConnexionReussieAction(){
-   return $this->render('default/index.html.twig',
-    array('user' => $this->getUser()->getName(),
-   )
-   );
+    return $this->render('default/index.html.twig',
+      array('user' => $this->getUser()->getName())
+    );
  }
 
 
