@@ -5,11 +5,12 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use AppBundle\Entity\User;
 
 class SecurityController extends Controller
 {
     /**
-     * @Route("/login", name="login")
+     * @Route("/", name="login")
      */
     public function loginAction(AuthenticationUtils $authenticationUtils)
     {
@@ -20,6 +21,7 @@ class SecurityController extends Controller
                'error'         => $authenticationUtils->getLastAuthenticationError(),
            )
        );
+
     }
 
 
