@@ -18,9 +18,9 @@ class RaidController extends Controller
     {
         $raids = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Raid')
-                ->findAll();
-        
+                ->findAll();   
         /* @var $raids Raids[] */
+        
         $formatted = [];
         foreach ($raids as $raid) {
             $formatted[] = [
@@ -29,7 +29,7 @@ class RaidController extends Controller
                 'date' => $raid->getDate(),
                 'lieu' => $raid->getLieu(),
                 'edition' => $raid->getEdition(),
-                'equipeOrganisatrice' => $raid->getEquipeorganisatrice()    
+                'equipeOrganisatrice' => $raid->getEquipeOrganisatrice()    
             ];
         }
 
