@@ -22,6 +22,10 @@ class UserController extends Controller
                 ->getRepository('AppBundle:User')
                 ->findAll();
         
+        if(empty($users)){
+            return new JsonResponse(["message" => "Aucun utilisateur présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+        }
+        
         /* @var $users users */
         $formatted = [];
         foreach ($users as $user) {
@@ -34,7 +38,7 @@ class UserController extends Controller
             ];
         }
 
-        return new JsonResponse($formatted);
+        return new JsonResponse($formatted, Response::HTTP_OK);
     }
 
     /**
