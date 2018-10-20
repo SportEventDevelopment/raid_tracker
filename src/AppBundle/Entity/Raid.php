@@ -1,109 +1,190 @@
 <?php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
+ * Raid
+ *
  * @ORM\Table(name="raid")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\RaidRepository")
  */
 class Raid
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $idRaid;
+    private $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @var string
+     *
+     * @ORM\Column(name="nom", type="string", length=255)
      */
-    protected $nom;
+    private $nom;
 
     /**
-     * @ORM\Column(type="date")
+     * @var string
+     *
+     * @ORM\Column(name="lieu", type="string", length=255)
      */
-    protected $date;
+    private $lieu;
 
     /**
-     * @ORM\Column(type="string")
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="datetime")
      */
-    protected $lieu;
+    private $date;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="edition", type="integer")
      */
-    protected $edition;
+    private $edition;
 
     /**
-     * @ORM\Column(type="string")
+     * @var string
+     *
+     * @ORM\Column(name="equipe", type="string", length=255)
      */
-    protected $equipeOrganisatrice;
+    private $equipe;
 
-    public function getIdRaid()
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
     {
-        return $this->idRaid;
+        return $this->id;
     }
 
+    /**
+     * Set nom
+     *
+     * @param string $nom
+     *
+     * @return Raid
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    /**
+     * Get nom
+     *
+     * @return string
+     */
     public function getNom()
     {
         return $this->nom;
     }
 
-    public function getDate()
+    /**
+     * Set lieu
+     *
+     * @param string $lieu
+     *
+     * @return Raid
+     */
+    public function setLieu($lieu)
     {
-        return $this->date;
+        $this->lieu = $lieu;
+
+        return $this;
     }
 
+    /**
+     * Get lieu
+     *
+     * @return string
+     */
     public function getLieu()
     {
         return $this->lieu;
     }
 
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     *
+     * @return Raid
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Set edition
+     *
+     * @param integer $edition
+     *
+     * @return Raid
+     */
+    public function setEdition($edition)
+    {
+        $this->edition = $edition;
+
+        return $this;
+    }
+
+    /**
+     * Get edition
+     *
+     * @return int
+     */
     public function getEdition()
     {
         return $this->edition;
     }
 
-    public function getEquipeOrganisatrice()
+    /**
+     * Set equipe
+     *
+     * @param string $equipe
+     *
+     * @return Raid
+     */
+    public function setEquipe($equipe)
     {
-        return $this->equipeOrganisatrice;
-    }
+        $this->equipe = $equipe;
 
-    public function setIdRaid($idRaid)
-    {
-        $this->idRaid = $idRaid;
-        return $this;
-    }
-
-    public function setNom($nom)
-    {
-        $this->nom = $nom;
         return $this;
     }
 
-    public function setDate($date)
+    /**
+     * Get equipe
+     *
+     * @return string
+     */
+    public function getEquipe()
     {
-        $this->date = $date;
-        return $this;
-    }
-    
-    public function setLieu($lieu)
-    {
-        $this->lieu = $lieu;
-        return $this;
-    }
-
-    public function setEdition($edition)
-    {
-        $this->edition = $edition;
-        return $this;
-    }
-
-    public function setEquipeOrganisatrice($equipeOrganisatrice)
-    {
-        $this->equipeOrganisatrice = $equipeOrganisatrice;
-        return $this;
+        return $this->equipe;
     }
 }
+

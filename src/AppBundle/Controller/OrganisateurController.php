@@ -55,7 +55,7 @@ class OrganisateurController extends Controller
 
         $em->flush();
 
-        return new JsonResponse(["message" => "Les organisateurs ont ete supprimes avec succes !"], Response::HTTP_OK);
+        return new JsonResponse(["message" => "Les organisateurs ont été supprimés avec succès !"], Response::HTTP_OK);
     }
 
     /**
@@ -70,7 +70,7 @@ class OrganisateurController extends Controller
         /* @var $organisateur organisateur */
 
         if(empty($organisateur)){
-            return new JsonResponse(["message" => "Organisateur non trouve !", Response::HTTP_NOT_FOUND]);
+            return new JsonResponse(["message" => "Organisateur non trouvé !", Response::HTTP_NOT_FOUND]);
         }
 
         $formatted = [
@@ -94,13 +94,13 @@ class OrganisateurController extends Controller
         $organisateur = $this->getDoctrine()->getRepository('AppBundle:Organisateur')->find($request->get('id_organisateur'));
        
         if (empty($organisateur)) {
-            return new JsonResponse(['message' => "Organisateur non trouve !"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(["message" => "Organisateur non trouvé !"], Response::HTTP_NOT_FOUND);
         }
 
         $sn->remove($organisateur);
         $sn->flush();
         
-        return new JsonResponse(['message' => "Organisateur supprime avec succes !"], Response::HTTP_OK); 
+        return new JsonResponse(["message" => "Organisateur supprime avec succès !"], Response::HTTP_OK); 
     }
 
    /**
@@ -115,7 +115,7 @@ class OrganisateurController extends Controller
         /* @var $organisateurs Organisateurs[] */
         
         if (empty($organisateurs)) {
-            return new JsonResponse(['message' => "Aucun organisateur pour ce raid !"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(["message" => "Aucun organisateur pour ce raid !"], Response::HTTP_NOT_FOUND);
         }
 
         $formatted = [];
@@ -150,7 +150,7 @@ class OrganisateurController extends Controller
         }
         $sn->flush();
         
-        return new JsonResponse(['message' => "Organisateurs supprimes avec succes !"], Response::HTTP_OK); 
+        return new JsonResponse(["message" => "Organisateurs supprimes avec succès !"], Response::HTTP_OK); 
     }
 
     /**
@@ -199,7 +199,7 @@ class OrganisateurController extends Controller
         $em->persist($organisateur);
         $em->flush();
 
-        return new JsonResponse(['message' => 'Nouvel organisateur ajoute !'], Response::HTTP_OK);
+        return new JsonResponse(["message" => "Nouvel organisateur ajouté !"], Response::HTTP_OK);
     }
 
     /**

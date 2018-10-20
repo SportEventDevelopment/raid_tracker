@@ -1,114 +1,190 @@
 <?php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
+ * Parcours
+ *
  * @ORM\Table(name="parcours")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ParcoursRepository")
  */
 class Parcours
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $idParcours;
+    private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="idRaid", type="integer")
      */
-    protected $idRaid;
+    private $idRaid;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="idParcoursPere", type="integer", nullable=true)
      */
-    protected $idParcoursPere;
+    private $idParcoursPere;
 
     /**
-     * @ORM\Column(type="string")
+     * @var string
+     *
+     * @ORM\Column(name="nom", type="string", length=255)
      */
-    protected $nom;
+    private $nom;
 
     /**
-     * @ORM\Column(type="string")
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=255)
      */
-    protected $type;
+    private $type;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @var bool
+     *
+     * @ORM\Column(name="etat", type="boolean")
      */
-    protected $etat;
+    private $etat;
 
-    public function getIdParcours()
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
     {
-        return $this->idParcours;
+        return $this->id;
     }
 
+    /**
+     * Set idRaid
+     *
+     * @param integer $idRaid
+     *
+     * @return Parcours
+     */
+    public function setIdRaid($idRaid)
+    {
+        $this->idRaid = $idRaid;
+
+        return $this;
+    }
+
+    /**
+     * Get idRaid
+     *
+     * @return int
+     */
     public function getIdRaid()
     {
         return $this->idRaid;
     }
 
-    public function getIdParcoursPere()
-    {
-        return $this->idUser;
-    }
-
-    public function getNom($nom)
-    {
-        $this->nom = $nom;
-        return $this;
-    }
-    
-    public function getType($type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    public function getEtat($etat)
-    {
-        $this->etat = $etat;
-        return $this;
-    }
-
-
-
-    public function setIdParcours($idParcours)
-    {
-        $this->idParcours = $idParcours;
-        return $this;
-    }
-
-    public function setIdRaid($idRaid)
-    {
-        $this->idRaid = $idRaid;
-        return $this;
-    }
-
+    /**
+     * Set idParcoursPere
+     *
+     * @param integer $idParcoursPere
+     *
+     * @return Parcours
+     */
     public function setIdParcoursPere($idParcoursPere)
     {
         $this->idParcoursPere = $idParcoursPere;
+
         return $this;
     }
 
+    /**
+     * Get idParcoursPere
+     *
+     * @return int
+     */
+    public function getIdParcoursPere()
+    {
+        return $this->idParcoursPere;
+    }
+
+    /**
+     * Set nom
+     *
+     * @param string $nom
+     *
+     * @return Parcours
+     */
     public function setNom($nom)
     {
         $this->nom = $nom;
+
         return $this;
     }
 
+    /**
+     * Get nom
+     *
+     * @return string
+     */
+    public function getNom()
+    {
+        return $this->nom;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     *
+     * @return Parcours
+     */
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set etat
+     *
+     * @param boolean $etat
+     *
+     * @return Parcours
+     */
     public function setEtat($etat)
     {
         $this->etat = $etat;
+
         return $this;
     }
+
+    /**
+     * Get etat
+     *
+     * @return bool
+     */
+    public function getEtat()
+    {
+        return $this->etat;
+    }
 }
+

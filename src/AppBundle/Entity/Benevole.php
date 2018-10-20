@@ -1,62 +1,97 @@
 <?php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
+ * Benevole
+ *
  * @ORM\Table(name="benevole")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\BenevoleRepository")
  */
 class Benevole
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $idBenevole;
+    private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="idUser", type="integer")
      */
-    protected $idRaid;
+    private $idUser;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="idRaid", type="integer")
      */
-    protected $idUser;
+    private $idRaid;
 
 
-    public function getIdBenevole()
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
     {
-        return $this->idBenevole;
+        return $this->id;
     }
 
-    public function getIdRaid()
+    /**
+     * Set idUser
+     *
+     * @param integer $idUser
+     *
+     * @return Benevole
+     */
+    public function setIdUser($idUser)
     {
-        return $this->idRaid;
+        $this->idUser = $idUser;
+
+        return $this;
     }
 
+    /**
+     * Get idUser
+     *
+     * @return int
+     */
     public function getIdUser()
     {
         return $this->idUser;
     }
 
-    public function setIdBenevole($nom)
-    {
-        $this->nom = $nom;
-        return $this;
-    }
-    
+    /**
+     * Set idRaid
+     *
+     * @param integer $idRaid
+     *
+     * @return Benevole
+     */
     public function setIdRaid($idRaid)
     {
         $this->idRaid = $idRaid;
+
         return $this;
     }
 
-    public function setIdUser($idUser)
+    /**
+     * Get idRaid
+     *
+     * @return int
+     */
+    public function getIdRaid()
     {
-        $this->idUser = $idUser;
-        return $this;
+        return $this->idRaid;
     }
 }
+

@@ -63,7 +63,7 @@ class UserController extends Controller
         $em->persist($user);
         $em->flush();
 
-        return new JsonResponse(['message' => 'Utilisateur ajoute !'], Response::HTTP_OK);
+        return new JsonResponse(['message' => 'Utilisateur ajouté !'], Response::HTTP_OK);
     }
 
     /**
@@ -97,7 +97,7 @@ class UserController extends Controller
         /* @var $user User */
 
         if(empty($user)){
-            return new JsonResponse(["message" => "Utilisateur non trouve !", Response::HTTP_NOT_FOUND]);
+            return new JsonResponse(["message" => "Utilisateur non trouvé !", Response::HTTP_NOT_FOUND]);
         }
         
         $formatted = [
@@ -128,7 +128,7 @@ class UserController extends Controller
         $password = $request->get('password');
 
         if (empty($user)) {
-            return new JsonResponse(['message' => "Utilisateur non trouve"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['message' => "Utilisateur non trouvé !"], Response::HTTP_NOT_FOUND);
         }
         
         $user->setName($name);
@@ -144,7 +144,7 @@ class UserController extends Controller
 
         $sn->flush();
 
-        return new JsonResponse(['message' => "Utilisateur mise a jour avec succes !"], Response::HTTP_OK); 
+        return new JsonResponse(['message' => "Utilisateur mise à jour avec succès !"], Response::HTTP_OK); 
     }
 
     /**
@@ -157,10 +157,14 @@ class UserController extends Controller
         $sn = $this->getDoctrine()->getManager();
         $user = $this->getDoctrine()->getRepository('AppBundle:User')->find($request->get('id_user'));
 
+        if(empty($user)){
+            return new JsonResponse(["message" => "L'utilisateur recherché n'est pas présent dans la BDD !"], Response::HTTP_NOT_FOUND); 
+        }
+
         $sn->remove($user);
         $sn->flush();
         
-        return new JsonResponse(['message' => "Utilisateur supprime avec succes !"], Response::HTTP_OK); 
+        return new JsonResponse(['message' => "Utilisateur supprimé avec succès !"], Response::HTTP_OK); 
     }
 
 }
