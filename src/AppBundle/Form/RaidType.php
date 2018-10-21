@@ -28,15 +28,15 @@ class RaidType extends AbstractType
 
       ->add('lieu', TextType::class, array("label" => "Lieu de l'événement"))
 
-      ->add('dateRaid', DateType::class, array("label" => 'Date du raid'))
+      ->add('date', DateType::class, array("label" => 'Date du raid'))
 
       ->add('edition', TextType::class, array("label" => "Numéro d'édition"))
 
-      ->add('typeSport', ChoiceType::class, array("label" => "Type de sport", "invalid_message" => "Le champ est incorrect", "choices_as_values"=>true ,"choices"=>array_flip(Raid::$tabTypeSport), "multiple" => false, "expanded" => true))
+    //   ->add('typeSport', ChoiceType::class, array("label" => "Type de sport", "invalid_message" => "Le champ est incorrect", "choices_as_values"=>true ,"choices"=>array_flip(Raid::$tabTypeSport), "multiple" => false, "expanded" => true))
 
-      ->add('nbrSport',null,array("label" => 'Nombre de sport', "invalid_message" => "Le champ est incorrect"))
+    //   ->add('nbrSport',null,array("label" => 'Nombre de sport', "invalid_message" => "Le champ est incorrect"))
 
-      ->add('typeSurface', ChoiceType::class, array("label" => "Type de surface", "invalid_message" => "Le champ est incorrect", "choices_as_values"=>true ,"choices"=>array_flip(Raid::$tabTypeSurface), "multiple" => false, "expanded" => true))
+    //   ->add('typeSurface', ChoiceType::class, array("label" => "Type de surface", "invalid_message" => "Le champ est incorrect", "choices_as_values"=>true ,"choices"=>array_flip(Raid::$tabTypeSurface), "multiple" => false, "expanded" => true))
 
        ->add('equipe', TextType::class, array("label" => "Nom d'équipe"))
        ;

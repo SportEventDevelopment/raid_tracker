@@ -7,10 +7,30 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Form\RaidType;
 use AppBundle\Entity\Raid;
 
 class RaidController extends Controller
 {
+    /**
+     * @Route("/raids/create", name="create_raid")
+     */
+    public function createRaid(Request $request) {
+
+        $raid= new Raid();
+        $form = $this->createForm('AppBundle\Form\RaidType', $raid);
+        $form->handleRequest($request);
+         if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($raid);
+            $em->flush();
+            return $this->redirectToRoute('landing');
+        }
+        return $this->render('raid/new.html.twig', array(
+            'raid' => $form->createView()
+        ));
+    }
+
     /**
      * @Route("/api/raids", name="get_all_raids")
      * @Method({"GET"})
