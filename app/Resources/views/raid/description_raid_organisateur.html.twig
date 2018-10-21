@@ -2,20 +2,20 @@
 
 {% block content %}
 <div class="container">
-
     <ul class="list-group">
-        <a href= {{ path('description_organisateur_raid',{'id':raids_organisateurs.id}) }}>
-        </a>
-
         <button type="button" class="btn btn-primary btn-lg btn-block">Parcours</button>
-        <a href= {{ path('create_parcours',{'id':raids_organisateurs.id}) }}>
+
+        <ul class="list-group">
+        {% for parcours in all_parcours %}
+            <li class="list-group-item text-left">
+                {{parcours.nom}}
+            </li>
+        {% endfor %}
+        </ul>
+
+        <a href= {{ path('create_parcours',{'id':raid.id}) }}>
           <i class="fas fa-3x fa-plus-circle"></i>
         </a>
     </ul>
-
-
-
-
-
 </div>
 {% endblock %}

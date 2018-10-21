@@ -48,19 +48,20 @@ class RaidController extends Controller
      */
     public function descriptionRaidOrganisateurAction(Request $request,$id)
     {
+        $raid =  $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Raid')
+            ->findOneBy(array(
+                'id' => $request->get('id')
+            ));
 
+        $all_parcours = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Raid')
+                ->findAllParcoursByIdRaid($request->get('id'));
 
-    /* $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
-                              ->getRepository('AppBundle:Raid')
-                              ->findRaidsOrganisateursByIdUser($this->getUser()->getId());*/
-
-
-      $rOrgo = $this->getDoctrine()->getManager()->getRepository('AppBundle:Raid')->find($id);
        return $this->render('raid/description_raid_organisateur.html.twig', array(
            'user' => $this->getUser(),
-        //   'parcours_Form' => $parcoursForm,
-        //   'raids_organisateurs' =>$raids_organisateurs
-          'raids_organisateurs' => $rOrgo
+          'all_parcours' => $all_parcours,
+          'raid' => $raid
        ));
     }
 

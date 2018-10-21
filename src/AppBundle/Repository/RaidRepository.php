@@ -37,6 +37,11 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
         return $stmt->fetchAll();
     }
 
-
-
+    function findAllParcoursByIdRaid($id_raid){
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM raid r inner join parcours p where r.id = idRaid and r.id = :idRaid";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['idRaid' => $id_raid]);
+        return $stmt->fetchAll();
+    }
 }
