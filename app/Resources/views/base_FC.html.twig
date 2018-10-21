@@ -4,16 +4,16 @@
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
-            <link href="{{ asset('css/styles.css') }}" type="text/css" rel="stylesheet" />
+            <link href="{{ asset('css/styles_FC.css') }}" type="text/css" rel="stylesheet" />
         {% endblock %}
     </head>
 
     <body>
-            {% include('header.html.twig') %}
+            {% include('header_FC.html.twig') %}
 
             {% block content %}{% endblock %}
 
-            {% include('footer.html.twig') %}
+            {% include('footer_FC.html.twig') %}
     </body>
 
 </html>
