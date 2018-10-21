@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Raid Tracker</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link href="{{ asset('css/styles_FC.css') }}" rel="stylesheet" type="text/css" />
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<div class='vertical-center'>
+<div class='container col col-md-4'>
+        <div class="card default-color-dark ">
+            <form class=" border border-light p-5" role="form" method="POST" action="{{ path('security_login_check') }}">
+                <p class="h4 mb-4 text-center">Connexion</p>
+
+                <!-- Email -->
+                <input type="email" id="email" class="form-control mb-4" placeholder="E-mail" name="_email" value="{{ last_username }}">
+
+                <!-- Password -->
+                <input type="password" id="password" class="form-control mb-4" placeholder="Mot de passe" name="_password">
+
+                <div class="d-flex justify-content-around">
+                    <div>
+                        <!-- Remember me -->
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="defaultLoginFormRemember">
+                            <label class="custom-control-label" for="defaultLoginFormRemember">Se souvenir de moi</label>
+                        </div>
+                    </div>
+                    <div>
+                        <!-- Forgot password -->
+                        <a href="">Mot de passe oublié ?</a>
+                    </div>
+                </div>
+
+                <!-- Sign in button -->
+                <button class="btn btn-info btn-block my-4" type="submit">Connexion</button>
+
+                 <!-- Register -->
+                    <p>Pas encore inscrit?
+                        <a href="register">Rejoignez-nous</a>
+                    </p>
+            </form>
+        </div>
+</div>
+</div>
+</body>
