@@ -19,9 +19,7 @@ class BenevoleType extends AbstractType
         $builder
         //->add('idUser')->add('poste')->add('idRaid')
         ->add('poste', ChoiceType::class, array("label" => 'Choix du poste', "invalid_message" => "Le champ est incorrect", "choices_as_values"=>true ,
-        "choices"=>array_flip(Benevole::$tabPoste), "multiple" => false, "expanded" => false))
-
-        ;
+        "choices"=>array_flip(Benevole::$tabPoste), "multiple" => false, "expanded" => false));
     }
 
     /**

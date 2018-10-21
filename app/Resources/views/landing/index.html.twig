@@ -7,16 +7,18 @@
   <br/>
 
   <ul class="list-group">
-  {% for raid in raids_organisateurs %}
-    <a href= {{ path('description_organisateur_raid') }}>
-      <li class="list-group-item">{{raid.nom}}</li>
+    {% for raid in raids_organisateurs %}
+      <a href= {{ path('description_organisateur_raid') }}>
+        <li class="list-group-item">{{raid.nom}}</li>
+      </a>
+    {% endfor %}
+
+    <a href= {{ path('create_raid') }}>
+      <i class="fas fa-4x fa-plus-circle"></i>
     </a>
-  {% endfor %}
   </ul>
   
-  <a href= {{ path('create_raid') }}>
-    <i class="fas fa-3x fa-plus-circle"></i>
-  </a>
+  
 
   <br/>
 

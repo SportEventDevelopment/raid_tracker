@@ -4,11 +4,11 @@
 <div class="container">
     
     <ul class="list-group">
-        {% for parcours in raids_organisateurs %}
+        {% for parcour in parcours %}
         <a href= {{ path('description_organisateur_raid') }}>
             <li class="list-group-item">{{parcours.nom}}</li>
         </a>
-    {% endfor %}
+        {% endfor %}
     </ul>
   
   <a href= {{ path('create_parcours') }}>
