@@ -11,6 +11,7 @@
     <a href= {{ path('description_organisateur_raid', {'id':raid.idRaid} ) }}>
       <li class="list-group-item">{{raid.nom}}</li>
     </a>
+  {% endfor %}
   </ul>
 
   <a href= {{ path('create_raid') }}>
