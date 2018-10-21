@@ -25,3 +25,8 @@
 .list-group a:last-child{
     padding:1rem;
 }
+
+.flexcolumn {
+    display:flex;
+    flex-direction:column;
+}

@@ -17,10 +17,6 @@
       <i class="fas fa-4x fa-plus-circle"></i>
     </a>
   </ul>
-  
-  
-
-  <br/>
 
   <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user.name}}</button>
   <br/>
@@ -35,12 +31,13 @@
 
   <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
   
-  <ulclass="list-group">
+  <ul class="list-group flexcolumn">
   {% for raid in all_raids %}
-    <li class="list-group-item">
+    <li class="list-group-item text-left">
       {{raid.nom}}
       <a href= {{ path('post_benevole_one_raid', {'id_raid': raid.id, 'id_user': user.id}) }}>
-        <span class="glyphicon glyphicon-plus"></span> Rejoins-nous!
+        Rejoins-nous!
+        <span class="glyphicon glyphicon-plus"></span>
       </a>
     </li>
   {% endfor %}
