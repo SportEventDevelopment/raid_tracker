@@ -13,7 +13,7 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
     function findRaidsOrganisateursByIdUser(int $id_user): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT * FROM Raid r CROSS JOIN Organisateur o WHERE o.idUser = :idUser";
+        $sql = "SELECT * FROM Raid r INNER JOIN Organisateur o WHERE o.idUser = :idUser AND r.id = o.idRaid";
         $stmt = $conn->prepare($sql);
         $stmt->execute(['idUser' => $id_user]);
         return $stmt->fetchAll();
@@ -22,7 +22,7 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
     function findRaidsBenevolesByIdUser(int $id_user): array
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT * FROM Raid r CROSS JOIN Benevole b WHERE b.idUser = :idUser";
+        $sql = "SELECT * FROM Raid r INNER JOIN Benevole b WHERE b.idUser = :idUser AND r.id = b.idRaid";
         $stmt = $conn->prepare($sql);
         $stmt->execute(['idUser' => $id_user]);
         return $stmt->fetchAll();

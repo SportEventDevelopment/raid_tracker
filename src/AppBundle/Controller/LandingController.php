@@ -36,6 +36,4 @@ class LandingController extends Controller
       'all_raids' => $all_raids,
     ));
    }
-
-
 }

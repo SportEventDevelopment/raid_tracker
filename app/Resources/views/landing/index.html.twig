@@ -1,42 +1,33 @@
 {% extends 'base.html.twig' %}
 
-
 {% block body %}
-
 
 <div class="container">
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-<div class="pull-right">Bonjour, {{user_name}}
-<li>
-<a href="./logout"> se déconecter
-<span class="glyphicon glyphicon-log-out"></span>
-</a>
-</li>
-
-</div>
+  <div class="pull-right">Bonjour, {{user_name}}
+    <li>
+      <a href="./logout"> se déconecter
+      <span class="glyphicon glyphicon-log-out"></span>
+    </a>
+    </li>
+  </div>
 </nav>
-
-
 
 <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user_name}}</button>
 <br/>
-
 
 {% for valeur in raids_organisateurs %}
  {{valeur.nom}} <br/>
 {% endfor %}
 
-
-
 <button type="button" class="btn btn-default btn-sm">
-<a href="./raid/new">
-  <span class="glyphicon glyphicon-plus"></span> Plus
-</a>
+  <a href="./raid/new">
+    <span class="glyphicon glyphicon-plus"></span> Plus
+  </a>
 </button>
 
-<br/><br/><br/>
-
+<br/>
 
 <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user_name}}</button>
 <br/>
@@ -45,18 +36,15 @@
  {{valeur.nom}} <br/>
 {% endfor %}
 
-
 <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
 <br/>
 {% for valeur in all_raids %}
- {{valeur.nom}} {{valeur.id}}
- <a href="./raid/{{valeur.id}}/edit">
-   <span class="glyphicon glyphicon-plus"></span> Rejoins-nous!
- </a>
+ {{valeur.nom}}
+  <a href="./raid/{{valeur.id}}/edit">
+    <span class="glyphicon glyphicon-plus"></span> Rejoins-nous!
+  </a>
   <br/>
 {% endfor %}
-
-
 
 </div>
 {% endblock %}
