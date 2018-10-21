@@ -23,18 +23,13 @@
     <div class="col-md-6 mb-4">
         <div class="card default-color-dark">
             <form class="text-center border border-light p-5" role="form" method="POST" action="{{ path('security_login_check') }}">
-                {% if error %}
-                    <div class="alert alert-danger">
-                        {{ error.messageKey|trans(error.messageData) }}
-                    </div>
-                {% endif %}
                 <p class="h4 mb-4">Connexion</p>
 
                 <!-- Email -->
-                <input type="email" id="defaultLoginFormEmail" class="form-control mb-4" placeholder="E-mail" name="_email" value="{{ last_username }}">
+                <input type="email" id="email" class="form-control mb-4" placeholder="E-mail" name="_email" value="{{ last_username }}">
 
                 <!-- Password -->
-                <input type="password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Mot de passe" name="_password">
+                <input type="password" id="password" class="form-control mb-4" placeholder="Mot de passe" name="_password">
 
                 <div class="d-flex justify-content-around">
                     <div>
@@ -52,9 +47,11 @@
 
                 <!-- Sign in button -->
                 <button class="btn btn-info btn-block my-4" type="submit">Connexion</button>
+
+                 <!-- Register -->
+                    <p>Pas encore inscrit?
+                        <a href="register">Rejoignez-nous</a>
+                    </p>
             </form>
         </div>
     </div>
-</div>
-
-</body>

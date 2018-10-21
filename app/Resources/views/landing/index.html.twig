@@ -3,27 +3,31 @@
 {% block content %}
 
 <div class="container">
-  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user_name}}</button>
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.name}}</button>
   <br/>
 
   <ul class="list-group">
   {% for raid in raids_organisateurs %}
-    <li class="list-group-item">{{raid.nom}}</li>
+    <a href= {{ path('description_organisateur_raid') }}>
+      <li class="list-group-item">{{raid.nom}}</li>
+    </a>
   {% endfor %}
   </ul>
   
-  <a href="raids/create">
+  <a href= {{ path('create_raid') }}>
     <i class="fas fa-3x fa-plus-circle"></i>
   </a>
 
   <br/>
 
-  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user_name}}</button>
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user.name}}</button>
   <br/>
 
   <ul class="list-group">
     {% for raid in raids_benevoles %}
-      <li class="list-group-item">{{raid.nom}}</li>
+      <a href= {{ path('create_raid') }}>
+        <li class="list-group-item">{{raid.nom}}</li>
+      </a>
   {% endfor %}
   </ul>
 
@@ -33,7 +37,7 @@
   {% for raid in all_raids %}
     <li class="list-group-item">
       {{raid.nom}}
-      <a href="./raid/{{raid.id}}/edit">
+      <a href= {{ path('post_benevole_one_raid', {'id_raid': raid.id, 'id_user': user.id}) }}>
         <span class="glyphicon glyphicon-plus"></span> Rejoins-nous!
       </a>
     </li>

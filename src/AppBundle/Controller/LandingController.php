@@ -16,7 +16,7 @@ class LandingController extends Controller
    */
    public function LandingAction(Request $request){
     
-    $user_name = $this->getUser()->getName();
+    $user = $this->getUser();
     $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
                             ->getRepository('AppBundle:Raid')
                             ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
@@ -30,7 +30,7 @@ class LandingController extends Controller
                     ->findAllRaids();
 
     return $this->render('landing/index.html.twig', array(
-      'user_name' => $user_name,
+      'user' => $user,
       'raids_organisateurs' => $raids_organisateurs,
       'raids_benevoles' => $raids_benevoles,
       'all_raids' => $all_raids,

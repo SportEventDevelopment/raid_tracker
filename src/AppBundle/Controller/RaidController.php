@@ -37,8 +37,20 @@ class RaidController extends Controller
         }
 
         return $this->render('raid/new.html.twig', array(
-            'user_name' => $this->getUser()->getName(),
+            'user' => $this->getUser(),
             'raid' => $form->createView(),
+        ));
+    }
+
+    /**
+     * @Route("/raids/description_raid_organisateur", name="description_organisateur_raid")
+     */
+    public function descriptionRaidOrganisateurAction(Request $request) 
+    {
+
+
+        return $this->render('raid/description_raid_organisateur.html.twig', array(
+            'user' => $this->getUser()
         ));
     }
 
