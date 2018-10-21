@@ -17,7 +17,7 @@ class ParcoursController extends Controller
     /**
      * Lists all parcour entities.
      *
-     * @Route("/parcours", name="parcours_index")
+     * @Route("/parcours", name="parcours")
      * @Method("GET")
      */
     public function indexAction()
@@ -34,8 +34,8 @@ class ParcoursController extends Controller
     /**
      * Creates a new parcour entity.
      *
-     * @Route("/new", name="parcours_new")
-     * @Method({"GET", "POST"})
+     * @Route("/parcours", name="create_parcours")
+     * @Method({"POST"})
      */
     public function newAction(Request $request)
     {

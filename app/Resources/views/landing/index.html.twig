@@ -6,34 +6,39 @@
   <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user_name}}</button>
   <br/>
 
+  <ul class="list-group">
   {% for raid in raids_organisateurs %}
-    {{raid.nom}} <br/>
+    <li class="list-group-item">{{raid.nom}}</li>
   {% endfor %}
-
-  <button type="button" class="btn btn-default btn-sm">
-    <a href="raids/create">
-      <span class="glyphicon glyphicon-plus"></span> Plus
-    </a>
-  </button>
+  </ul>
+  
+  <a href="raids/create">
+    <i class="fas fa-3x fa-plus-circle"></i>
+  </a>
 
   <br/>
 
   <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user_name}}</button>
   <br/>
 
-  {% for raid in raids_benevoles %}
-  {{raid.nom}} <br/>
+  <ul class="list-group">
+    {% for raid in raids_benevoles %}
+      <li class="list-group-item">{{raid.nom}}</li>
   {% endfor %}
+  </ul>
 
   <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
-  <br/>
+  
+  <ulclass="list-group">
   {% for raid in all_raids %}
-    {{raid.nom}}
-    <a href="./raid/{{raid.id}}/edit">
-      <span class="glyphicon glyphicon-plus"></span> Rejoins-nous!
-    </a>
-    <br/>
+    <li class="list-group-item">
+      {{raid.nom}}
+      <a href="./raid/{{raid.id}}/edit">
+        <span class="glyphicon glyphicon-plus"></span> Rejoins-nous!
+      </a>
+    </li>
   {% endfor %}
+  </ul>
 
 </div>
 {% endblock %}

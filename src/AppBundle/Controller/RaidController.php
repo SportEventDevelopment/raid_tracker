@@ -9,26 +9,36 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\RaidType;
 use AppBundle\Entity\Raid;
+use AppBundle\Entity\Organisateur;
 
 class RaidController extends Controller
 {
     /**
      * @Route("/raids/create", name="create_raid")
      */
-    public function createRaid(Request $request) {
-
-        $raid= new Raid();
+    public function createRaid(Request $request) 
+    {
+        $raid = new Raid();
+        $orga = new Organisateur();
+        
         $form = $this->createForm('AppBundle\Form\RaidType', $raid);
         $form->handleRequest($request);
-         if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            //$ee=$raid->getTypeSport();
+            //  var_dump($raid);die();
             $em->persist($raid);
+            $em->flush();
+            $orga->setIdUser($this->getUser()->getId());
+            $orga->setIdRaid($raid->getId());
+            $em->persist($orga);
             $em->flush();
             return $this->redirectToRoute('landing');
         }
+
         return $this->render('raid/new.html.twig', array(
             'user_name' => $this->getUser()->getName(),
-            'raid' => $form->createView()
+            'raid' => $form->createView(),
         ));
     }
 
