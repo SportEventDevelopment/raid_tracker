@@ -7,16 +7,15 @@
   <br/>
 
   <ul class="list-group">
-    {% for raid in raids_organisateurs %}
-      <a href= {{ path('description_organisateur_raid') }}>
-        <li class="list-group-item">{{raid.nom}}</li>
-      </a>
-    {% endfor %}
-
-    <a href= {{ path('create_raid') }}>
-      <i class="fas fa-4x fa-plus-circle"></i>
+  {% for raid in raids_organisateurs %}
+    <a href= {{ path('description_organisateur_raid', {'id':raid.idRaid} ) }}>
+      <li class="list-group-item">{{raid.nom}}</li>
     </a>
   </ul>
+
+  <a href= {{ path('create_raid') }}>
+    <i class="fas fa-3x fa-plus-circle"></i>
+  </a>
 
   <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user.name}}</button>
   <br/>
@@ -30,8 +29,8 @@
   </ul>
 
   <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
-  
-  <ul class="list-group flexcolumn">
+
+  <ulclass="list-group">
   {% for raid in all_raids %}
     <li class="list-group-item text-left">
       {{raid.nom}}

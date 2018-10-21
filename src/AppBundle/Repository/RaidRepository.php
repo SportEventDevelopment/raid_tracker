@@ -36,4 +36,7 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+
+
 }
