@@ -14,14 +14,8 @@ class AdvertController extends Controller
    */
     public function indexAction()
     {
-
-    /*  $em = $this->getDoctrine()->getManager();
-
-              $entities = $em->getRepository('AppBundle:User')->getTsUsers();
-
-              var_dump($entities);die();*/
-
-        $content = $this->get('templating')->render('default/map_interactive.html.twig',array('nom'=> "Maxime"));
+        $user = $this->getUser();
+        $content = $this->get('templating')->render('default/map_interactive.html.twig',array('user' => $user));
         return new Response($content);
         //return $this->render('SEDInteractiveMapBundle:Default::index.html.twig');
     }

@@ -3,5 +3,18 @@
 {% block content %}
 <div class="container">
     
+    <ul class="list-group">
+        {% for parcours in raids_organisateurs %}
+        <a href= {{ path('description_organisateur_raid') }}>
+            <li class="list-group-item">{{parcours.nom}}</li>
+        </a>
+    {% endfor %}
+    </ul>
+  
+  <a href= {{ path('create_parcours') }}>
+    <i class="fas fa-3x fa-plus-circle"></i>
+  </a>
+    <button type="button" class="btn btn-primary btn-lg btn-block">Parcours</button>
+
 </div>
 {% endblock %}

@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: #fafafa;
+    background: #F8F8FF;
 }
 
 p {
@@ -25,7 +25,7 @@ a, a:hover, a:focus {
 
 .navbar {
     padding: 15px 10px;
-    background: #fff;
+    background: #F8F8FF;
     border: none;
     border-radius: 0;
     margin-bottom: 40px;
@@ -60,8 +60,8 @@ a, a:hover, a:focus {
 #sidebar {
     min-width: 250px;
     max-width: 250px;
-    background: #7386D5;
-    color: #fff;
+    background: #85c17eff;
+    color: #F8F8FF;
     transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
     transform-origin: bottom left;
 }
@@ -73,16 +73,16 @@ a, a:hover, a:focus {
 
 #sidebar .sidebar-header {
     padding: 20px;
-    background: #6d7fcc;
+    background: #80BA75;
 }
 
 #sidebar ul.components {
     padding: 20px 0;
-    border-bottom: 1px solid #47748b;
+    border-bottom: 1px solid #80A770;
 }
 
 #sidebar ul p {
-    color: #fff;
+    color: #F8F8FF;
     padding: 10px;
 }
 
@@ -90,15 +90,16 @@ a, a:hover, a:focus {
     padding: 10px;
     font-size: 1.1em;
     display: block;
+    color:#F8F8FF;
 }
 #sidebar ul li a:hover {
-    color: #7386D5;
-    background: #fff;
+    color: #85c17eff;
+    background: #F8F8FF;
 }
 
 #sidebar ul li.active > a, a[aria-expanded="true"] {
-    color: #fff;
-    background: #6d7fcc;
+    color: #F8F8FF;
+    background: #80BA75;
 }
 
 
@@ -117,7 +118,7 @@ a[data-toggle="collapse"] {
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: #6d7fcc;
+    background: #80BA75;
 }
 
 ul.CTAs {
@@ -133,13 +134,13 @@ ul.CTAs a {
 }
 
 a.download {
-    background: #fff;
-    color: #7386D5;
+    background: #F8F8FF;
+    color: #85c17eff;
 }
 
 a.article, a.article:hover {
-    background: #6d7fcc !important;
-    color: #fff !important;
+    background: #80BA75 !important;
+    color: #F8F8FF !important;
 }
 
 
@@ -157,7 +158,7 @@ a.article, a.article:hover {
 #sidebarCollapse {
     width: 40px;
     height: 40px;
-    background: #f5f5f5;
+    background: #F8F8FF;
     cursor: pointer;
 }
 
@@ -187,6 +188,15 @@ a.article, a.article:hover {
     opacity: 1;
     margin: 5px auto;
 }
+
+
+/* ---------------------------------------------------
+    CARTE
+----------------------------------------------------- */
+#basicMap {
+    width: 100%;
+    height: 100%;
+  }
 
 
 /* ---------------------------------------------------

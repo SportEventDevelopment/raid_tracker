@@ -10,7 +10,7 @@ namespace AppBundle\Repository;
  */
 class RaidRepository extends \Doctrine\ORM\EntityRepository
 {
-    function findRaidsOrganisateursByIdUser(int $id_user): array
+    function findRaidsOrganisateursByIdUser($id_user)
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT * FROM Raid r INNER JOIN Organisateur o WHERE o.idUser = :idUser AND r.id = o.idRaid";
@@ -19,7 +19,7 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
         return $stmt->fetchAll();
     }
 
-    function findRaidsBenevolesByIdUser(int $id_user): array
+    function findRaidsBenevolesByIdUser($id_user)
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT * FROM Raid r INNER JOIN Benevole b WHERE b.idUser = :idUser AND r.id = b.idRaid";
@@ -28,7 +28,7 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
         return $stmt->fetchAll();
     }
 
-    function findAllRaids(): array
+    function findAllRaids()
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT * FROM Raid r";

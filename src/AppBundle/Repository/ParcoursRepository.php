@@ -10,4 +10,12 @@ namespace AppBundle\Repository;
  */
 class ParcoursRepository extends \Doctrine\ORM\EntityRepository
 {
+    function findParcoursByIdRaids($id_raid)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM parcours p INNER JOIN raid r WHERE p.idRaid=r.id AND p.idRaid = :idRaid";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['idRaid' => $id_raid]);
+        return $stmt->fetchAll();
+    }
 }
