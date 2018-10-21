@@ -1,50 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
+{% block content %}
 
 <div class="container">
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="pull-right">Bonjour, {{user_name}}
-    <li>
-      <a href="./logout"> Se déconnecter
-      <span class="glyphicon glyphicon-log-out"></span>
-    </a>
-    </li>
-  </div>
-</nav>
-
-<button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user_name}}</button>
-<br/>
-
-{% for raid in raids_organisateurs %}
- {{raid.nom}} <br/>
-{% endfor %}
-
-<button type="button" class="btn btn-default btn-sm">
-  <a href="raids/create">
-    <span class="glyphicon glyphicon-plus"></span> Plus
-  </a>
-</button>
-
-<br/>
-
-<button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user_name}}</button>
-<br/>
-
-{% for raid in raids_benevoles %}
- {{raid.nom}} <br/>
-{% endfor %}
-
-<button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
-<br/>
-{% for raid in all_raids %}
-  {{raid.nom}}
-  <a href="./raid/{{raid.id}}/edit">
-    <span class="glyphicon glyphicon-plus"></span> Rejoins-nous!
-  </a>
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user_name}}</button>
   <br/>
-{% endfor %}
+
+  {% for raid in raids_organisateurs %}
+    {{raid.nom}} <br/>
+  {% endfor %}
+
+  <button type="button" class="btn btn-default btn-sm">
+    <a href="raids/create">
+      <span class="glyphicon glyphicon-plus"></span> Plus
+    </a>
+  </button>
+
+  <br/>
+
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user_name}}</button>
+  <br/>
+
+  {% for raid in raids_benevoles %}
+  {{raid.nom}} <br/>
+  {% endfor %}
+
+  <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
+  <br/>
+  {% for raid in all_raids %}
+    {{raid.nom}}
+    <a href="./raid/{{raid.id}}/edit">
+      <span class="glyphicon glyphicon-plus"></span> Rejoins-nous!
+    </a>
+    <br/>
+  {% endfor %}
 
 </div>
 {% endblock %}

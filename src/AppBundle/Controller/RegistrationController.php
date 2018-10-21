@@ -33,17 +33,25 @@ class RegistrationController extends Controller
             $em->persist($user);
             $em->flush();
 
-
-          //  $user = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->getUtilisateur($this->getUser()->getUsername())
-
-
-          //  $user =$this->getUser()->getName();
-          //   var_dump($user);die();
             return $this->redirectToRoute('login');
         }
 
         return $this->render('auth/register.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/login_check", name="security_login_check")
+     */
+    public function securityLoginCheckAction(Request $request)
+    {
+    }
+
+    /**
+     * @Route("/logout", name="logout")
+     */
+    public function logoutAction(Request $request)
+    {
     }
 }
