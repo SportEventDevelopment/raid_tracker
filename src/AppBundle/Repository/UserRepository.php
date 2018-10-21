@@ -11,12 +11,21 @@ namespace AppBundle\Repository;
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
 
-    public function getUtilisateur($user) {
+  /*  public function getUtilisateur($user) {
 
 $qb = $this->createQueryBuilder('p')
 ->select('p.name)
 ->where('p.name = :name')
 ->setParameter('name', $user);
 return $qb->getQuery()->getSingleScalarResult();
-}
+}*/
+/*
+public function getTsUsers() {
+  $qb = $this->createQueryBuilder('us')
+  ->orderBy('us.name', 'ASC')
+  ;
+  return $qb->getQuery ()->getResult();
+}*/
+
+
 }

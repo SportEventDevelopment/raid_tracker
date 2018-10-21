@@ -10,4 +10,30 @@ namespace AppBundle\Repository;
  */
 class RaidRepository extends \Doctrine\ORM\EntityRepository
 {
+    function findRaidsOrganisateursByIdUser(int $id_user): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM Raid r CROSS JOIN Organisateur o WHERE o.idUser = :idUser";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['idUser' => $id_user]);
+        return $stmt->fetchAll();
+    }
+
+    function findRaidsBenevolesByIdUser(int $id_user): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM Raid r CROSS JOIN Benevole b WHERE b.idUser = :idUser";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['idUser' => $id_user]);
+        return $stmt->fetchAll();
+    }
+
+    function findAllRaids(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM Raid r";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

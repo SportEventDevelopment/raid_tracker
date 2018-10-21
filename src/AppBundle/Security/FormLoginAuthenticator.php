@@ -62,7 +62,7 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
     {
       //  $url = $this->router->generate('welcome');
 
-        $url = $this->router->generate('success');
+        $url = $this->router->generate('landing');
 
         return new RedirectResponse($url);
     }
@@ -85,7 +85,7 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
     {
       //  return $this->router->generate('welcome');
 
-      return $this->router->generate('success');
+      return $this->router->generate('landing');
 
     }
 
