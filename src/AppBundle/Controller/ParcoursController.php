@@ -17,7 +17,7 @@ class ParcoursController extends Controller
     /**
      * Lists all parcour entities.
      *
-     * @Route("/", name="parcours_index")
+     * @Route("/parcours", name="parcours_index")
      * @Method("GET")
      */
     public function indexAction()

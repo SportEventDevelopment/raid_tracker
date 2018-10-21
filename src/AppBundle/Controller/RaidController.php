@@ -27,6 +27,7 @@ class RaidController extends Controller
             return $this->redirectToRoute('landing');
         }
         return $this->render('raid/new.html.twig', array(
+            'user_name' => $this->getUser()->getName(),
             'raid' => $form->createView()
         ));
     }
