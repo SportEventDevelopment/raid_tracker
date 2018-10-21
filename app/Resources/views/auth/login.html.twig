@@ -20,10 +20,10 @@
 <body>
 
 <div class='vertical-center'>
-<div class='container'>
+<div class='container col col-md-4'>
         <div class="card default-color-dark ">
-            <form class="text-center border border-light p-5" role="form" method="POST" action="{{ path('security_login_check') }}">
-                <p class="h4 mb-4">Connexion</p>
+            <form class=" border border-light p-5" role="form" method="POST" action="{{ path('security_login_check') }}">
+                <p class="h4 mb-4 text-center">Connexion</p>
 
                 <!-- Email -->
                 <input type="email" id="email" class="form-control mb-4" placeholder="E-mail" name="_email" value="{{ last_username }}">

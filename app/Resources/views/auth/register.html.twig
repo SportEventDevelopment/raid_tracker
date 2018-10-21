@@ -19,10 +19,10 @@
 
 {% block content %}
 <div class='vertical-center'>
-<div class='container'>
+<div class='container col col-md-4'>
 <div class="card default-color-dark">
-{{ form_start(form, {'attr': {'class': 'center text-center border border-light p-5'}}) }}
-    <p class="h4 mb-4">Créer un compte</p>
+{{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
+    <p class="h4 mb-4 text-center">Créer un compte</p>
     <div class="form-row mb-4">
         <div class="col">
             <!-- First name -->
@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <small id="defaultRegisterFormPasswordHelpBlock" class="form-text text-muted mb-4">
+    <small id="defaultRegisterFormPasswordHelpBlock" class="form-text text-center text-muted mb-4">
         Au moins 8 charactères dont 1 chiffre
     </small>
 
@@ -58,7 +58,7 @@
     <hr>
 
     <!-- Terms of service -->
-    <p>En cliquant sur
+    <p class="text-center">En cliquant sur
         <em>Créer un compte</em> vous acceptez les
         <a href="" target="_blank">Conditions d'utilisation</a> et la
         <a href="" target="_blank">Politique de confidentialité</a>. </p>
