@@ -1,0 +1,42 @@
+{% extends ['base.html.twig','header.html.twig','footer.html.twig'] %}
+{% block body %}
+    <h1>Parcours list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Etat</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for parcour in parcours %}
+            <tr>
+                <td><a href="{{ path('parcours_show', { 'id': parcour.id }) }}">{{ parcour.id }}</a></td>
+                <td>{{ parcour.nom }}</td>
+                <td>{{ parcour.type }}</td>
+                <td>{% if parcour.etat %}Yes{% else %}No{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('parcours_show', { 'id': parcour.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('parcours_edit', { 'id': parcour.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('parcours_new') }}">Create a new parcour</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,51 +1,100 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html>
 
-{% block body %}
-<div class="container">
-    <div class="row">
-  {#  <div class="page-header"><div class="panel panel-default">Login gt</div></div>#}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ path('security_login_check') }}">
-                        {% if error %}
-                            <div class="alert alert-danger">
-                                {{ error.messageKey|trans(error.messageData) }}
-                            </div>
-                        {% endif %}
+    <title>Collapsible sidebar using Bootstrap 4</title>
 
-                        <div class="form-group">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link href="{{ asset('css/styles_FC.css') }}" rel="stylesheet" type="text/css" />
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="_email" value="{{ last_username }}">
-                            </div>
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card default-color-dark">
+            <form class="text-center border border-light p-5" role="form" method="POST" action="{{ path('security_login_check') }}">
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error.messageKey|trans(error.messageData) }}
+                    </div>
+                {% endif %}
+                <p class="h4 mb-4">Connexion</p>
+
+                <!-- Email -->
+                <input type="email" id="defaultLoginFormEmail" class="form-control mb-4" placeholder="E-mail" name="_email" value="{{ last_username }}">
+
+                <!-- Password -->
+                <input type="password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Mot de passe" name="_password">
+
+                <div class="d-flex justify-content-around">
+                    <div>
+                        <!-- Remember me -->
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="defaultLoginFormRemember">
+                            <label class="custom-control-label" for="defaultLoginFormRemember">Se souvenir de moi</label>
                         </div>
-
-                        <div class="form-group">
-                            <label for="password" class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="_password">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-sign-in"></i> se connecter
-                                </button>
-                                <button type="button" class="btn btn-outline-success and-all-other-classes">
-<a href="./register">Création de compte</a>
-</button>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
+                    <div>
+                        <!-- Forgot password -->
+                        <a href="">Mot de passe oublié ?</a>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Sign in button -->
+                <button class="btn btn-info btn-block my-4" type="submit">Connexion</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card primary-color-dark">
+            <form class="text-center border border-light p-5">
+                <p class="h4 mb-4">Créer un compte</p>
+
+                <div class="form-row mb-4">
+                    <div class="col">
+                        <!-- First name -->
+                        <input type="text" id="defaultRegisterFormFirstName" class="form-control" placeholder="Prénom">
+                    </div>
+                    <div class="col">
+                        <!-- Last name -->
+                        <input type="text" id="defaultRegisterFormLastName" class="form-control" placeholder="Nom">
+                    </div>
+                </div>
+
+                <!-- E-mail -->
+                <input type="email" id="defaultRegisterFormEmail" class="form-control mb-4" placeholder="E-mail">
+
+                <!-- Password -->
+                <input type="password" id="defaultRegisterFormPassword" class="form-control" placeholder="Mot de passe" aria-describedby="defaultRegisterFormPasswordHelpBlock">
+                <small id="defaultRegisterFormPasswordHelpBlock" class="form-text text-muted mb-4">
+                    Au moins 8 charactères et un chiffre
+                </small>
+
+                <!-- Sign up button -->
+                <button class="btn btn-info my-4 btn-block" type="submit">Créer un compte</button>
+
+                <hr>
+
+                <!-- Terms of service -->
+                <p>En cliquant sur 
+                    <em>Créer un compte,</em> vous acceptez les
+                    <a href="" target="_blank">Conditions d'utilisation</a> et la
+                    <a href="" target="_blank">Politique de confidentialité</a>. </p>
+
+            </form>
         </div>
     </div>
 </div>
-{% endblock %}
+
+</body>
