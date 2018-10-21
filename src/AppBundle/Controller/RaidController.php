@@ -10,17 +10,18 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\RaidType;
 use AppBundle\Entity\Raid;
 use AppBundle\Entity\Organisateur;
+use AppBundle\Entity\Parcours;
 
 class RaidController extends Controller
 {
     /**
      * @Route("/raids/create", name="create_raid")
      */
-    public function createRaid(Request $request) 
+    public function createRaid(Request $request)
     {
         $raid = new Raid();
         $orga = new Organisateur();
-        
+
         $form = $this->createForm('AppBundle\Form\RaidType', $raid);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -43,15 +44,24 @@ class RaidController extends Controller
     }
 
     /**
-     * @Route("/raids/description_raid_organisateur", name="description_organisateur_raid")
+     * @Route("/raids/{id}/description_raid_organisateur", name="description_organisateur_raid")
      */
-    public function descriptionRaidOrganisateurAction(Request $request) 
+    public function descriptionRaidOrganisateurAction(Request $request,$id)
     {
 
 
-        return $this->render('raid/description_raid_organisateur.html.twig', array(
-            'user' => $this->getUser()
-        ));
+    /* $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
+                              ->getRepository('AppBundle:Raid')
+                              ->findRaidsOrganisateursByIdUser($this->getUser()->getId());*/
+
+
+      $rOrgo = $this->getDoctrine()->getManager()->getRepository('AppBundle:Raid')->find($id);
+       return $this->render('raid/description_raid_organisateur.html.twig', array(
+           'user' => $this->getUser(),
+        //   'parcours_Form' => $parcoursForm,
+        //   'raids_organisateurs' =>$raids_organisateurs
+          'raids_organisateurs' => $rOrgo
+       ));
     }
 
     /**
@@ -62,9 +72,9 @@ class RaidController extends Controller
     {
         $raids = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Raid')
-                ->findAll();   
+                ->findAll();
         /* @var $raids Raids[] */
-        
+
         if(empty($raids)){
             return new JsonResponse(["message" => "Aucun RAID trouvé dans la BDD !"], Response::HTTP_NOT_FOUND);
         }
@@ -77,7 +87,7 @@ class RaidController extends Controller
                 'lieu' => $raid->getLieu(),
                 'date' => $raid->getDate(),
                 'edition' => $raid->getEdition(),
-                'equipe' => $raid->getEquipe()    
+                'equipe' => $raid->getEquipe()
             ];
         }
 
@@ -91,7 +101,7 @@ class RaidController extends Controller
     public function postRaidsAction(Request $request)
     {
         $raid = new Raid();
-        
+
         $raid->setNom($request->get('nom'));
         $raid->setLieu($request->get('lieu'));
         $date = new \DateTime($request->get('date'));
@@ -118,7 +128,7 @@ class RaidController extends Controller
         $raids = $em->getRepository('AppBundle:Raid')->findAll();
 
         if(empty($raids)){
-            return new JsonResponse(["message" => "Aucun RAID présents dans la BDD !"], Response::HTTP_NOT_FOUND);    
+            return new JsonResponse(["message" => "Aucun RAID présents dans la BDD !"], Response::HTTP_NOT_FOUND);
         }
 
         foreach ($raids as $raid) {
@@ -143,7 +153,7 @@ class RaidController extends Controller
         /* @var $raid Raid */
 
         if(empty($raid)){
-            return new JsonResponse(["message" => "Le raid recherché n'est pas présent dans la BDD !"], Response::HTTP_NOT_FOUND); 
+            return new JsonResponse(["message" => "Le raid recherché n'est pas présent dans la BDD !"], Response::HTTP_NOT_FOUND);
         }
 
         $formatted = [
@@ -152,7 +162,7 @@ class RaidController extends Controller
             'date' => $raid->getDate(),
             'lieu' => $raid->getLieu(),
             'edition' => $raid->getEdition(),
-            'equipe' => $raid->getEquipe()    
+            'equipe' => $raid->getEquipe()
         ];
 
         return new JsonResponse($formatted, Response::HTTP_OK);
@@ -164,13 +174,13 @@ class RaidController extends Controller
      */
     public function postRaidAction(Request $request)
     {
-        
+
         $sn = $this->getDoctrine()->getManager();
         $raid = $this->getDoctrine()->getRepository('AppBundle:Raid')
                 ->find($request->get('id_raid'));
 
         if(empty($raid)){
-            return new JsonResponse(["message" => "Le raid recherché n'est pas présent dans la BDD !"], Response::HTTP_NOT_FOUND); 
+            return new JsonResponse(["message" => "Le raid recherché n'est pas présent dans la BDD !"], Response::HTTP_NOT_FOUND);
         }
 
         $nom = $request->get('nom');
@@ -178,7 +188,7 @@ class RaidController extends Controller
         $date = new \DateTime($request->get('date'));
         $edition = $request->get('edition');
         $equipe = $request->get('equipe');
-        
+
         $raid->setNom($nom);
         $raid->setLieu($lieu);
         $raid->setDate($date);
@@ -187,7 +197,7 @@ class RaidController extends Controller
 
         $sn->flush();
 
-        return new JsonResponse(['message' => "Raid mise à jour avec succès !"], Response::HTTP_OK); 
+        return new JsonResponse(['message' => "Raid mise à jour avec succès !"], Response::HTTP_OK);
     }
 
     /**
@@ -196,18 +206,18 @@ class RaidController extends Controller
      */
     public function deleteRaidAction(Request $request)
     {
-        
+
         $sn = $this->getDoctrine()->getManager();
         $raid = $this->getDoctrine()->getRepository('AppBundle:Raid')->find($request->get('id_raid'));
 
         if(empty($raid)){
-            return new JsonResponse(["message" => "Le raid recherché n'est pas présent dans la BDD !"], Response::HTTP_NOT_FOUND); 
+            return new JsonResponse(["message" => "Le raid recherché n'est pas présent dans la BDD !"], Response::HTTP_NOT_FOUND);
         }
 
         $sn->remove($raid);
         $sn->flush();
-        
-        return new JsonResponse(['message' => "Raid supprimé avec succès !"], Response::HTTP_OK); 
+
+        return new JsonResponse(['message' => "Raid supprimé avec succès !"], Response::HTTP_OK);
     }
 
 
@@ -230,7 +240,7 @@ class RaidController extends Controller
 
         $formatted = [];
         foreach ($benevoles as $benevole) {
-            
+
             $raid = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Raid')
                 ->findOneBy(array(
@@ -243,7 +253,7 @@ class RaidController extends Controller
                 'lieu' => $raid->getLieu(),
                 'date' => $raid->getDate(),
                 'edition' => $raid->getEdition(),
-                'equipe' => $raid->getEquipe()    
+                'equipe' => $raid->getEquipe()
             ];
         }
 
@@ -264,7 +274,7 @@ class RaidController extends Controller
                     ));
 
         if(empty($benevoles)){
-            return new JsonResponse(["message" => "Cet utilisateur n'est bénévole d'aucun RAID !"], Response::HTTP_NOT_FOUND);    
+            return new JsonResponse(["message" => "Cet utilisateur n'est bénévole d'aucun RAID !"], Response::HTTP_NOT_FOUND);
         }
 
         foreach ($benevoles as $benevole) {
@@ -300,7 +310,7 @@ class RaidController extends Controller
 
         $formatted = [];
         foreach ($organisateurs as $organisateur) {
-            
+
             $raid = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Raid')
                 ->findOneBy(array(
@@ -313,7 +323,7 @@ class RaidController extends Controller
                 'lieu' => $raid->getLieu(),
                 'date' => $raid->getDate(),
                 'edition' => $raid->getEdition(),
-                'equipe' => $raid->getEquipe()    
+                'equipe' => $raid->getEquipe()
             ];
         }
 
@@ -334,7 +344,7 @@ class RaidController extends Controller
                     ));
 
         if(empty($organisateurs)){
-            return new JsonResponse(["message" => "Cet utilisateur n'est organisateur d'aucun RAID !"], Response::HTTP_NOT_FOUND);    
+            return new JsonResponse(["message" => "Cet utilisateur n'est organisateur d'aucun RAID !"], Response::HTTP_NOT_FOUND);
         }
 
         foreach ($organisateurs as $organisateur) {
@@ -371,7 +381,7 @@ class RaidController extends Controller
 
         $formatted = [];
         foreach ($parcours as $parcour) {
-            
+
             $raid = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Raid')
                 ->findOneBy(array(
@@ -384,7 +394,7 @@ class RaidController extends Controller
                 'lieu' => $raid->getLieu(),
                 'date' => $raid->getDate(),
                 'edition' => $raid->getEdition(),
-                'equipe' => $raid->getEquipe()    
+                'equipe' => $raid->getEquipe()
             ];
         }
 
@@ -405,7 +415,7 @@ class RaidController extends Controller
                     ));
 
         if(empty($parcours)){
-            return new JsonResponse(["message" => "Cet utilisateur n'est organisateur d'aucun RAID !"], Response::HTTP_NOT_FOUND);    
+            return new JsonResponse(["message" => "Cet utilisateur n'est organisateur d'aucun RAID !"], Response::HTTP_NOT_FOUND);
         }
 
         foreach ($parcours as $parcour) {

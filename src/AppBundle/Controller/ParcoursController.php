@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Parcours;
+use AppBundle\Entity\Raid;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -28,32 +30,39 @@ class ParcoursController extends Controller
 
         return $this->render('parcours/index.html.twig', array(
             'parcours' => $parcours,
+            'user' =>$this->getUser()
+
         ));
     }
 
     /**
      * Creates a new parcour entity.
      *
-     * @Route("/parcours", name="create_parcours")
-     * @Method({"POST"})
+     * @Route("/parcours/{id}/new", name="create_parcours")
+     * @Method({"GET", "POST"})
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request, $id)
     {
         $parcour = new Parcours();
         $form = $this->createForm('AppBundle\Form\ParcoursType', $parcour);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $parcour->setIdRaid($id);
             $em = $this->getDoctrine()->getManager();
             $em->persist($parcour);
             $em->flush();
+            return $this->redirectToRoute('landing');
 
-            return $this->redirectToRoute('parcours_show', array('id' => $parcour->getId()));
+          //  return $this->redirectToRoute('parcours_show', array('id' => $parcour->getId()));
         }
 
         return $this->render('parcours/new.html.twig', array(
             'parcour' => $parcour,
             'form' => $form->createView(),
+            'user' =>$this->getUser()
         ));
     }
 

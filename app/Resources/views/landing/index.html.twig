@@ -8,12 +8,12 @@
 
   <ul class="list-group">
   {% for raid in raids_organisateurs %}
-    <a href= {{ path('description_organisateur_raid') }}>
+    <a href= {{ path('description_organisateur_raid', {'id':raid.idRaid} ) }}>
       <li class="list-group-item">{{raid.nom}}</li>
     </a>
   {% endfor %}
   </ul>
-  
+
   <a href= {{ path('create_raid') }}>
     <i class="fas fa-3x fa-plus-circle"></i>
   </a>
@@ -32,7 +32,7 @@
   </ul>
 
   <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
-  
+
   <ulclass="list-group">
   {% for raid in all_raids %}
     <li class="list-group-item">

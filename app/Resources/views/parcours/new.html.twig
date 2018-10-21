@@ -7,16 +7,22 @@
         <div class="panel panel-default">
           <div class="panel-heading">Création d'un parcours</div>
           <div class="panel-body">
-            {{ form_start(parcour) }}
+            {{ form_start(form) }}
             <div class="form_group">
                 <div class="col-md-8 col-md-offset-2">
-                  {{ form_row(parcour.nom, {'attr': {'class': 'form-control'}}) }}
+                  {{ form_row(form.nom, {'attr': {'class': 'form-control'}}) }}
                 </div>
             </div>
 
             <div class="form_group">
                 <div class="col-md-8 col-md-offset-2">
-                {{ form_row(parcour.type, {'attr': {'class': 'form-control'}}) }}
+                {{ form_row(form.type, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form_group">
+                <div class="col-md-8 col-md-offset-2">
+                {{ form_row(form.etat, {'attr': {'class': 'form-control'}}) }}
                 </div>
             </div>
 
@@ -31,7 +37,7 @@
                     </button>
                 </div>
             </div>
-            {{ form_end(parcour) }}
+            {{ form_end(form) }}
           </div>
         </div>
     </div>
