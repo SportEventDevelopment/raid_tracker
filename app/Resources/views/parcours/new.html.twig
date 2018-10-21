@@ -1,45 +1,39 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Création d'un parcours</div>
-                    <div class="panel-body">
-                        {{ form_start(form) }}
-                        <div class="form_group">
-                            <div class="col-md-8 col-md-offset-2">
-                            {{ form_row(form.nom, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                        </div>
-
-                        <div class="form_group">
-                            <div class="col-md-8 col-md-offset-2">
-                            {{ form_row(form.type, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                        </div>
-
-                        <div class="form_group">
-                            <div class="col-md-8 col-md-offset-2">
-                            {{ form_row(form.etat, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-8 col-md-offset-4" style="margin-top:5px;">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-user"></i>Création
-                                </button>
-
-                                <button type="button" class="btn btn-outline-success and-all-other-classes">
-                                    <a href={{ path('landing') }}>Retour à la liste</a>
-                                </button>
-                            </div>
-                        </div>
-                        {{ form_end(form) }}
+<div class='vertical-center'>
+    <div class="container">
+        <div class="card default-color-dark ">
+            {{ form_start(form, {'attr': {'class': 'center text-center border border-light p-5'}}) }}
+                <p class="h4 mb-4">Création d'un parcours</p>
+                
+                <div class="form-row mb-4">
+                    <div class="col">
+                        {{ form_row(form.nom, {'attr': {'class': 'form-control'}}) }}
                     </div>
-            </div>
+                </div>
+
+                <div class="form-row mb-4">
+                    <div class="col">
+                        {{ form_row(form.type, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                <div class="form-row mb-4">
+                    <div class="col">
+                        {{ form_row(form.etat, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                <div class="form-row mb-4">
+                    <div class="col">
+                        <button class="btn btn-info my-4 btn-block" type="submit">Créer un compte</button>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-info my-4 btn-block" type="submit">Annuler</button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
         </div>
     </div>
 </div>
