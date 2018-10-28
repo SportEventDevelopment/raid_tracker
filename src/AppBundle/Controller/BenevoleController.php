@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Benevole;
 
+use AppBundle\Entity\PrefPoste;
+
+
 class BenevoleController extends Controller
 {
     /**
@@ -31,7 +34,7 @@ class BenevoleController extends Controller
             $formatted[] = [
                 'id' => $benevole->getId(),
                 'idUser' => $benevole->getIdUser(),
-                'idRaid' => $benevole->getIdRaid()    
+                'idRaid' => $benevole->getIdRaid()
             ];
         }
 
@@ -88,15 +91,15 @@ class BenevoleController extends Controller
     {
         $sn = $this->getDoctrine()->getManager();
         $benevole = $this->getDoctrine()->getRepository('AppBundle:Benevole')->find($request->get('id_benevole'));
-       
+
         if (empty($benevole)) {
             return new JsonResponse(['message' => "Le bénévole recherché n'a pas été trouvé !"], Response::HTTP_NOT_FOUND);
         }
 
         $sn->remove($benevole);
         $sn->flush();
-        
-        return new JsonResponse(['message' => "Bénévole supprimé avec succès !"], Response::HTTP_OK); 
+
+        return new JsonResponse(['message' => "Bénévole supprimé avec succès !"], Response::HTTP_OK);
     }
 
 
@@ -124,7 +127,7 @@ class BenevoleController extends Controller
                 'idRaid' => $benevole->getIdRaid()
             ];
         }
-        
+
         return new JsonResponse($formatted, Response::HTTP_OK);
     }
 
@@ -133,13 +136,13 @@ class BenevoleController extends Controller
      * @Method({"DELETE"})
      */
     public function deleteBenevolesByIdRaidAction(Request $request)
-    {   
+    {
         $sn = $this->getDoctrine()->getManager();
         $benevoles = $this->getDoctrine()->getRepository('AppBundle:Benevole')
                     ->findBy(array(
                         "idRaid" => $request->get('id_raid')
                     ));
-       
+
         if (empty($benevoles)) {
             return new JsonResponse(['message' => "Aucun bénévole à supprimer trouvé dans ce raid !"], Response::HTTP_NOT_FOUND);
         }
@@ -148,8 +151,8 @@ class BenevoleController extends Controller
             $sn->remove($benevole);
         }
         $sn->flush();
-        
-        return new JsonResponse(['message' => "Tous les bénévoles du raid ont été supprimés avec succes !"], Response::HTTP_OK); 
+
+        return new JsonResponse(['message' => "Tous les bénévoles du raid ont été supprimés avec succes !"], Response::HTTP_OK);
     }
 
 
@@ -163,8 +166,8 @@ class BenevoleController extends Controller
     {
         $benevole = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Benevole')
-                ->findOneBy(array(  
-                    'idRaid' => $request->get('id_raid'), 
+                ->findOneBy(array(
+                    'idRaid' => $request->get('id_raid'),
                     'idUser' => $request->get('id_user'))
                 );
 
@@ -180,6 +183,49 @@ class BenevoleController extends Controller
 
         return new JsonResponse($formatted,Response::HTTP_OK);
     }
+
+
+    /**
+     * Creates a new parcour entity.
+     *
+     * @Route("/benevole/{id_user}/{id_raid}/new", name="rejoindre_raid_comme_benevole")
+     * @Method({"GET", "POST"})
+     */
+    public function rejoindreRaidBenevole(Request $request,$id_user, $id_raid)
+    {
+
+      $benevole = new Benevole();
+
+      $benevole->setIdUser($id_user);
+      $benevole->setIdRaid($id_raid);
+
+
+        $PrefPoste = new PrefPoste();
+        $form = $this->createForm('AppBundle\Form\PrefPosteType', $PrefPoste);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $PrefPoste->setIdRaid($id_raid);
+            $PrefPoste->setIdUser($id_user);
+
+            $em->persist($PrefPoste);
+            $em->persist($benevole);
+
+            $em->flush();
+            return $this->redirectToRoute('landing');
+
+          //  return $this->redirectToRoute('parcours_show', array('id' => $parcour->getId()));
+        }
+
+        return $this->render('landing/rejoindreRaid.html.twig', array(
+            'form' => $form->createView(),
+            'user' =>$this->getUser()
+        ));
+    }
+
 
 
     /**
@@ -210,21 +256,21 @@ class BenevoleController extends Controller
      */
     public function deleteBenevoleByIdRaidAndByIdUser(Request $request)
     {
-        
+
         $sn = $this->getDoctrine()->getManager();
         $benevole = $this->getDoctrine()->getRepository('AppBundle:Benevole')
                         ->findOneBy(array(
                             "idUser" => $request->get('id_user'),
                             "idRaid" => $request->get('id_raid')
                         ));
-       
+
         if (empty($benevole)) {
             return new JsonResponse(['message' => "Le bénévole n'est pas dans ce raid !"], Response::HTTP_NOT_FOUND);
         }
 
         $sn->remove($benevole);
         $sn->flush();
-        
-        return new JsonResponse(['message' => "Bénévole supprimé du raid avec succes !"], Response::HTTP_OK); 
+
+        return new JsonResponse(['message' => "Bénévole supprimé du raid avec succes !"], Response::HTTP_OK);
     }
 }

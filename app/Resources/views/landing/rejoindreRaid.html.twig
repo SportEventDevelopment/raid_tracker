@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div class='vertical-center'>
+    <div class="container col col-md-4">
+        <div class="card default-color-dark ">
+            {{ form_start(form, {'attr': {'class': 'center border border-light p-5 '}}) }}
+                <p class="h4 mb-2 text-center">Rejoindre un raid comme bénévole</p>
+
+
+
+                <div class="form-row mb-4">
+                    <div class="col">
+                        {{ form_row(form.poste, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+
+
+                <div class="form-row mb-4">
+                    <div class="col">
+                        <button class="btn btn-info my-4 btn-block" type="submit"> Nous rejoindre</button>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
