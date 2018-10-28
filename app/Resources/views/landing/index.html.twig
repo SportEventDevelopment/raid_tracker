@@ -44,12 +44,12 @@
     {% for raid in all_raids %}
       <li class="list-group-item text-left">
         {{raid.nom}}
-        <a href= {{ path('raid_benevole_join', {'id_raid': raid.id}) }}>
-          Rejoins-nous!
-          <span class="glyphicon glyphicon-plus"></span>
-        </a>
-      </li>
-    {% endfor %}
+      <a href= {{ path('rejoindre_raid_comme_benevole', {'id_raid': raid.id, 'id_user': user.id}) }}>
+        Rejoins-nous!
+        <span class="glyphicon glyphicon-plus"></span>
+      </a>
+    </li>
+  {% endfor %}
   {% else %}
     <p>Aucun RAID enregistré.</p>
   {% endif %}

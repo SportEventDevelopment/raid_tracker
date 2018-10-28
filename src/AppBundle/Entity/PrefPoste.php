@@ -1,62 +1,135 @@
 <?php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
- * @ORM\Table(name="prefposte")
+ * PrefPoste
+ *
+ * @ORM\Table(name="pref_poste")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PrefPosteRepository")
  */
-class Prefposte
+class PrefPoste
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $idPrefPoste;
+    private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="idUser", type="integer")
      */
-    protected $idUser;
+    private $idUser;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="idRaid", type="integer")
      */
-    protected $idPoste;
+    private $idRaid;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Poste", inversedBy="prefpostes")
+     * @ORM\JoinColumn(name="poste_id", referencedColumnName="id")
+     **/
+    private $poste;
 
-    public function getIdPrefPoste()
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
     {
-        return $this->getIdPrefPoste;
+        return $this->id;
     }
 
+    /**
+     * Set idUser
+     *
+     * @param integer $idUser
+     *
+     * @return PrefPoste
+     */
+    public function setIdUser($idUser)
+    {
+        $this->idUser = $idUser;
+
+        return $this;
+    }
+
+    /**
+     * Get idUser
+     *
+     * @return int
+     */
     public function getIdUser()
     {
         return $this->idUser;
     }
 
-    public function getIdPoste()
+    /**
+     * Set idUser
+     *
+     * @param integer $idRaid
+     *
+     * @return PrefPoste
+     */
+    public function setIdRaid($idRaid)
     {
-        return $this->idPoste;
-    }
+        $this->idRaid = $idRaid;
 
-    public function setIdPrefPoste($idPrefPoste)
-    {
-        $this->idPrefPoste = $idPrefPoste;
-        return $this;
-    }
-    
-    public function setIdUser($idUser)
-    {
-        $this->idUser = $idUser;
         return $this;
     }
 
-    public function setIdPoste($idPoste)
+    /**
+     * Get idRaid
+     *
+     * @return int
+     */
+    public function getIdRaid()
     {
-        $this->idPoste = $idPoste;
-        return $this;
+        return $this->idRaid;
     }
+
+
+    /**
+ * Set poste
+ *
+ * @param \AppBundle\Entity\Poste $poste
+ *
+ * @return PrefPoste
+ */
+public function setPoste(\AppBundle\Entity\Poste $poste = null)
+{
+    $this->poste = $poste;
+
+    return $this;
+}
+
+/**
+ * Get poste
+ *
+ * @return \AppBundle\Entity\Poste
+ */
+public function getPoste()
+{
+    return $this->poste;
+}
+
+/**
+*
+* @return string
+*/
+public function __toString()
+{
+return  $this->getPoste();
+}
 }

@@ -1,110 +1,169 @@
 <?php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
+ * Poste
+ *
  * @ORM\Table(name="poste")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PosteRepository")
  */
 class Poste
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $idPoste;
+    private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="idPoint", type="integer")
      */
-    protected $idPoint;
+    private $idPoint;
 
     /**
-     * @ORM\Column(type="string")
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=255)
      */
-    protected $type;
+    private $type;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var \DateTime
+     *
+     * @ORM\Column(name="heureDebut", type="date")
      */
-    protected $nombre;
+    private $heureDebut;
 
     /**
-     * @ORM\Column(type="date")
+     * @var \DateTime
+     *
+     * @ORM\Column(name="heureFin", type="date")
      */
-    protected $heureDebut;
+    private $heureFin;
+
+
 
     /**
-     * @ORM\Column(type="date")
+     * Get id
+     *
+     * @return int
      */
-    protected $heureFin;
-
-
-    public function getIdPoste()
+    public function getId()
     {
-        return $this->idPoste;
+        return $this->id;
     }
 
+    /**
+     * Set idPoint
+     *
+     * @param integer $idPoint
+     *
+     * @return Poste
+     */
+    public function setIdPoint($idPoint)
+    {
+        $this->idPoint = $idPoint;
+
+        return $this;
+    }
+
+    /**
+     * Get idPoint
+     *
+     * @return int
+     */
     public function getIdPoint()
     {
         return $this->idPoint;
     }
 
+    /**
+     * Set type
+     *
+     * @param string $type
+     *
+     * @return Poste
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
     public function getType()
     {
         return $this->type;
     }
 
-    public function getNombre()
+    /**
+     * Set heureDebut
+     *
+     * @param \DateTime $heureDebut
+     *
+     * @return Poste
+     */
+    public function setHeureDebut($heureDebut)
     {
-        return $this->nombre;
+        $this->heureDebut = $heureDebut;
+
+        return $this;
     }
 
+    /**
+     * Get heureDebut
+     *
+     * @return \DateTime
+     */
     public function getHeureDebut()
     {
         return $this->heureDebut;
     }
 
+    /**
+     * Set heureFin
+     *
+     * @param \DateTime $heureFin
+     *
+     * @return Poste
+     */
+    public function setHeureFin($heureFin)
+    {
+        $this->heureFin = $heureFin;
+
+        return $this;
+    }
+
+    /**
+     * Get heureFin
+     *
+     * @return \DateTime
+     */
     public function getHeureFin()
     {
         return $this->heureFin;
     }
 
-    public function setIdPoste($idPoste)
-    {
-        $this->idPoste = $idPoste;
-        return $this;
-    }
-    
-    public function setIdPoint($idPoint)
-    {
-        $this->idPoint = $idPoint;
-        return $this;
-    }
+    /**
+ *
+ * @return string
+ */
+ public function __toString()
+  {
+    return  $this->getType();
+  }
 
-    public function setType($type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    public function setNombre($nombre)
-    {
-        $this->nombre = $nombre;
-        return $this;
-    }
-
-    public function setHeureDebut($heureDebut)
-    {
-        $this->heureDebut = $heureDebut;
-        return $this;
-    }
-
-    public function setHeureFin($heureFin)
-    {
-        $this->heureFin = $heureFin;
-        return $this;
-    }
 }
