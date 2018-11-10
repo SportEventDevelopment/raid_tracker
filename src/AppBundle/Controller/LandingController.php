@@ -14,29 +14,14 @@ class LandingController extends Controller
    * @Route("/landing", name="landing")
    */
    public function LandingAction(Request $request){
-    
-    var_dump($this->getUser());die;
-    $raids_organisateurs = 
-      $headers = array('Accept' => 'application/json');      
-      $response = Unirest\Request::get(
-        'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/raids/organisateurs/users/'.
-        $request->get('id_user'), 
-        $headers
-      );
 
-      $raids_benevoles = 
-        $headers = array('Accept' => 'application/json');      
-        $response = Unirest\Request::get(
-          'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/raids/benevoles/users/'.
-          $request->get('id_user'), 
-          $headers
-        );
+    $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
+    $raids_organisateurs = $this->get('app.restclient')->get($url);
+
+    $url = 'api/raids/benevoles/users/'.$this->getUser()->getIdUser();
+    $raids_benevoles = $this->get('app.restclient')->get($url);
     
-      $all_raids = 
-        $headers = array('Accept' => 'application/json');      
-        $response = Unirest\Request::get(
-          'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/raids/', $headers
-        );
+    $all_raids = $this->get('app.restclient')->get('api/raids/');
 
     return $this->render('landing/index.html.twig', array(
       'user' => $this->getUser(),

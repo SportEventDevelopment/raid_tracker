@@ -19,7 +19,6 @@ services:
 
     app.webservice_authenticator:
         class: AppBundle\Security\User\WebserviceAuthenticator
-    # App\Service\RestClient:
-    #     factory: ['App\Service\RestClientFactory', RestClient]
-    #     # define the class of the created object
-    #     class: AppBundle\Email\NewsletterManager]
+    app.restclient:
+        class: AppBundle\Service\RestClient
+        public: true

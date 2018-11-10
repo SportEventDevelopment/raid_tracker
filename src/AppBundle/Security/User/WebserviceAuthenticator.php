@@ -57,7 +57,14 @@ class WebserviceAuthenticator extends AbstractFormLoginAuthenticator
 
         $response = $this->restClient->IsValidLogin($email, $password);
         if ($response) {
-            return new WebserviceUser($email, $response->user->username, null, ['ROLE_USER']);
+            return new WebserviceUser(
+                $response->id,
+                $response->value,
+                $email,
+                $response->user->username,
+                $response->user->id,
+                null,
+                ['ROLE_USER']);
         } else {
             throw new CustomUserMessageAuthenticationException('Identifiant ou mot de passe incorrect');
         }

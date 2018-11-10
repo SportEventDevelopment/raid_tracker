@@ -18,7 +18,6 @@ security:
                 check_path: login_check
                 login_path: login
                 default_target_path: landing
-                use_forward: true
             logout:
                 path: /logout
                 target: /
