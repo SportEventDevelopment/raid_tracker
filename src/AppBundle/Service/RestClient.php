@@ -15,6 +15,7 @@ class RestClient
             'login' => $username,
             'password' => $password
         );
+
         $response = Unirest\Request::post($this->domain.'api/auth-tokens', $headers, $data);
         
         if($response->code == 201) {
@@ -23,11 +24,17 @@ class RestClient
         return false;
     }
 
-    public function post($url, $data, $token){
+    public function post($url, $data, $token = null){
+
         $headers = array(
             'Accept' => 'application/json',
             'X-Auth-Token' => $token
         );
+
+        if($token === null){
+            $headers = array('Accept' => 'application/json');  
+        }
+
         $response = Unirest\Request::post($this->domain.''.$url, $headers, $data);
 
         if($response->code == 201){

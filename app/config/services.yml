@@ -22,3 +22,6 @@ services:
     app.restclient:
         class: AppBundle\Service\RestClient
         public: true
+    app.serialize:
+        class: AppBundle\Service\Serialize
+        public: true

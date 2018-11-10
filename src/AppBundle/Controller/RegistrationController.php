@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RegistrationController extends Controller
 {
+
     /**
      * @Route("/register", name="register")
      */
@@ -20,15 +21,15 @@ class RegistrationController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            var_dump($data);die;
-            $data = Unirest\Request\Body::form($data);
+
+            $data =$this->get('app.serialize')->entityToArray($form->getData());            
             $response = $this->get('app.restclient')->post('api/users', $data);
-            return $this->forward('AppBundle\Controller\SecurityController::login');
+            
+            return $this->redirectToRoute('login');
         }
 
         return $this->render('auth/register.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form->createView()
         ]);
     }
 }
