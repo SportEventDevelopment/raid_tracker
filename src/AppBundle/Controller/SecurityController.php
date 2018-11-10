@@ -6,8 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\User;
-use AppBundle\Form\UserType;
 
 class SecurityController extends Controller
 {
@@ -34,8 +32,8 @@ class SecurityController extends Controller
      * @Route("/logout", name="logout")
      */
     public function logout(Request $request){
-        $url = 'api/auth-tokens/'.$this->getUser()->getIdToken();
-        $deleteToken = $this->get('app.restclient')->delete($url);
-        var_dump($deleteToken);die;
+        // $url = 'api/auth-tokens/'.$this->getUser()->getIdToken();
+        // $deleteToken = $this->get('app.restclient')->delete($url);
+        // var_dump($deleteToken);die;
     }
 }

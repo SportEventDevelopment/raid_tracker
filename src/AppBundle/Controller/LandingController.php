@@ -26,7 +26,6 @@ class LandingController extends Controller
     $all_raids = $this->get('app.restclient')
     ->get('api/raids', $this->getUser()->getToken());
         
-    var_dump($all_raids);die;
     return $this->render('landing/index.html.twig', array(
       'user' => $this->getUser(),
       'raids_organisateurs' => $raids_organisateurs,
