@@ -8,7 +8,7 @@
 
   <ul class="list-group">
     {% for raid in raids_organisateurs %}
-    <a href= {{ path('description_organisateur_raid', {'id':raid.idRaid} ) }}>
+    <a href= {{ path('description_organisateur_raid', {'id': raid['id']} ) }}>
       <li class="list-group-item">{{raid.nom}}</li>
     </a>
     {% endfor %}
@@ -24,7 +24,7 @@
   <ul class="list-group">
     {% for raid in raids_benevoles %}
       <a href= {{ path('create_raid') }}>
-        <li class="list-group-item">{{raid.nom}}</li>
+        <li class="list-group-item">{{raid['nom']}}</li>
       </a>
   {% endfor %}
   </ul>
