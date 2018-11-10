@@ -5,8 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\Raid;
-use AppBundle\Entity\Organisateur;
+use \Unirest;
 
 class LandingController extends Controller
 {
@@ -17,23 +16,34 @@ class LandingController extends Controller
    public function LandingAction(Request $request){
     
     $user = $this->getUser();
-    $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
-                            ->getRepository('AppBundle:Raid')
-                            ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
-
-    $raids_benevoles = $this->get('doctrine.orm.entity_manager')
-                        ->getRepository('AppBundle:Raid')
-                        ->findRaidsBenevolesByIdUser($this->getUser()->getId());
     
-    $all_raids = $this->get('doctrine.orm.entity_manager')
-                    ->getRepository('AppBundle:Raid')
-                    ->findAllRaids();
+    // $raids_organisateurs = 
+    //   $headers = array('Accept' => 'application/json');      
+    //   $response = Unirest\Request::get(
+    //     'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/raids/organisateurs/users/'.
+    //     $request->get('id_user'), 
+    //     $headers
+    //   );
+
+    //   $raids_benevoles = 
+    //     $headers = array('Accept' => 'application/json');      
+    //     $response = Unirest\Request::get(
+    //       'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/raids/benevoles/users/'.
+    //       $request->get('id_user'), 
+    //       $headers
+    //     );
+    
+    //   $all_raids = 
+    //     $headers = array('Accept' => 'application/json');      
+    //     $response = Unirest\Request::get(
+    //       'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/raids/', $headers
+    //     );
 
     return $this->render('landing/index.html.twig', array(
       'user' => $user,
-      'raids_organisateurs' => $raids_organisateurs,
-      'raids_benevoles' => $raids_benevoles,
-      'all_raids' => $all_raids,
+      // 'raids_organisateurs' => $raids_organisateurs,
+      // 'raids_benevoles' => $raids_benevoles,
+      // 'all_raids' => $all_raids,
     ));
    }
 }

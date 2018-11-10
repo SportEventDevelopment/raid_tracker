@@ -22,7 +22,7 @@
 <div class='vertical-center'>
 <div class='container col col-md-4'>
         <div class="card default-color-dark ">
-            <form class=" border border-light p-5" role="form" method="POST" action="{{ path('security_login_check') }}">
+            <form class=" border border-light p-5" role="form" method="POST" action="{{ path('login_check') }}">
                 <p class="h4 mb-4 text-center">Connexion</p>
 
                 <!-- Email -->
@@ -31,6 +31,11 @@
                 <!-- Password -->
                 <input type="password" id="password" class="form-control mb-4" placeholder="Mot de passe" name="_password">
 
+                {% if error %}
+                    <div> 
+                        <b style="color:red">{{ error.messageKey|trans(error.messageData, 'security') }}</b>
+                    </div>
+                {% endif %}
                 <div class="d-flex justify-content-around">
                     <div>
                         <!-- Remember me -->

@@ -17,6 +17,9 @@ services:
         # but if a service is unused, it's removed anyway
         exclude: '../../src/AppBundle/{Entity,Repository}'
 
-    app.form_login_authenticator:
-        class: AppBundle\Security\FormLoginAuthenticator
-        arguments: ["@router", "@security.password_encoder"]
+    app.webservice_authenticator:
+        class: AppBundle\Security\User\WebserviceAuthenticator
+    # App\Service\RestClient:
+    #     factory: ['App\Service\RestClientFactory', RestClient]
+    #     # define the class of the created object
+    #     class: AppBundle\Email\NewsletterManager]

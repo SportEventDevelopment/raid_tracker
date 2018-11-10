@@ -14,7 +14,7 @@ class SecurityController extends Controller
     /**
      * @Route("/", name="login")
      */
-    public function loginAction(AuthenticationUtils $authenticationUtils)
+    public function login(AuthenticationUtils $authenticationUtils)
     {
        return $this->render(
            'auth/login.html.twig',
@@ -24,4 +24,14 @@ class SecurityController extends Controller
            )
        );
     }
+    
+    /**
+     * @Route("/login_check", name="login_check")
+     */
+    public function loginCheck(Request $request){}
+
+    /**
+     * @Route("/logout", name="logout")
+     */
+    public function logout(Request $request){}
 }

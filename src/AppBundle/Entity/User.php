@@ -4,6 +4,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 /**
  * @ORM\Entity
  * @UniqueEntity(fields="email", message="This email address is already in use")
@@ -23,7 +24,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=40)
      */
-    protected $name;
+    protected $username;
     /**
      * @ORM\Column(type="string", length=50)
      */
@@ -36,6 +37,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=64)
      */
     protected $password;
+    
     public function eraseCredentials()
     {
         return null;
@@ -50,23 +52,20 @@ class User implements UserInterface
     }
     public function getRoles()
     {
-        return [$this->getRole()];
+        return [];
     }
     public function getId()
     {
         return $this->id;
     }
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-    public function getName()
-    {
-        return $this->name;
-    }
+
     public function getUsername()
     {
-        return $this->email;
+        return $this->username;
+    }
+    public function setUsername($username)
+    {
+        $this->username = $username;
     }
     public function getEmail()
     {
@@ -83,14 +82,6 @@ class User implements UserInterface
     public function setPassword($password)
     {
         $this->password = $password;
-    }
-    public function getPlainPassword()
-    {
-        return $this->plainPassword;
-    }
-    public function setPlainPassword($plainPassword)
-    {
-        $this->plainPassword = $plainPassword;
     }
     public function getSalt()
     {

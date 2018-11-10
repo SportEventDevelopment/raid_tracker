@@ -12,7 +12,7 @@ class RegistrationController extends Controller
     /**
      * @Route("/register", name="register")
      */
-    public function registerAction(Request $request)
+    public function register(Request $request)
     {
         // Create a new blank user and process the form
         $user = new User();
@@ -20,38 +20,23 @@ class RegistrationController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Encode the new users password
-            $encoder = $this->get('security.password_encoder');
-            $password = $encoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);
-
-            // Set their role
-            $user->setRole('ROLE_USER');
-
-            // Save
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            return $this->redirectToRoute('login');
+            
+            // ****************
+            // Insert new user
+            // ****************
+            $headers = array('Accept' => 'application/json');
+            $data = $request->request->get('appbundle_raid');
+            
+            //remove the token
+            array_pop($data);
+            $body = Unirest\Request\Body::form($data);
+            $response = Unirest\Request::post('http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/users', $headers, $body);
+            var_dump($response);die;
+            return $this->forward('AppBundle\Controller\SecurityController::loginAction');
         }
 
         return $this->render('auth/register.html.twig', [
             'form' => $form->createView(),
         ]);
-    }
-
-    /**
-     * @Route("/login_check", name="security_login_check")
-     */
-    public function securityLoginCheckAction(Request $request)
-    {
-    }
-
-    /**
-     * @Route("/logout", name="logout")
-     */
-    public function logoutAction(Request $request)
-    {
     }
 }
