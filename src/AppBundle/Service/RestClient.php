@@ -10,11 +10,12 @@ class RestClient
     private $domain = "http://raidtracker.ddns.net/raid_tracker_api/web/app.php/";
 
     public function isValidLogin($username, $password){
+        $headers = array('Accept' => 'application/json');
         $data = array(
             'login' => $username,
             'password' => $password
         );
-        $response = $this->post('api/auth-tokens', $data);
+        $response = Unirest\Request::post($this->domain.'api/auth-tokens', $headers, $data);
         
         if($response->code == 201) {
             return $response->body;
@@ -22,21 +23,40 @@ class RestClient
         return false;
     }
 
-    public function post($url, $data){
-        $headers = array('Accept' => 'application/json');
+    public function post($url, $data, $token){
+        $headers = array(
+            'Accept' => 'application/json',
+            'X-Auth-Token' => $token
+        );
         $response = Unirest\Request::post($this->domain.''.$url, $headers, $data);
-        return $response;
+
+        if($response->code == 201){
+            return $response;
+        }
+        return null;
     }
 
-    public function get($url){
-        $headers = array('Accept' => 'application/json');      
+    public function get($url, $token){
+        $headers = array(
+            'Accept' => 'application/json',
+            'X-Auth-Token' => $token
+        );      
         $response = Unirest\Request::get($this->domain.''.$url, $headers);
-        return $response;
+        if($response->code == 200){
+            return $response;
+        }
+        return null;
     }
 
-    public function delete($url){
-        $headers = array('Accept' => 'application/json');      
+    public function delete($url, $token){
+        $headers = array(
+            'Accept' => 'application/json',
+            'X-Auth-Token' => $token
+        );      
         $response = Unirest\Request::delete($this->domain.''.$url, $headers);
-        return $response;
+        if($response->code == 202){
+            return $response;
+        }
+        return null;
     }
 }

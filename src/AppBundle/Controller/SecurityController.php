@@ -33,5 +33,9 @@ class SecurityController extends Controller
     /**
      * @Route("/logout", name="logout")
      */
-    public function logout(Request $request){}
+    public function logout(Request $request){
+        $url = 'api/auth-tokens/'.$this->getUser()->getIdToken();
+        $deleteToken = $this->get('app.restclient')->delete($url);
+        var_dump($deleteToken);die;
+    }
 }

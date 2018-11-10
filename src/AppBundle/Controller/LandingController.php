@@ -13,16 +13,20 @@ class LandingController extends Controller
   /**
    * @Route("/landing", name="landing")
    */
-   public function LandingAction(Request $request){
+   public function Landing(Request $request){
 
     $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
-    $raids_organisateurs = $this->get('app.restclient')->get($url);
-
+    $raids_organisateurs = $this->get('app.restclient')
+    ->get($url, $this->getUser()->getToken());
+        
     $url = 'api/raids/benevoles/users/'.$this->getUser()->getIdUser();
-    $raids_benevoles = $this->get('app.restclient')->get($url);
-    
-    $all_raids = $this->get('app.restclient')->get('api/raids/');
+    $raids_benevoles = $this->get('app.restclient')
+    ->get($url, $this->getUser()->getToken());
 
+    $all_raids = $this->get('app.restclient')
+    ->get('api/raids', $this->getUser()->getToken());
+        
+    var_dump($all_raids);die;
     return $this->render('landing/index.html.twig', array(
       'user' => $this->getUser(),
       'raids_organisateurs' => $raids_organisateurs,
