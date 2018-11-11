@@ -7,11 +7,13 @@
   <br/>
 
   <ul class="list-group">
+  {% if raids_organisateurs != null %}
     {% for raid in raids_organisateurs %}
-    <a href= {{ path('description_organisateur_raid', {'id': raid['id']} ) }}>
-      <li class="list-group-item">{{raid.nom}}</li>
-    </a>
+      <a href= {{ path('description_organisateur_raid', {'id': raid.id} ) }}>
+        <li class="list-group-item">{{raid.nom}}</li>
+      </a>
     {% endfor %}
+  {% endif %}
     
     <a href= {{ path('create_raid') }}>
       <i class="fas fa-3x fa-plus-circle"></i>
@@ -22,25 +24,29 @@
   <br/>
 
   <ul class="list-group">
+  {% if raids_benevoles != null %}
     {% for raid in raids_benevoles %}
       <a href= {{ path('create_raid') }}>
-        <li class="list-group-item">{{raid['nom']}}</li>
+        <li class="list-group-item">{{raid.nom}}</li>
       </a>
-  {% endfor %}
+    {% endfor %}
+  {% endif %}
   </ul>
 
   <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
 
   <ul class="list-group flexcolumn">
-  {% for raid in all_raids %}
-    <li class="list-group-item text-left">
-      {{raid.nom}}
-      <a href= {{ path('post_benevole_one_raid', {'id_raid': raid.id, 'id_user': user.id}) }}>
-        Rejoins-nous!
-        <span class="glyphicon glyphicon-plus"></span>
-      </a>
-    </li>
-  {% endfor %}
+  {% if all_raids != null %}
+    {% for raid in all_raids %}
+      <li class="list-group-item text-left">
+        {{raid.nom}}
+        {# <a href= {{ path('post_benevole_one_raid', {'id_raid': raid.id}) }}> #}
+          Rejoins-nous!
+          <span class="glyphicon glyphicon-plus"></span>
+        </a>
+      </li>
+    {% endfor %}
+  {% endif %}
   </ul>
 
 </div>

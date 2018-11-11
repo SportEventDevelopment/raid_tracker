@@ -47,10 +47,12 @@ class RestClient
         $headers = array(
             'Accept' => 'application/json',
             'X-Auth-Token' => $token
-        );      
+        );
+
         $response = Unirest\Request::get($this->domain.''.$url, $headers);
+
         if($response->code == 200){
-            return $response;
+            return $response->body;
         }
         return null;
     }
