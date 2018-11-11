@@ -26,34 +26,27 @@ class RaidController extends Controller
         
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // ****************************
-            // Create new Raid with the API
-            // ****************************
-            $headers = array('Accept' => 'application/json');
-            $data = $request->request->get('appbundle_raid');
-            //format date to datetime
-            $data['date'] = $data['date']['year'].'-'.$data['date']['month'].'-'.$data['date']['day'];
-            $data['date'] = new \DateTime($data['date']);
-            $data['date'] = $data['date']->format('Y/m/d H:i');
-            
-            //remove the token
-            array_pop($data);
-            $body = Unirest\Request\Body::form($data);
-            $response = Unirest\Request::post('http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/raids', $headers, $body);
-            
-            // *****************************
-            // Register the new organisateur
-            // *****************************
-            $headers = array('Accept' => 'application/json');
-            $data = array(
-                'idUser' => $this->getUser()->getId(),
-                'idRaid' => $response->body->id
+            $raid_data =$this->get('app.serialize')->entityToArray($form->getData());
+            $date = $form->getData()->getDate()->format('Y/m/d H:i');
+            $raid_data['date'] = $date;
+
+            $response = $this->get('app.restclient')->post(
+                'api/raids',
+                $raid_data,
+                $this->getUser()->getToken()
             );
             
-            $body = Unirest\Request\Body::form($data);
-            $response = Unirest\Request::post('http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/organisateurs/raids/'. $data['idRaid'].'/users/'. $data['idUser'], $headers, $body);
+            $organisateur_data = array(
+                'idUser' => $this->getUser()->getIdUser(),
+                'idRaid' => $response->body->id
+            );
+            $response = $this->get('app.restclient')->post(
+                'api/organisateurs/raids/'. $organisateur_data['idRaid'].'/users/'. $organisateur_data['idUser'], 
+                $organisateur_data,
+                $this->getUser()->getToken()
+            );
 
-            return $this->forward('AppBundle\Controller\LandingController::LandingAction');
+            return $this->redirectToRoute('landing');
         }
 
         return $this->render('raid/new.html.twig', array(

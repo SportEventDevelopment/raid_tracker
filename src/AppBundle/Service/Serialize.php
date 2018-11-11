@@ -19,4 +19,8 @@ class Serialize
         $var =  $serializer->serialize($entity, 'json');
         return json_decode($var , true);
     }
+
+    public function datetimeToString($datetime){
+        return $datetime;
+    }
 }
