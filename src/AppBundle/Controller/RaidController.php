@@ -56,19 +56,17 @@ class RaidController extends Controller
     }
 
     /**
-     * @Route("/raids/{id}/description_raid_organisateur", name="description_organisateur_raid")
+     * @Route("/raids/{id}/edit", name="edit_raid")
      */
-    public function descriptionRaidOrganisateurAction(Request $request,$id)
+    public function descriptionRaidOrganisateurAction(Request $request)
     {
-        $raid =  $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Raid')
-            ->findOneBy(array(
-                'id' => $request->get('id')
-            ));
+        $url = 'api/raids/'.$request->get('id');
+        $raid = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
 
-        $all_parcours = $this->getDoctrine()->getManager()
-                ->getRepository('AppBundle:Raid')
-                ->findAllParcoursByIdRaid($request->get('id'));
+        $url = 'api/parcours/raids/'.$request->get('id');
+        $all_parcours = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
 
        return $this->render('raid/description_raid_organisateur.html.twig', array(
             'user' => $this->getUser(),
