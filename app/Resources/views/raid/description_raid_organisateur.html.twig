@@ -2,24 +2,22 @@
 
 {% block content %}
 <div class="container">
+    <h2>Liste des parcours</h2>
     <ul class="list-group">
-        <button type="button" class="btn btn-primary btn-lg btn-block">Parcours</button>
-
-        <ul class="list-group">
-        {% if all_parcours != null %}
-            {% for parcours in all_parcours %}
-                <li class="list-group-item text-left">
-                    {{parcours.nom}}
-                </li>
-            {% endfor %}
-        {% else %}
-            <p>Aucun parcours n'a pour l'instant été créé pour ce RAID</p>
-        {% endif %}
-        </ul>
-
-        <a href= {{ path('create_parcours',{'id':raid.id}) }}>
-          <i class="fas fa-3x fa-plus-circle"></i>
-        </a>
+    {% if all_parcours != null %}
+        {% for parcours in all_parcours %}
+            <li class="list-group-item text-left">
+                {{parcours.nom}} - {{parcours.type}}
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>Aucun parcours n'a pour l'instant été créé pour ce RAID</p>
+    {% endif %}
     </ul>
+
+    <a href= {{ path('create_parcours',{'id':raid.id}) }}>
+        <i class="fas fa-3x fa-plus-circle"></i>
+    </a>
+
 </div>
 {% endblock %}

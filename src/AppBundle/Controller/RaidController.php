@@ -56,7 +56,7 @@ class RaidController extends Controller
     }
 
     /**
-     * @Route("/raids/{id}/edit", name="edit_raid")
+     * @Route("/raids/{id}", name="edit_raid")
      */
     public function descriptionRaidOrganisateurAction(Request $request)
     {

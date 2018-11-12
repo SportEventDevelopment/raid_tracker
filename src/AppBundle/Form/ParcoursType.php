@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ParcoursType extends AbstractType
 {
@@ -13,7 +14,9 @@ class ParcoursType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('nom')->add('type')->add('etat');
+        $builder
+            ->add('nom', TextType::class)
+            ->add('type', TextType::class);
     }/**
      * {@inheritdoc}
      */
