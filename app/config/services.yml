@@ -25,3 +25,5 @@ services:
     app.serialize:
         class: AppBundle\Service\Serialize
         public: true
+    app.logout.listener:
+        class: AppBundle\Listener\LogoutListener

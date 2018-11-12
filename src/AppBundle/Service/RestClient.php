@@ -61,8 +61,9 @@ class RestClient
         $headers = array(
             'Accept' => 'application/json',
             'X-Auth-Token' => $token
-        );      
+        );
         $response = Unirest\Request::delete($this->domain.''.$url, $headers);
+        
         if($response->code == 202){
             return $response;
         }

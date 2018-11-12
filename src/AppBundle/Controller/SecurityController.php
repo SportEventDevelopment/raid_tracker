@@ -32,8 +32,6 @@ class SecurityController extends Controller
      * @Route("/logout", name="logout")
      */
     public function logout(Request $request){
-        // $url = 'api/auth-tokens/'.$this->getUser()->getIdToken();
-        // $deleteToken = $this->get('app.restclient')->delete($url);
-        // var_dump($deleteToken);die;
+        throw new \RuntimeException('Michel, active le logout dans le pare-feu...');
     }
 }

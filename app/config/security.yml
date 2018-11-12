@@ -19,8 +19,9 @@ security:
                 login_path: login
                 default_target_path: landing
             logout:
-                path: /logout
-                target: /
+                path: logout
+                target: login
+                handlers: [app.logout.listener]
             guard:
                 authenticators:
                     - app.webservice_authenticator

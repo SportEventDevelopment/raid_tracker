@@ -13,6 +13,8 @@
         <li class="list-group-item">{{raid.nom}}</li>
       </a>
     {% endfor %}
+  {% else %}
+    <p>Vous n'êtes organisateurs d'aucun RAID pour le moment.</p>
   {% endif %}
     
     <a href= {{ path('create_raid') }}>
@@ -30,6 +32,8 @@
         <li class="list-group-item">{{raid.nom}}</li>
       </a>
     {% endfor %}
+  {% else %}
+    <p>Vous n'êtes bénévoles d'aucun RAID pour le moment.</p>
   {% endif %}
   </ul>
 
@@ -46,6 +50,8 @@
         </a>
       </li>
     {% endfor %}
+  {% else %}
+    <p>Aucun RAID enregistré.</p>
   {% endif %}
   </ul>
 
