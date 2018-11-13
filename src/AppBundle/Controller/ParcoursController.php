@@ -16,6 +16,52 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
  */
 class ParcoursController extends Controller
 {
+
+    /**
+     * Displays a form to edit an existing parcour entity.
+     *
+     * @Route("/{id}/edit", name="parcours_edit")
+     * @Method({"GET", "POST"})
+     */
+    public function editAction(Request $request, Parcours $parcour)
+    {
+        $deleteForm = $this->createDeleteForm($parcour);
+        $editForm = $this->createForm('AppBundle\Form\ParcoursType', $parcour);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            //return $this->redirectToRoute('parcours_edit', array('id' => $parcour->getId()));
+            return $this->redirectToRoute('gestion_raid');
+
+        }
+
+        return $this->render('parcours/edit.html.twig', array(
+            'parcour' => $parcour,
+            'user' => $this->getUser(),
+            'edit_form' => $editForm->createView(),
+            'delete_form' => $deleteForm->createView(),
+        ));
+    }
+
+    /**
+     * @Route("/parcours/{id}/parcours", name="edition_parcours")
+     */
+    public function editionParcoursAction(Request $request,$id)
+    {
+        $parcours =  $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Parcours')
+            ->findOneBy(array(
+                'id' => $request->get('id')
+            ));
+
+       return $this->render('default/map_interactive.html.twig', array(
+           'user' => $this->getUser(),
+          'parcours' => $parcours
+       ));
+    }
+
     /**
      * Lists all parcour entities.
      *
@@ -54,7 +100,7 @@ class ParcoursController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($parcour);
             $em->flush();
-            return $this->redirectToRoute('landing');
+            return $this->redirectToRoute('carte');
 
           //  return $this->redirectToRoute('parcours_show', array('id' => $parcour->getId()));
         }
@@ -82,30 +128,7 @@ class ParcoursController extends Controller
         ));
     }
 
-    /**
-     * Displays a form to edit an existing parcour entity.
-     *
-     * @Route("/{id}/edit", name="parcours_edit")
-     * @Method({"GET", "POST"})
-     */
-    public function editAction(Request $request, Parcours $parcour)
-    {
-        $deleteForm = $this->createDeleteForm($parcour);
-        $editForm = $this->createForm('AppBundle\Form\ParcoursType', $parcour);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('parcours_edit', array('id' => $parcour->getId()));
-        }
-
-        return $this->render('parcours/edit.html.twig', array(
-            'parcour' => $parcour,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
+ 
 
     /**
      * Deletes a parcour entity.

@@ -36,4 +36,39 @@ class LandingController extends Controller
       'all_raids' => $all_raids,
     ));
    }
+
+   
+   /**
+    * @Route("/inviter", name="inviter")
+    */
+    public function InviterNewBeneoleAction(Request $request){
+
+      $user = $this->getUser();
+      $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
+                              ->getRepository('AppBundle:Raid')
+                              ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
+ 
+      return $this->render('landing/inviter.html.twig', array(
+        'user' => $user,
+        'raids_organisateurs' => $raids_organisateurs,
+     ));
+     }
+ 
+ 
+     /**
+      * @Route("/gestion_raid", name="gestion_raid")
+      */
+      public function GestionRaidsAction(Request $request){
+ 
+       $user = $this->getUser();
+       $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
+                               ->getRepository('AppBundle:Raid')
+                               ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
+ 
+ //print_r($raids_organisateurs);die();
+       return $this->render('landing/gestionRaid.html.twig', array(
+         'user' => $user,
+         'raids_organisateurs' => $raids_organisateurs,
+      ));
+      }
 }

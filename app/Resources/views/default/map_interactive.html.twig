@@ -1,71 +1,159 @@
 
 {% extends 'base.html.twig' %}
+{% block title %}
+    Carte Interactive
+{% endblock %}
 
-{% block content %}
-  <head>
-    <title>Carte Interactive</title>
-    <style type="text/css">
-      #basicMap {
-        width: 100%;
-        height: 91.5%;
-      }
-    </style>
-    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+{% block content %}    
+
+
+<body onload="init();">
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.js')}}"></script>
+    <script src="{{asset('js/leaflet-draw-toolbar/dist/leaflet.draw-toolbar.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="https://github.com/k4r573n/leaflet-control-osm-geocoder/blob/master/Control.OSMGeocoder.js"></script>
+    <link rel="stylesheet" href="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.css')}}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+    <link rel="stylesheet" href="https://github.com/k4r573n/leaflet-control-osm-geocoder/blob/master/Control.OSMGeocoder.css"/>
+
+    <div id="mapid"></div>
+
     <script>
-      function init() {
-        map = new OpenLayers.Map("basicMap");
-        var mapnik = new OpenLayers.Layer.OSM();
-        map.addLayer(mapnik);
-        latitude = 2.43896484375;    //3
-        longitude = 46.52863469527167; //47.5 ,
-        echelle = 6;
+        function init(){
+            var mymap = L.map('mapid');
+            longitude = 2.43896484375;
+            latitude = 46.52863469527167;
+            echelle = 6;
+            
+            mymap.setView([latitude, longitude], echelle);
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mymap);
 
-        map.setCenter(new OpenLayers.LonLat(latitude,longitude) // Centre de la carte
-          .transform(
-            new OpenLayers.Projection("EPSG:4326"), // transformation de WGS 1984
-            new OpenLayers.Projection("EPSG:900913") // en projection Mercator sphérique
-          ), echelle // Zoom level
-        );
+            {#var osmGeocoder = new L.Control.OSMGeocoder({
+                position:'topright',
+                collapsed:false
+            });
+            mymap.addControl(osmGeocoder);#}
 
-        var positionUser = function() {
-              if(navigator.geolocation) {
-                  navigator.geolocation.getCurrentPosition(showPosition);
-              }
-              else {
-                  alert("La localisation n'est pas disponible avec votre navigateur !");
-              }
-          }
+            var drawnItems = new L.FeatureGroup();
+            mymap.addLayer(drawnItems);
 
-          var showPosition = function(position) {
-              latitude = position.coords.longitude;
-              longitude = position.coords.latitude; //position.coords.longitude
-              echelle = 18;
+            {#document.getElementsByClassName("leaflet-control-zoom-in").innerHTML = 'teessaixt';#}
+            
+            var drawControl = new L.Control.Draw({
+                position:'topleft',
+                edit: {
+                    featureGroup: drawnItems
+                },
+                draw: {
+                    polyline: true,
+                    circle: false,
+                    polygon: false,
+                    marker: true,
+                    circlemarker: false,
+                    rectangle: false,
+                },
+                polyline: {
+                        shapeOptions: {
+                            color: '#f357a1',
+                            weight: 10,
+                            title:'essai'
+                        }
+                    },
+            });
 
-              map.setCenter(new OpenLayers.LonLat(latitude,longitude) // Centre de la carte
-                .transform(
-                  new OpenLayers.Projection("EPSG:4326"), // transformation de WGS 1984
-                  new OpenLayers.Projection("EPSG:900913") // en projection Mercator sphérique
-                ), echelle // Zoom level
-              );
+            {#var options = new L.Control.Draw({
+                draw: {
+                    polygon: {
+                        allowIntersection: false, // Restricts shapes to simple polygons
+                        drawError: {
+                            color: '#e1e100', // Color the shape will turn when intersects
+                            message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+                        },
+                        shapeOptions: {
+                            color: '#97009c'
+                        }
+                    },
+                    polyline: {
+                        shapeOptions: {
+                            color: '#f357a1',
+                            weight: 10,
+                        }
+                    },
+                    // disable toolbar item by setting it to false
+                    polyline: true,
+                    circle: true,
+                    polygon: true,
+                    marker: true,
+                    rectangle: true,
+                },
+                edit: {
+                    featureGroup: drawnItems, //REQUIRED!!
+                }
+            });#}
 
-              var lonLat = new OpenLayers.LonLat( latitude ,longitude )
-                .transform(
-                    new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                    new OpenLayers.Projection("EPSG:900913")
-                );
+            
+            mymap.addControl(drawControl);
 
-              var markers = new OpenLayers.Layer.Markers("Markers");
-              map.addLayer(markers);
-              markers.addMarker(new OpenLayers.Marker(lonLat));
-          }
+            var editableLayers = new L.FeatureGroup();
+            mymap.addLayer(editableLayers);
 
-        positionUser();
-      }
+            mymap.on('draw:created', function(e) {
+                var type = e.layerType,
+                    layer = e.layer;
+                    {#console.log(e.layer.editing.latlngs[0][0]);#}
+
+                if (type === 'polyline') {
+                    drawnItems.addLayer(layer);
+                }
+                else if ( type === 'polygon') {
+                    drawnItems.addLayer(layer);
+                }
+                else if (type === 'marker') {
+                    drawnItems.addLayer(layer);
+                }
+                else if (type === 'circlemarker') {
+                    drawnItems.addLayer(layer);
+                }
+                else if (type === 'circle') {
+                    drawnItems.addLayer(layer);
+                }
+                else if (type === 'rectangle') {
+                    drawnItems.addLayer(layer);
+                }
+                editableLayers.addLayer(layer);
+            });
+
+            var positionUser = function() {
+                if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                }
+                else {
+                    alert("La localisation n'est pas disponible avec votre navigateur !");
+                }
+            }
+
+            var showPosition = function(position) {
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+                echelle = 18;
+
+                mymap.setView([latitude, longitude], echelle);
+                L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(mymap);
+
+                var latlng = [latitude, longitude];
+                var marker = L.marker([latitude, longitude]).addTo(mymap);
+                var popup = L.popup().setLatLng(latlng).setContent('<p>Vous êtes ici<br>Latitude: '+ latitude +'<br>Longitude: '+longitude+'</p>').openOn(mymap);
+                marker.bindPopup(popup).openPopup();
+                
+            }
+            positionUser();
+        }
     </script>
 
-  </head>
-  <body onload="init();">
-    <div id="basicMap"></div>
-  </body>
-
+</body>
 {% endblock %}

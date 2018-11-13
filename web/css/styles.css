@@ -50,6 +50,7 @@ a, a:hover, a:focus {
 ----------------------------------------------------- */
 
 .wrapper {
+    max-height:100vh;
     display: flex;
     width: 100%;
     align-items: stretch;
@@ -193,10 +194,26 @@ a.article, a.article:hover {
 /* ---------------------------------------------------
     CARTE
 ----------------------------------------------------- */
-#basicMap {
+#mapid {
     width: 100%;
-    height: 100%;
-  }
+    height:90%;
+}
+
+#ensembleBoutonMap {
+    display: flex;
+    justify-content: center;
+    z-index:10;
+}
+
+.leaflet-toolbar-icon .fa { 
+    color: #000;
+}
+
+.leaflet-color-swatch {
+    background-color: #fff;
+}
+
+
 
 
 /* ---------------------------------------------------
