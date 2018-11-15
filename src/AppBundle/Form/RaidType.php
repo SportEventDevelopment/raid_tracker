@@ -32,9 +32,6 @@ class RaidType extends AbstractType
             ->add('equipe', TextType::class, array("label" => "Nom d'équipe"));
     }
 
-
-
-
     /**
      * {@inheritdoc}
      */

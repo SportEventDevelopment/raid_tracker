@@ -15,22 +15,21 @@ class ParcoursController extends Controller
 
     /**
      * Creates a new parcour entity.
-     *
      * @Route("/parcours/raids/{id}", name="create_parcours")
      */
     public function createParcours(Request $request)
     {
-        $parcour = new Parcours();
-        $form = $this->createForm('AppBundle\Form\ParcoursType', $parcour);
+        $parcours = new Parcours();
+        $form = $this->createForm('AppBundle\Form\ParcoursType', $parcours);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        $raid = $this->get('app.restclient')->get(
+            'api/raids/'. $request->get('id'),
+            $this->getUser()->getToken()
+        );
 
-            $raid = $this->get('app.restclient')->get(
-                'api/raids/'. $request->get('id'),
-                $this->getUser()->getToken()
-            );
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $parcours_data = $this->get('app.serialize')->entityToArray($form->getData());
             $parcours_data['idRaid'] = $request->get('id');
@@ -41,13 +40,14 @@ class ParcoursController extends Controller
                 $this->getUser()->getToken()
             );
 
-            return $this->redirectToRoute('landing');
+            return $this->redirectToRoute('carte');
         }
 
         return $this->render('parcours/new.html.twig', array(
-            'parcour' => $parcour,
+            'user' =>$this->getUser(),
+            'parcours' => $parcours,
             'form' => $form->createView(),
-            'user' =>$this->getUser()
+            'raid' => $raid
         ));
     }
 
@@ -70,7 +70,7 @@ class ParcoursController extends Controller
     /**
      * Displays a form to edit an existing parcour entity.
      *
-     * @Route("/parcours/{id}/edit", name="edit_parcours")
+     * @Route("/parcours/{id}/edit", name="edition_parcours")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Parcours $parcour)

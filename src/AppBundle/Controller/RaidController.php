@@ -74,7 +74,8 @@ class RaidController extends Controller
             'raid' => $raid
        ));
     }
-        /**
+    
+    /**
      * Displays a form to edit an existing machin entity.
      *
      * @Route("/{id}/edit", name="raid_edit")
@@ -90,20 +91,20 @@ class RaidController extends Controller
             $this->getDoctrine()->getManager()->flush();
 
             //return $this->redirectToRoute('raid_edit', array('id' => $raid->getId()));
-            return $this->redirectToRoute('gestion_raid')
-;        }
+            return $this->redirectToRoute('gestion_raid');
+        }
 
         return $this->render('raid/edit.html.twig', array(
             'edit_form' => $editForm->createView(),
             'raid' => $raid,
             'user'=>$this->getUser()
             //'delete_form' => $deleteForm->createView(),
-    }
         ));
+    }
 
-       /**
-     */
+    /**
      * @Route("/raids/{id}/gestion_parcours", name="gestion_parcours")
+     */
     public function GestionRaidParcoursAction(Request $request,$id)
     {
         $raid =  $this->getDoctrine()->getManager()
