@@ -91,4 +91,39 @@ class ParcoursController extends Controller
             'delete_form' => $deleteForm->createView(),
         ));
     }
+    /**
+     * Deletes a parcour entity.
+     *
+     * @Route("/{id}", name="parcours_delete")
+     * @Method("DELETE")
+     */
+    public function deleteAction(Request $request, Parcours $parcour)
+    {
+        $form = $this->createDeleteForm($parcour);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($parcour);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('parcours_index');
+    }
+
+    /**
+     * Creates a form to delete a parcour entity.
+     *
+     * @param Parcours $parcour The parcour entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createDeleteForm(Parcours $parcour)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('parcours_delete', array('id' => $parcour->getId())))
+            ->setMethod('DELETE')
+            ->getForm()
+        ;
+    }
 }

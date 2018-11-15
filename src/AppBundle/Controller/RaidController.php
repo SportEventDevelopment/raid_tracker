@@ -74,4 +74,52 @@ class RaidController extends Controller
             'raid' => $raid
        ));
     }
+        /**
+     * Displays a form to edit an existing machin entity.
+     *
+     * @Route("/{id}/edit", name="raid_edit")
+     * @Method({"GET", "POST"})
+     */
+    public function editAction(Request $request, Raid $raid)
+    {
+        //$deleteForm = $this->createDeleteForm($raid);
+        $editForm = $this->createForm('AppBundle\Form\RaidType', $raid);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            //return $this->redirectToRoute('raid_edit', array('id' => $raid->getId()));
+            return $this->redirectToRoute('gestion_raid')
+;        }
+
+        return $this->render('raid/edit.html.twig', array(
+            'edit_form' => $editForm->createView(),
+            'raid' => $raid,
+            'user'=>$this->getUser()
+            //'delete_form' => $deleteForm->createView(),
+    }
+        ));
+
+       /**
+     */
+     * @Route("/raids/{id}/gestion_parcours", name="gestion_parcours")
+    public function GestionRaidParcoursAction(Request $request,$id)
+    {
+        $raid =  $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Raid')
+            ->findOneBy(array(
+                'id' => $request->get('id')
+            ));
+
+        $all_parcours = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Raid')
+                ->findAllParcoursByIdRaid($request->get('id'));
+
+       return $this->render('raid/GestionParcoursRaid.html.twig', array(
+           'user' => $this->getUser(),
+          'all_parcours' => $all_parcours,
+          'raid' => $raid
+       ));
+    }
 }

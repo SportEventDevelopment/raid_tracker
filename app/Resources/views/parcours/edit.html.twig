@@ -1,21 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <h1>Parcour edit</h1>
+{% block content %}
+<div class='vertical-center'>
+    <div class="container col col-md-4">
+            <div class="card default-color-dark ">
+                {{ form_start(edit_form, {'attr': {'class': 'center border border-light p-5'}}) }}
+                    <p class="h4 mb-4 text-center">Edition du Raid</p>
 
-    {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
-    {{ form_end(edit_form) }}
+                    <div class="form-row mb-4">
+                        <div class="col">
+                            {{ form_row(edit_form.nom, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
 
-    <ul>
-        <li>
-            <a href="{{ path('parcours_index') }}">Back to the list</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+                    <div class="form-row mb-4">
+                        <div class="col">
+                            {{ form_row(edit_form.type, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-4">
+                        <div class="col">
+                            {{ form_row(edit_form.etat, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-4">
+                        <div class="col">
+                            <button class="btn btn-info my-4 btn-block" type="submit">Editer le parcours</button>
+                        </div>
+                        <div class="col">
+                           {# <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>#}
+                                                              <button class="btn btn-info my-4 btn-block">             <a href={{ path('gestion_raid') }}>Retour</a>  </button>
+
+                        </div>
+                    </div>
+                {{ form_end(edit_form) }}
+          </div>
+    </div>
+</div>
 {% endblock %}
