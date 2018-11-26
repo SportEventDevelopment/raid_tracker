@@ -5,7 +5,7 @@
     <div class="container col col-md-4">
             <div class="card default-color-dark ">
                 {{ form_start(edit_form, {'attr': {'class': 'center border border-light p-5'}}) }}
-                    <p class="h4 mb-4 text-center">Edition du Raid</p>
+                    <p class="h4 mb-4 text-center">Edition du Parcours</p>
 
                     <div class="form-row mb-4">
                         <div class="col">
@@ -30,9 +30,7 @@
                             <button class="btn btn-info my-4 btn-block" type="submit">Editer le parcours</button>
                         </div>
                         <div class="col">
-                           {# <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>#}
-                                                              <button class="btn btn-info my-4 btn-block">             <a href={{ path('gestion_raid') }}>Retour</a>  </button>
-
+                            <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
                         </div>
                     </div>
                 {{ form_end(edit_form) }}

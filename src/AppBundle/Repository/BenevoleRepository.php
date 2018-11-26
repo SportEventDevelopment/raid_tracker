@@ -10,4 +10,12 @@ namespace AppBundle\Repository;
  */
 class BenevoleRepository extends \Doctrine\ORM\EntityRepository
 {
+  function findBenevoleByIdRaid($id_raid,$id_user){
+    $qb = $this->createQueryBuilder('b')
+  ->where('b.idUser =:user')->setParameter("user", $id_user)
+  ->andWhere("b.idRaid=:raid")->setParameter("raid", $id_raid)
+  ;
+  return $qb->getQuery()->getSingleResult();
+   }
+
 }

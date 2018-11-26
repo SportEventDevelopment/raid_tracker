@@ -11,6 +11,8 @@ use AppBundle\Entity\Benevole;
 use AppBundle\Entity\UserRegistration;
 
 use AppBundle\Entity\PrefPoste;
+use AppBundle\Entity\User;
+
 
 
 class BenevoleController extends Controller
@@ -223,7 +225,7 @@ class BenevoleController extends Controller
 
       $benevole->setIdUser($id_user);
       $benevole->setIdRaid($id_raid);
-
+      $benevole->setEstBenevole(false);
 
         $PrefPoste = new PrefPoste();
         $form = $this->createForm('AppBundle\Form\PrefPosteType', $PrefPoste);
@@ -246,6 +248,77 @@ class BenevoleController extends Controller
         }
 
         return $this->render('landing/rejoindreRaid.html.twig', array(
+            'form' => $form->createView(),
+            'user' =>$this->getUser()
+        ));
+    }
+
+    /**
+     * Displays a form to edit an existing parcour entity.
+     *
+     * @Route("/user/{iduser}/raid/{idraid}/choixOrga", name="choix_bene_defi")
+     * @Method({"GET"})
+     */
+    public function ChoixDefinitifBenevoleAction(Request $request,$iduser,$idraid)
+    {
+
+      $em = $this->getDoctrine()->getManager();
+
+      $benevole = $this->getDoctrine()->getManager()
+              ->getRepository('AppBundle:Benevole')
+              ->findBenevoleByIdRaid($request->get('idraid'),$request->get('iduser'));
+              $benevole->setEstBenevole(true);
+              $em->persist($benevole);
+              $em->flush();
+
+          $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
+                                    ->getRepository('AppBundle:Raid')
+                                    ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
+
+            return $this->render('landing/adminBenevole.html.twig', array(
+                  'user' => $this->getUser(),
+                  'raids_organisateurs' =>$raids_organisateurs
+              ));
+    }
+
+    /**
+     * Creates a new parcour entity.
+     *
+     * @Route("/benevole/{id_raid}/inviter", name="inviter_benevole")
+     * @Method({"GET", "POST"})
+     */
+    public function inviterBenevoleDansRaid(Request $request, $id_raid,\Swift_Mailer $mailer)
+    {
+
+
+      //  $PrefPoste = new PrefPoste();
+
+        $user = new User();
+        $form = $this->createForm('AppBundle\Form\InviterBenevoleType',$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $em = $this->getDoctrine()->getManager();
+     ;
+    $this->get('mailer')->send($message);
+
+          //  var_dump($form->getEmail());die();
+
+        //    var_dump($user->getEmail());die();
+          /*  $PrefPoste->setIdRaid($id_raid);
+
+            $em->persist($PrefPoste);
+            $em->persist($benevole);
+
+            $em->flush();*/
+            return $this->redirectToRoute('landing');
+
+          //  return $this->redirectToRoute('parcours_show', array('id' => $parcour->getId()));
+        }
+
+        return $this->render('landing/inviterBenevole.html.twig', array(
             'form' => $form->createView(),
             'user' =>$this->getUser()
         ));

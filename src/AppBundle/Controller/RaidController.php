@@ -13,6 +13,11 @@ use AppBundle\Entity\Organisateur;
 use AppBundle\Entity\Parcours;
 use \Unirest;
 
+/**
+ * Raid controller.
+ *
+ * @Route("raid")
+ */
 class RaidController extends Controller
 {
     /**
@@ -68,6 +73,7 @@ class RaidController extends Controller
         $all_parcours = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
+                //var_dump($all_parcours);die();
        return $this->render('raid/description_raid_organisateur.html.twig', array(
             'user' => $this->getUser(),
             'all_parcours' => $all_parcours,
@@ -76,10 +82,57 @@ class RaidController extends Controller
     }
     
     /**
-     * Displays a form to edit an existing machin entity.
-     *
-     * @Route("/{id}/edit", name="raid_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/raids/{id}/user/{id2}/choix_benevole_orga", name="choix_benevole_orga")
+     */
+    public function choixBenevoleAction(Request $request,$id,$id2)
+    {
+        $raid =  $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Raid')
+            ->findOneBy(array(
+                'id' => $request->get('id')
+            ));
+
+        $all_postes = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Raid')
+                ->findPosteByIdRaid($request->get('id'));
+                        //   var_dump($all_postes);die();
+        $em = $this->getDoctrine()->getManager();
+
+//        $benes = $em->getRepository('AppBundle:Benevole')->findAll();
+//var_dump($benes);die();
+       return $this->render('raid/choixBenevole.html.twig', array(
+           'user' => $this->getUser(),
+          'all_postes' => $all_postes,
+          'raid' => $raid,
+//          'benes' => $benes
+       ));
+    }
+
+
+
+
+
+    /**
+     * @Route("/raids/{id}/gestion_parcours", name="gestion_parcours")
+     */
+    public function GestionRaidParcoursAction(Request $request,$id)
+    {
+        $raid =  $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Raid')
+            ->findOneBy(array(
+                'id' => $request->get('id')
+            ));
+
+        $all_parcours = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Raid')
+                ->findAllParcoursByIdRaid($request->get('id'));
+
+       return $this->render('raid/GestionParcoursRaid.html.twig', array(
+           'user' => $this->getUser(),
+          'all_parcours' => $all_parcours,
+          'raid' => $raid
+       ));
+    }
      */
     public function editAction(Request $request, Raid $raid)
     {

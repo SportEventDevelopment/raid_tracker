@@ -61,4 +61,3 @@ class Raid
         return $this->equipe;
     }
 }
-

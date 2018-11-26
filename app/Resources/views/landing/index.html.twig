@@ -20,7 +20,7 @@
     <a href= {{ path('create_raid') }}>
       <i class="fas fa-3x fa-plus-circle"></i>
     </a>
-  </ul>
+  </ul> <br/>
 
   <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user.username}}</button>
   <br/>
@@ -28,7 +28,7 @@
   <ul class="list-group">
   {% if raids_benevoles != null %}
     {% for raid in raids_benevoles %}
-      <a href= {{ path('create_raid') }}>
+    {#  <a href= {{ path('create_raid') }}> #}
         <li class="list-group-item">{{raid.nom}}</li>
       </a>
     {% endfor %}
@@ -36,6 +36,18 @@
     <p>Vous n'êtes bénévoles d'aucun RAID pour le moment.</p>
   {% endif %}
   </ul>
+
+
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vous avez été choisi comme bénévole dans ses raids {{user.name}}</button>
+  <br/>
+
+  <ul class="list-group">
+    {% for raid in raids_benevoles_choisis %}
+    {#  <a href= {{ path('create_raid') }}> #}
+        <li class="list-group-item">{{raid.nom}}</li>
+      {# </a> #}
+  {% endfor %}
+  </ul><br/>
 
   <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
 

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+<div class="container">
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.name}} : Gestion des bénévoles</button>
+  <br/>
+
+  <ul class="list-group flexcolumn">
+  {% for raid in raids_organisateurs %}
+    <li class="list-group-item text-left">
+      {{raid.nom}}
+      <a href= {{ path('choix_benevole_orga', {'id': raid.idRaid,'id2':raid.idUser }) }}>
+        Gérer!
+        <span class="glyphicon glyphicon-plus"></span>
+      </a>
+
+    </li>
+  {% endfor %}
+  </ul>
+
+
+</div>
+{% endblock %}

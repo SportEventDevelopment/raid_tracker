@@ -18,7 +18,7 @@ class PrefPosteType extends AbstractType
         //->add('idUser')
 //        ->add('poste');
 
-     ->add('poste', null, array("label" => 'Famille de contrôle', "invalid_message" => "Le champ est incorrect", "required" => true,
+     ->add('poste', null, array("label" => 'Poste', "invalid_message" => "Le champ est incorrect", "required" => true,
 'query_builder' => function (EntityRepository $er) {
 return $er->createQueryBuilder('p')
 ->orderBy('p.type', 'ASC');    },))
