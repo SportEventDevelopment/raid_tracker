@@ -8,23 +8,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Benevole;
-use AppBundle\Entity\User;
+use AppBundle\Entity\UserRegistration;
+
 class BenevoleController extends Controller
 {
 
-        /**
+    /**
      * Creates a new parcour entity.
-     *
      * @Route("/benevole/{id_raid}/inviter", name="inviter_benevole")
-     * @Method({"GET", "POST"})
      */
-    public function inviterBenevoleDansRaid(Request $request, $id_raid)
+    public function inviterBenevoles(Request $request, $id_raid)
     {
-
-
-      //  $PrefPoste = new PrefPoste();
-
-        $user = new User();
+        $user = new UserRegistration();
         $form = $this->createForm('AppBundle\Form\InviterBenevoleType',$user);
 
         $form->handleRequest($request);
@@ -32,24 +27,12 @@ class BenevoleController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 
-
-          //  var_dump($form->getEmail());die();
-
-        //    var_dump($user->getEmail());die();
-          /*  $PrefPoste->setIdRaid($id_raid);
-
-            $em->persist($PrefPoste);
-            $em->persist($benevole);
-
-            $em->flush();*/
             return $this->redirectToRoute('landing');
-
-          //  return $this->redirectToRoute('parcours_show', array('id' => $parcour->getId()));
         }
 
         return $this->render('landing/inviterBenevole.html.twig', array(
-            'form' => $form->createView(),
-            'user' =>$this->getUser()
+            'user' =>$this->getUser(),
+            'form' => $form->createView()
         ));
     }
 

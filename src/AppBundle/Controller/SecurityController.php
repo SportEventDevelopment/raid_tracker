@@ -14,13 +14,17 @@ class SecurityController extends Controller
      */
     public function login(AuthenticationUtils $authenticationUtils)
     {
-       return $this->render(
+        $url = 'api/raids/visible/all';
+        $raids_visibles = $this->get('app.restclient')->get($url);
+
+        return $this->render(
            'auth/login.html.twig',
-           array(
-               'last_username' => $authenticationUtils->getLastUsername(),
-               'error'         => $authenticationUtils->getLastAuthenticationError(),
-           )
-       );
+            array(
+                'last_username' => $authenticationUtils->getLastUsername(),
+                'error'         => $authenticationUtils->getLastAuthenticationError(),
+                'raids_visibles'=> $raids_visibles
+            )
+        );
     }
     
     /**

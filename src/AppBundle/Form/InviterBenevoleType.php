@@ -15,10 +15,7 @@ class InviterBenevoleType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-
-        ->add('email', EmailType::class, array("label" => 'E-mail'))
-        ;
+        $builder->add('email', EmailType::class, array("label" => 'E-mail'));
     }
 
     /**
@@ -27,7 +24,8 @@ class InviterBenevoleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\User'
+            'data_class' => 'AppBundle\Entity\UserRegistration',
+            'csrf_protection' => false
         ));
     }
 

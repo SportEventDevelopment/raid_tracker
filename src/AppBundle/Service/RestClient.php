@@ -43,7 +43,7 @@ class RestClient
         return null;
     }
 
-    public function get($url, $token){
+    public function get($url, $token=null){
         $headers = array(
             'Accept' => 'application/json',
             'X-Auth-Token' => $token

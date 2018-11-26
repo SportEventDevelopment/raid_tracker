@@ -57,7 +57,7 @@ class ParcoursController extends Controller
      * @Route("/parcours/{id}", name="parcours_show")
      * @Method("GET")
      */
-    public function showAction(Parcours $parcour)
+    public function showParcours(Parcours $parcour)
     {
         $deleteForm = $this->createDeleteForm($parcour);
 
@@ -68,25 +68,26 @@ class ParcoursController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing parcour entity.
+     * Displays a form to edit an existing parcours.
      *
-     * @Route("/parcours/{id}/edit", name="edition_parcours")
-     * @Method({"GET", "POST"})
+     * @Route("/parcours/{id}/edit", name="edit_parcours")
      */
-    public function editAction(Request $request, Parcours $parcour)
+    public function editParcours(Request $request)
     {
-        $deleteForm = $this->createDeleteForm($parcour);
-        $editForm = $this->createForm('AppBundle\Form\ParcoursType', $parcour);
+        $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
+        $parcours = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+            
+        $editForm = $this->createForm('AppBundle\Form\ParcoursType', $parcours);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('edit_parcours', array('id' => $parcour->getId()));
+           
+            return $this->redirectToRoute('edit_parcours', array('id' => $parcours->getId()));
         }
 
         return $this->render('parcours/edit.html.twig', array(
-            'parcour' => $parcour,
+            'parcour' => $parcours,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
@@ -95,9 +96,8 @@ class ParcoursController extends Controller
      * Deletes a parcour entity.
      *
      * @Route("/{id}", name="parcours_delete")
-     * @Method("DELETE")
      */
-    public function deleteAction(Request $request, Parcours $parcour)
+    public function deleteParcours(Request $request, Parcours $parcour)
     {
         $form = $this->createDeleteForm($parcour);
         $form->handleRequest($request);

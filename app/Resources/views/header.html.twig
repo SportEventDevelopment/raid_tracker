@@ -31,36 +31,15 @@
             </div>
 
             <ul class="list-unstyled components">
-                <li class="active">
+                <li style="background-color: #80BA75">
                     <a href={{ path('landing') }}>Accueil</a>
                 <li>
-                {#<li>
-                    <a href={{ path('carte') }}>Carte interactive</a>
-                </li>
-                <li class="active">
-                    <a href="#" aria-disabled="true">Invitation Raid</a>
-                </li>#}
-                <li class="active">
+                <li>
                     <a href={{ path('inviter') }}>Inviter bénévole</a>
                 </li>
-                <li class="active">
-                    <a href={{ path('gestion_raid') }}>Gérer mes Raids</a>
+                <li style="background-color: #80BA75">
+                    <a href={{ path('landing_gerer_raid') }}>Gérer mes Raids</a>
                 </li>
-
-               <!-- <li>
-                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
-                    <ul class="collapse list-unstyled" id="pageSubmenu">
-                        <li>
-                            <a href="#">Page 1</a>
-                        </li>
-                        <li>
-                            <a href="#">Page 2</a>
-                        </li>
-                        <li>
-                            <a href="#">Page 3</a>
-                        </li>
-                    </ul>
-                </li>   -->
             </ul>
         </nav>
 
@@ -80,14 +59,12 @@
                     </button>
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="nav navbar-nav ml-auto">
-                            <li class="nav-item active">
-                                Bonjour {{user.username}} !
-                                <a href= {{ path('logout') }}>
-                                    <i class="fas fa-sign-out-alt"></i>
-                                </a>
-                            </li>
-                        </ul>
+                        <p class="nav navbar-nav ml-auto">
+                            Bonjour <span style="font-weight:500;margin-left:0.5rem;">{{user.username}}</span>
+                            <a href= {{ path('logout') }}>
+                                <i class="fas fa-sign-out-alt" style="color:red; margin-left:1rem;"></i>
+                            </a>
+                        </p>
                     </div>
                 </div>
             </nav>

@@ -59,6 +59,19 @@
                 </p>
             </form>
         </div>
+        
+        <h2>RAIDS à venir</h2>
+        <ul class="list-group flexcolumn">
+        {% if raids_visibles != null %}
+            {% for raid in raids_visibles %}
+            <li class="list-group-item text-left">
+                {{raid.nom}}
+            </li>
+            {% endfor %}
+        {% else %}
+            <p>Aucun RAID disponible en ce moment</p>
+        {% endif %}
+        </ul>
 </div>
 </div>
 </body>

@@ -7,7 +7,7 @@
 
         <ul class="list-group">
         {% for parcours in all_parcours %} 
-            <a href= {{ path('edition_parcours', {'id':parcours.id} ) }}>
+            <a href= {{ path('edit_parcours', {'id':parcours.id} ) }}>
                 <li class="list-group-item">{{parcours.nom}}</li>
             </a>
         {% endfor %}

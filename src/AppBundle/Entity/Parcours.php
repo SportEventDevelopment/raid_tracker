@@ -2,14 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * Parcours
- *
- * @ORM\Table(name="parcours")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ParcoursRepository")
- */
 class Parcours
 {
     private $idRaid;

@@ -44,7 +44,7 @@
     {% for raid in all_raids %}
       <li class="list-group-item text-left">
         {{raid.nom}}
-        {# <a href= {{ path('post_benevole_one_raid', {'id_raid': raid.id}) }}> #}
+        <a href= {{ path('raid_benevole_join', {'id_raid': raid.id}) }}>
           Rejoins-nous!
           <span class="glyphicon glyphicon-plus"></span>
         </a>

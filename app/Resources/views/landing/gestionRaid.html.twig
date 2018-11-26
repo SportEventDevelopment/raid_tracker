@@ -3,21 +3,19 @@
 {% block content %}
 
 <div class="container">
-  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.name}}</button>
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.username}}</button>
   <br/>
 
   <ul class="list-group flexcolumn">
   {% for raid in raids_organisateurs %}
     <li class="list-group-item text-left">
       {{raid.nom}}
-      <a href= {{ path('raid_edit', {'id': raid.idRaid }) }}>
-        Editer!
-        <span class="glyphicon glyphicon-plus"></span>
+      <a href= {{ path('raid_edit', {'id': raid.id }) }}>
+        <i class="fas fa-edit"></i>
       </a>
 
-      <a href= {{ path('gestion_parcours', {'id': raid.idRaid }) }}>
-        Parcours du raid!
-        <span class="glyphicon glyphicon-plus"></span>
+      <a href= {{ path('gestion_parcours', {'id': raid.id }) }}>
+        Parcours du raid
       </a>
     </li>
   {% endfor %}

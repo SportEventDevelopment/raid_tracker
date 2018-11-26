@@ -90,7 +90,6 @@ class RaidController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            //return $this->redirectToRoute('raid_edit', array('id' => $raid->getId()));
             return $this->redirectToRoute('gestion_raid');
         }
 
