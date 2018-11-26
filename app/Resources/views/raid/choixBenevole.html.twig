@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div class="container">
+    <ul class="list-group">
+        <button type="button" class="btn btn-primary btn-lg btn-block">Gestiion des postes</button>
+
+        <ul class="list-group">
+        {% for poste in all_postes %}
+            <li class="list-group-item text-left">
+               {{poste.type}} -
+               {{poste.name}}
+
+               <a href= {{ path('choix_bene_defi', {'iduser': poste.idUser,'idraid':poste.idRaid }) }}> 
+                 Choisir
+               </a>
+            </li>
+
+        {% endfor %}
+        </ul>
+
+
+    </ul>
+</div>
+{% endblock %}

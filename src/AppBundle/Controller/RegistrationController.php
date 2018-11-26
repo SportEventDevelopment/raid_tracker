@@ -28,6 +28,7 @@ class RegistrationController extends Controller
             // Set their role
             $user->setRole('ROLE_USER');
 
+            //  var_dump($user->getEmail());die();
             // Save
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);

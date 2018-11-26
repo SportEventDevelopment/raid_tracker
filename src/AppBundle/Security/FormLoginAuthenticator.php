@@ -24,7 +24,9 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
         $this->router = $router;
         $this->encoder = $encoder;
     }
-
+/*
+* cette fonction récupère l'adresse email et le mot de passe de la requête
+*/
     public function getCredentials(Request $request)
     {
         if ($request->getPathInfo() != '/login_check') {
@@ -40,13 +42,18 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
             'password' => $password,
         ];
     }
-
+/*
+* cette fonction utilise cela pour charger l'utilisateur
+*/
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $email = $credentials['email'];
 
         return $userProvider->loadUserByUsername($email);
     }
+/*
+* Vérifie si le mot de passe correspond au compte d'utilisateur que getUser a recuperé
+*/
 
     public function checkCredentials($credentials, UserInterface $user)
     {
@@ -58,6 +65,9 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
         throw new BadCredentialsException();
     }
 
+/**
+* si checkCredentials est true, on a onAuthenticationSuccess
+*/
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
       //  $url = $this->router->generate('welcome');

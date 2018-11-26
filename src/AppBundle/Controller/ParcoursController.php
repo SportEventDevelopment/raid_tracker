@@ -102,6 +102,7 @@ class ParcoursController extends Controller
 
         return $this->render('parcours/edit.html.twig', array(
             'parcour' => $parcour,
+            'user' => $this->getUser(),
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));

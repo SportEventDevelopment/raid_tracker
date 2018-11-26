@@ -9,25 +9,41 @@
   <ul class="list-group">
     {% for raid in raids_organisateurs %}
     <a href= {{ path('description_organisateur_raid', {'id':raid.idRaid} ) }}>
+
       <li class="list-group-item">{{raid.nom}}</li>
+
+    {#  {{ dump(raid) }} #}
+
     </a>
     {% endfor %}
 
     <a href= {{ path('create_raid') }}>
       <i class="fas fa-3x fa-plus-circle"></i>
     </a>
-  </ul>
+  </ul> <br/>
 
   <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user.name}}</button>
   <br/>
 
   <ul class="list-group">
     {% for raid in raids_benevoles %}
-      <a href= {{ path('create_raid') }}>
+    {#  <a href= {{ path('create_raid') }}> #}
         <li class="list-group-item">{{raid.nom}}</li>
-      </a>
+      {# </a> #}
   {% endfor %}
-  </ul>
+  </ul><br/>
+
+
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vous avez été choisi comme bénévole dans ses raids {{user.name}}</button>
+  <br/>
+
+  <ul class="list-group">
+    {% for raid in raids_benevoles_choisis %}
+    {#  <a href= {{ path('create_raid') }}> #}
+        <li class="list-group-item">{{raid.nom}}</li>
+      {# </a> #}
+  {% endfor %}
+  </ul><br/>
 
   <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
 

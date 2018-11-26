@@ -37,6 +37,41 @@ class Benevole
 
 
     /**
+      * @var bool
+      *
+      * @ORM\Column(name="est_benevole", type="boolean")
+      */
+     private $estBenevole;
+
+
+
+
+
+     /**
+ * Get estBenevole
+ *
+ * @return boolean
+ */
+public function getEstBenevole()
+{
+    return $this->estBenevole;
+}
+/**
+ * Set estBenevole
+ *
+ * @param boolean $estBenevole
+ *
+ * @return Benevole
+ */
+public function setEstBenevole($estBenevole)
+{
+  $this->estBenevole = $estBenevole;
+
+  return $this;
+}
+
+
+    /**
      * Get id
      *
      * @return int
@@ -94,4 +129,3 @@ class Benevole
         return $this->idRaid;
     }
 }
-

@@ -6,8 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
-class PrefPosteType extends AbstractType
+class InviterBenevoleType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -15,15 +16,9 @@ class PrefPosteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        //->add('idUser')
-//        ->add('poste');
 
-     ->add('poste', null, array("label" => 'Poste', "invalid_message" => "Le champ est incorrect", "required" => true,
-'query_builder' => function (EntityRepository $er) {
-return $er->createQueryBuilder('p')
-->orderBy('p.type', 'ASC');    },))
-
-;
+        ->add('email', EmailType::class, array("label" => 'E-mail'))
+        ;
     }
 
     /**
@@ -32,7 +27,7 @@ return $er->createQueryBuilder('p')
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\PrefPoste'
+            'data_class' => 'AppBundle\Entity\User'
         ));
     }
 
@@ -41,7 +36,7 @@ return $er->createQueryBuilder('p')
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_prefposte';
+        return 'appbundle_user';
     }
 
 

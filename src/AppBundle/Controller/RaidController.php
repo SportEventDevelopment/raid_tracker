@@ -11,7 +11,13 @@ use AppBundle\Form\RaidType;
 use AppBundle\Entity\Raid;
 use AppBundle\Entity\Organisateur;
 use AppBundle\Entity\Parcours;
+use AppBundle\Entity\User;
 
+/**
+ * Raid controller.
+ *
+ * @Route("raid")
+ */
 class RaidController extends Controller
 {
     /**
@@ -58,12 +64,68 @@ class RaidController extends Controller
                 ->getRepository('AppBundle:Raid')
                 ->findAllParcoursByIdRaid($request->get('id'));
 
+                //var_dump($all_parcours);die();
        return $this->render('raid/description_raid_organisateur.html.twig', array(
            'user' => $this->getUser(),
           'all_parcours' => $all_parcours,
           'raid' => $raid
        ));
     }
+
+
+    /**
+     * @Route("/raids/{id}/user/{id2}/choix_benevole_orga", name="choix_benevole_orga")
+     */
+    public function choixBenevoleAction(Request $request,$id,$id2)
+    {
+        $raid =  $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Raid')
+            ->findOneBy(array(
+                'id' => $request->get('id')
+            ));
+
+        $all_postes = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Raid')
+                ->findPosteByIdRaid($request->get('id'));
+                        //   var_dump($all_postes);die();
+        $em = $this->getDoctrine()->getManager();
+
+//        $benes = $em->getRepository('AppBundle:Benevole')->findAll();
+//var_dump($benes);die();
+       return $this->render('raid/choixBenevole.html.twig', array(
+           'user' => $this->getUser(),
+          'all_postes' => $all_postes,
+          'raid' => $raid,
+//          'benes' => $benes
+       ));
+    }
+
+
+
+
+
+    /**
+     * @Route("/raids/{id}/gestion_parcours", name="gestion_parcours")
+     */
+    public function GestionRaidParcoursAction(Request $request,$id)
+    {
+        $raid =  $this->getDoctrine()->getManager()
+            ->getRepository('AppBundle:Raid')
+            ->findOneBy(array(
+                'id' => $request->get('id')
+            ));
+
+        $all_parcours = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Raid')
+                ->findAllParcoursByIdRaid($request->get('id'));
+
+       return $this->render('raid/GestionParcoursRaid.html.twig', array(
+           'user' => $this->getUser(),
+          'all_parcours' => $all_parcours,
+          'raid' => $raid
+       ));
+    }
+
 
     /**
      * @Route("/api/raids", name="get_all_raids")
@@ -403,33 +465,31 @@ class RaidController extends Controller
     }
 
 
+
     /**
-     * @Route("/api/raids/parcours/{id_parcours}", name="delete_all_raids_parcours")
-     * @Method({"DELETE"})
+     * Displays a form to edit an existing machin entity.
+     *
+     * @Route("/{id}/edit", name="raid_edit")
+     * @Method({"GET", "POST"})
      */
-    public function deleteRaidsByIdParcoursAction(Request $request)
+    public function editAction(Request $request, Raid $raid)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $parcours = $em->getRepository('AppBundle:Parcours')
-                    ->findBy(array(
-                        "id" => $request->get('id_parcours')
-                    ));
+        //$deleteForm = $this->createDeleteForm($raid);
+        $editForm = $this->createForm('AppBundle\Form\RaidType', $raid);
+        $editForm->handleRequest($request);
 
-        if(empty($parcours)){
-            return new JsonResponse(["message" => "Cet utilisateur n'est organisateur d'aucun RAID !"], Response::HTTP_NOT_FOUND);
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('raid_edit', array('id' => $raid->getId()));
         }
 
-        foreach ($parcours as $parcour) {
-            $raid = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Raid')
-                ->findOneBy(array(
-                    "id" => $parcour->getIdRaid()
-                ));
-            $em->remove($raid);
-        }
-
-        $em->flush();
-
-        return new JsonResponse(["message" => "Les raids organisateurs de cet utilisateur ont été supprimés avec succès !"], Response::HTTP_OK);
+        return $this->render('raid/edit.html.twig', array(
+            'raid' => $raid,
+            'edit_form' => $editForm->createView(),
+            'user'=>$this->getUser()
+            //'delete_form' => $deleteForm->createView(),
+        ));
     }
+
 }

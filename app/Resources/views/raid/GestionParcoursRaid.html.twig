@@ -9,14 +9,16 @@
         {% for parcours in all_parcours %}
             <li class="list-group-item text-left">
                 {{parcours.nom}}
+                <a href= {{ path('parcours_edit', {'id': parcours.id }) }}>
+                Editer!
+                <span class="glyphicon glyphicon-plus"></span>
+                </a>
             </li>
 
         {% endfor %}
         </ul>
 
-        <a href= {{ path('create_parcours',{'id':raid.id}) }}>
-          <i class="fas fa-3x fa-plus-circle"></i>
-        </a>
+
     </ul>
 </div>
 {% endblock %}
