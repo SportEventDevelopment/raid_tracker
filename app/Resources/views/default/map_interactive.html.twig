@@ -8,93 +8,122 @@
 
 
 <body onload="init();">
-    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-    <script src="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.js')}}"></script>
-    <script src="{{asset('js/leaflet-draw-toolbar/dist/leaflet.draw-toolbar.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-    <script src="https://github.com/k4r573n/leaflet-control-osm-geocoder/blob/master/Control.OSMGeocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
     <link rel="stylesheet" href="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.css')}}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
-    <link rel="stylesheet" href="https://github.com/k4r573n/leaflet-control-osm-geocoder/blob/master/Control.OSMGeocoder.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+    <script src="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.js')}}"></script>
+    {# <script src="{{asset('js/leaflet-draw-toolbar/dist/leaflet.draw-toolbar.js')}}"></script> #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
 
     <div id="mapid"></div>
 
     <script>
         function init(){
-            var mymap = L.map('mapid');
+            var mymap = L.map('mapid',{
+                zoomControl:false
+            });
             longitude = 2.43896484375;
             latitude = 46.52863469527167;
             echelle = 6;
-            
+
             mymap.setView([latitude, longitude], echelle);
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(mymap);
 
-            {#var osmGeocoder = new L.Control.OSMGeocoder({
-                position:'topright',
-                collapsed:false
-            });
-            mymap.addControl(osmGeocoder);#}
-
             var drawnItems = new L.FeatureGroup();
             mymap.addLayer(drawnItems);
 
-            {#document.getElementsByClassName("leaflet-control-zoom-in").innerHTML = 'teessaixt';#}
+            //Toolbar Visible
+            L.drawLocal.draw.toolbar.buttons.polyline = 'Créer un parcours';
+            L.drawLocal.draw.toolbar.buttons.marker = 'Ajouter un point d\'intérêt';
+            L.drawLocal.edit.toolbar.buttons.editDisabled = "Aucun élément à éditer";
+            L.drawLocal.edit.toolbar.buttons.removeDisabled = "Aucun élément à supprimer";
+
+            //Toolbar Visible Element Placé
+            L.drawLocal.edit.toolbar.buttons.edit = "Editer parcours/points";
+            L.drawLocal.edit.toolbar.buttons.remove = "Supprimer parcours/points";
+
+            //Toolbar Polyline
+            L.drawLocal.draw.toolbar.actions.text = "Annuler";
+            L.drawLocal.draw.toolbar.actions.title = "Annuler";
+            L.drawLocal.draw.toolbar.finish.text = "Terminer";
+            L.drawLocal.draw.toolbar.finish.title = "Terminer la création du parcours";
+            L.drawLocal.draw.toolbar.undo.text = "Supprimer le dernier point";
+            L.drawLocal.draw.toolbar.undo.title = "Supprimer le dernier point dessiné";
+
+            //Toolbar Polyline Texte Carte
+            L.drawLocal.draw.handlers.polyline.tooltip.start = 'Cliquer sur la carte pour positionner le point de départ';
+            L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Cliquer sur la carte pour continuer le tracé';
+            L.drawLocal.draw.handlers.polyline.tooltip.end = 'Cliquer sur le dernier point pour finaliser le parcours';
+
+            //Toolbar Marker Texte
+            L.drawLocal.draw.handlers.marker.tooltip.start = 'Cliquer sur la carte pour placer un point d\'intérêt';
+
+            //Toolbar Edition
+            L.drawLocal.edit.toolbar.actions.cancel.text = "Annuler";
+            L.drawLocal.edit.toolbar.actions.cancel.title = "Annuler les derniers changements";
+            L.drawLocal.edit.toolbar.actions.save.text = "Sauvegarder";
+            L.drawLocal.edit.toolbar.actions.save.title = "Sauvegarder les changements";
             
+            //Toolbar Edition Texte
+            L.drawLocal.edit.handlers.edit.tooltip.text = "Maintenir un élément pour le déplacer";
+            L.drawLocal.edit.handlers.edit.tooltip.subtext = "Retirer un point de passage en double-cliquant dessus";
+            
+            //Toolbar Suppression
+            L.drawLocal.edit.toolbar.actions.clearAll.text = "Tout supprimer";
+            L.drawLocal.edit.toolbar.actions.clearAll.title = "Supprimer tous les éléments sur la carte";
+
+            //Toolbar Suppression Texte
+            L.drawLocal.edit.handlers.remove.tooltip.text = "Cliquez sur un élément pour le supprimer";
+
+            //Toolbar Zoom
+            var zoomControl = new L.control.zoom({
+                zoomInTitle: "Zoomer",
+                zoomOutTitle: "Dézoomer"
+            });
+
+            /*var osmGeocoder = new L.Control.OSMGeocoder({
+                position:'topright',
+                collapsed:false
+            });
+            mymap.addControl(osmGeocoder);*/
+
+            L.Control.geocoder().addTo(mymap);
+
+            mymap.addControl(zoomControl);
+
             var drawControl = new L.Control.Draw({
                 position:'topleft',
                 edit: {
-                    featureGroup: drawnItems
+                    featureGroup: drawnItems,
+                    remove:true
                 },
                 draw: {
-                    polyline: true,
+                    polyline: {
+                        shapeOptions: {
+                            color: 'orange',
+                            weight: 10,
+                        }
+                    },
                     circle: false,
                     polygon: false,
-                    marker: true,
+                    marker: {
+                        repeatMode:true
+                    },
                     circlemarker: false,
                     rectangle: false,
                 },
-                polyline: {
-                        shapeOptions: {
-                            color: '#f357a1',
-                            weight: 10,
-                            title:'essai'
-                        }
-                    },
             });
+            //console.log(mymap);
+            //console.log(L.drawLocal);
+            console.log(drawControl);
 
-            {#var options = new L.Control.Draw({
-                draw: {
-                    polygon: {
-                        allowIntersection: false, // Restricts shapes to simple polygons
-                        drawError: {
-                            color: '#e1e100', // Color the shape will turn when intersects
-                            message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
-                        },
-                        shapeOptions: {
-                            color: '#97009c'
-                        }
-                    },
-                    polyline: {
-                        shapeOptions: {
-                            color: '#f357a1',
-                            weight: 10,
-                        }
-                    },
-                    // disable toolbar item by setting it to false
-                    polyline: true,
-                    circle: true,
-                    polygon: true,
-                    marker: true,
-                    rectangle: true,
-                },
-                edit: {
-                    featureGroup: drawnItems, //REQUIRED!!
-                }
-            });#}
-
-            
             mymap.addControl(drawControl);
 
             var editableLayers = new L.FeatureGroup();
@@ -103,10 +132,12 @@
             mymap.on('draw:created', function(e) {
                 var type = e.layerType,
                     layer = e.layer;
-                    {#console.log(e.layer.editing.latlngs[0][0]);#}
+                    //console.log(layer);
 
                 if (type === 'polyline') {
                     drawnItems.addLayer(layer);
+                    console.log(e.layer.editing.latlngs[0])
+                    //console.log(e.layer.editing.latlngs[0][0]);
                 }
                 else if ( type === 'polygon') {
                     drawnItems.addLayer(layer);
@@ -125,7 +156,14 @@
                 }
                 editableLayers.addLayer(layer);
             });
-
+/*
+            mymap.on('draw:edited', function(e) {
+                var type = e.layerType,
+                    layer = e.layer;
+                    drawnItems.addLayer(layer);
+                    editableLayers.addLayer(layer);
+            });
+*/
             var positionUser = function() {
                 if(navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(showPosition);
