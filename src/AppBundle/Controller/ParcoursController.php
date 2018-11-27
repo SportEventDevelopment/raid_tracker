@@ -93,10 +93,11 @@ class ParcoursController extends Controller
             'delete_form' => $deleteForm->createView(),
         ));
     }
+
     /**
      * Deletes a parcour entity.
      *
-     * @Route("/{id}", name="parcours_delete")
+     * @Route("/parcours/remove/{id}", name="parcours_delete")
      */
     public function deleteParcours(Request $request, Parcours $parcour)
     {
@@ -124,7 +125,6 @@ class ParcoursController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('parcours_delete', array('id' => $parcour->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
     }
 }

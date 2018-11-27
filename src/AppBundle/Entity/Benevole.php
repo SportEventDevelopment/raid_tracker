@@ -2,74 +2,23 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * Benevole
- *
- * @ORM\Table(name="benevole")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\BenevoleRepository")
- */
 class Benevole
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     private $id;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="idUser", type="integer")
-     */
     private $idUser;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="idRaid", type="integer")
-     */
     private $idRaid;
-
-
+    
     /**
-      * @var bool
-      *
-      * @ORM\Column(name="est_benevole", type="boolean")
-      */
-     private $estBenevole;
-
-
-
-
-
-     /**
- * Get estBenevole
- *
- * @return boolean
- */
-public function getEstBenevole()
-{
-    return $this->estBenevole;
-}
-/**
- * Set estBenevole
- *
- * @param boolean $estBenevole
- *
- * @return Benevole
- */
-public function setEstBenevole($estBenevole)
-{
-  $this->estBenevole = $estBenevole;
-
-  return $this;
-}
-
+     * Set id
+     *
+     * @param integer $id
+     *
+     * @return Benevole
+     */
+    public function setIdUser($id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * Get id

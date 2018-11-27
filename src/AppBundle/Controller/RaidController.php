@@ -95,62 +95,13 @@ class RaidController extends Controller
         $all_postes = $this->getDoctrine()->getManager()
                 ->getRepository('AppBundle:Raid')
                 ->findPosteByIdRaid($request->get('id'));
-                        //   var_dump($all_postes);die();
         $em = $this->getDoctrine()->getManager();
 
-//        $benes = $em->getRepository('AppBundle:Benevole')->findAll();
-//var_dump($benes);die();
        return $this->render('raid/choixBenevole.html.twig', array(
            'user' => $this->getUser(),
-          'all_postes' => $all_postes,
-          'raid' => $raid,
-//          'benes' => $benes
-       ));
-    }
-
-
-
-
-
-    /**
-     * @Route("/raids/{id}/gestion_parcours", name="gestion_parcours")
-     */
-    public function GestionRaidParcoursAction(Request $request,$id)
-    {
-        $raid =  $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Raid')
-            ->findOneBy(array(
-                'id' => $request->get('id')
-            ));
-
-        $all_parcours = $this->getDoctrine()->getManager()
-                ->getRepository('AppBundle:Raid')
-                ->findAllParcoursByIdRaid($request->get('id'));
-
-       return $this->render('raid/GestionParcoursRaid.html.twig', array(
-           'user' => $this->getUser(),
-          'all_parcours' => $all_parcours,
-          'raid' => $raid
-       ));
-    }
-     */
-    public function editAction(Request $request, Raid $raid)
-    {
-        //$deleteForm = $this->createDeleteForm($raid);
-        $editForm = $this->createForm('AppBundle\Form\RaidType', $raid);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('gestion_raid');
-        }
-
-        return $this->render('raid/edit.html.twig', array(
-            'edit_form' => $editForm->createView(),
+            'all_postes' => $all_postes,
             'raid' => $raid,
-            'user'=>$this->getUser()
-            //'delete_form' => $deleteForm->createView(),
+//          'benes' => $benes
         ));
     }
 
@@ -174,5 +125,25 @@ class RaidController extends Controller
           'all_parcours' => $all_parcours,
           'raid' => $raid
        ));
+    }
+
+    public function editAction(Request $request, Raid $raid)
+    {
+        //$deleteForm = $this->createDeleteForm($raid);
+        $editForm = $this->createForm('AppBundle\Form\RaidType', $raid);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('gestion_raid');
+        }
+
+        return $this->render('raid/edit.html.twig', array(
+            'edit_form' => $editForm->createView(),
+            'raid' => $raid,
+            'user'=>$this->getUser()
+            //'delete_form' => $deleteForm->createView(),
+        ));
     }
 }
