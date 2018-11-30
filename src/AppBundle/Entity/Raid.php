@@ -9,8 +9,8 @@ class Raid
     private $date;
     private $edition;
     private $equipe;
-
-
+    private $visibility;
+    
     public function setNom($nom)
     {
         $this->nom = $nom;
@@ -59,5 +59,15 @@ class Raid
     public function getEquipe()
     {
         return $this->equipe;
+    }
+
+    public function setVisibility($visibility)
+    {
+        $this->visibility = $visibility;
+    }
+
+    public function getVisibility()
+    {
+        return $this->visibility;
     }
 }

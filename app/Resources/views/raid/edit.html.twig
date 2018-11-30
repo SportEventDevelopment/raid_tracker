@@ -25,30 +25,11 @@
                         </div>
                     </div>
 
-
                     <div class="form-row mb-4">
                         <div class="col">
                             {{ form_row(edit_form.edition, {'attr': {'class': 'form-control'}}) }}
                         </div>
                     </div>
-
-                   {# <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.nbrSport, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                    </div>
-
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.typeSport, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                    </div>
-
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.typeSurface, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                    </div> #}
 
                     <div class="form-row mb-4">
                         <div class="col">
@@ -58,12 +39,19 @@
 
                     <div class="form-row mb-4">
                         <div class="col">
-                            <button class="btn btn-info my-4 btn-block" type="submit">Créer un raid</button>
+                            {{ form_row(edit_form.visibility, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-4">
+                        <div class="col">
+                            <button class="btn btn-info my-4 btn-block" type="submit">Sauvegarder les modifications</button>
                         </div>
                         <div class="col">
                             <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
                         </div>
                     </div>
+
                 {{ form_end(edit_form) }}
           </div>
     </div>

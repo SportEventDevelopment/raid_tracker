@@ -10,8 +10,8 @@
   {% for raid in raids_organisateurs %}
     <li class="list-group-item text-left">
       {{raid.nom}}
-      <a href= {{ path('raid_edit', {'id': raid.id }) }}>
-        <i class="fas fa-edit"></i>
+      <a href= {{ path('raid_description_edit', {'id_raid': raid.id }) }}>
+        Editer les détails
       </a>
 
       <a href= {{ path('gestion_parcours', {'id': raid.id }) }}>
