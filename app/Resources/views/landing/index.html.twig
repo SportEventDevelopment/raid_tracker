@@ -3,54 +3,60 @@
 {% block content %}
 
 <div class="container">
-  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.username}}</button>
-  <br/>
-
-  <ul class="list-group">
-  {% if raids_organisateurs != null %}
-    {% for raid in raids_organisateurs %}
-      <a href= {{ path('edit_raid', {'id': raid.id} ) }}>
-        <li class="list-group-item">{{raid.nom}}</li>
-      </a>
-    {% endfor %}
-  {% else %}
-    <p>Vous n'êtes organisateurs d'aucun RAID pour le moment.</p>
-  {% endif %}
-
-    <a href= {{ path('create_raid') }}>
-      <i class="fas fa-3x fa-plus-circle"></i>
-    </a>
-  </ul>
-
-  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user.username}}</button>
-  <ul class="list-group">
-  {% if raids_benevoles != null %}
-    {% for raid in raids_benevoles %}
-    {#  <a href= {{ path('create_raid') }}> #}
-        <li class="list-group-item">{{raid.nom}}</li>
-      </a>
-    {% endfor %}
-  {% else %}
-    <p>Vous n'êtes bénévoles d'aucun RAID pour le moment.</p>
-  {% endif %}
-  </ul>
-
-  <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
-  <ul class="list-group flexcolumn">
-    {% if all_raids != null %}
-      {% for raid in all_raids %}
-        <li class="list-group-item text-left">
-          {{raid.nom}}
-          <a href= {{ path('rejoindre_raid_comme_benevole', {'id_raid': raid.id}) }}>
-            Rejoins-nous!
-            <span class="glyphicon glyphicon-plus"></span>
-          </a>
-      </li>
-    {% endfor %}
+  
+  <section>
+    <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.username}}</button>
+    <ul class="list-group">
+    {% if raids_organisateurs != null %}
+      {% for raid in raids_organisateurs %}
+        <a href= {{ path('edit_raid', {'id': raid.id} ) }}>
+          <li class="list-group-item">{{raid.nom}}</li>
+        </a>
+      {% endfor %}
     {% else %}
-      <p>Aucun RAID enregistré.</p>
+      <p>Vous n'êtes organisateurs d'aucun RAID pour le moment.</p>
     {% endif %}
-  </ul>
+
+      <a href= {{ path('create_raid') }}>
+        Créer mon RAID
+        <i class="fas fa-3x fa-plus-circle"></i>
+      </a>
+    </ul>
+  </section>
+
+  <section>
+    <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user.username}}</button>
+    <ul class="list-group">
+    {% if raids_benevoles != null %}
+      {% for raid in raids_benevoles %}
+      {#  <a href= {{ path('create_raid') }}> #}
+          <li class="list-group-item">{{raid.nom}}</li>
+        {# </a> #}
+      {% endfor %}
+    {% else %}
+      <p>Vous n'êtes bénévoles d'aucun RAID pour le moment.</p>
+    {% endif %}
+    </ul>
+  </section>
+
+  <section>
+    <button type="button" class="btn btn-primary btn-lg btn-block">Tous les raids</button>
+    <ul class="list-group flexcolumn">
+      {% if all_raids != null %}
+        {% for raid in all_raids %}
+          <li class="list-group-item raid-row text-left">
+            {{raid.nom}}
+            <a href= {{ path('rejoindre_raid_comme_benevole', {'id_raid': raid.id}) }}>
+              Rejoins-nous!
+              <span class="glyphicon glyphicon-plus"></span>
+            </a>
+        </li>
+      {% endfor %}
+      {% else %}
+        <p>Aucun RAID enregistré.</p>
+      {% endif %}
+    </ul>
+  </section>
 
 </div>
 {% endblock %}

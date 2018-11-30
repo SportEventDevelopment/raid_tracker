@@ -154,6 +154,7 @@ a.article, a.article:hover {
     padding: 20px;
     transition: all 0.3s;
     height:90vh;
+    overflow:auto;
 }
 
 #sidebarCollapse {

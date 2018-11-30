@@ -1,8 +1,6 @@
 .list-group {
     display:flex;
     flex-direction: row;
-    max-height:43vh;
-    overflow:auto;
 }
 
 .list-group li {
@@ -31,4 +29,8 @@
 .flexcolumn {
     display:flex;
     flex-direction:column;
+}
+
+.raid-row {
+    padding:3rem !important;
 }

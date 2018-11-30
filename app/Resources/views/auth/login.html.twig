@@ -1,26 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base_login.html.twig' %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <title>Raid Tracker</title>
-
-    <!-- Bootstrap CSS CDN -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-    <link href="{{ asset('css/styles_FC.css') }}" rel="stylesheet" type="text/css" />
-
-    <!-- Font Awesome JS -->
-    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
-</head>
-
-<body>
-
+{% block content %}
 <div class='vertical-center'>
-<div class='container col col-md-4'>
+    <div class='container col col-md-4'>
         <div class="card default-color-dark ">
             <form class=" border border-light p-5" role="form" method="POST" action="{{ path('login_check') }}">
                 <p class="h4 mb-4 text-center">Connexion</p>
@@ -64,7 +46,7 @@
         <ul class="list-group flexcolumn">
         {% if raids_visibles != null %}
             {% for raid in raids_visibles %}
-            <li class="list-group-item text-left">
+            <li class="list-group-item raid-row text-left">
                 {{raid.nom}}
             </li>
             {% endfor %}
@@ -72,6 +54,6 @@
             <p>Aucun RAID disponible en ce moment</p>
         {% endif %}
         </ul>
+    </div>
 </div>
-</div>
-</body>
+{% endblock %}
