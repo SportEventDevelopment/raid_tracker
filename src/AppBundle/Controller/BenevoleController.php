@@ -72,33 +72,6 @@ class BenevoleController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing parcour entity.
-     *
-     * @Route("/user/{iduser}/raid/{idraid}/choixOrga", name="choix_bene_defi")
-     */
-    public function ChoixDefinitifBenevoleAction(Request $request,$iduser,$idraid)
-    {
-
-      $em = $this->getDoctrine()->getManager();
-
-      $benevole = $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Benevole')
-            ->findBenevoleByIdRaid($request->get('idraid'),$request->get('iduser'));
-            $benevole->setEstBenevole(true);
-            $em->persist($benevole);
-            $em->flush();
-
-            $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
-                                    ->getRepository('AppBundle:Raid')
-                                    ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
-
-            return $this->render('landing/adminBenevole.html.twig', array(
-                  'user' => $this->getUser(),
-                  'raids_organisateurs' =>$raids_organisateurs
-              ));
-    }
-
-    /**
      * Creates a new parcour entity.
      *
      * @Route("/benevoles/raids/{id_raid}/invitations", name="inviter_benevole")
@@ -115,7 +88,7 @@ class BenevoleController extends Controller
                 ->setFrom('sporteventdevelopment@gmail.com')
                 ->setTo($form->getData()->getEmail())
                 ->setBody(
-                    $this->renderView('emails/invitationRaid.html.twig',
+                    $this->renderView('gestion/invitationRaid.html.twig',
                         array('link' => 'http://raidtracker.ddns.net/raid_tracker/web/app.php/benevoles/raids/'.$request->get('id_raid').'/join')),
                     'text/html'
                 );

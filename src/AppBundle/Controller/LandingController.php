@@ -21,10 +21,10 @@ class LandingController extends Controller
 
     $url = 'api/raids/benevoles/users/'.$this->getUser()->getIdUser();
     $raids_benevoles = $this->get('app.restclient')
-    ->get($url, $this->getUser()->getToken());
+      ->get($url, $this->getUser()->getToken());
 
     $all_raids = $this->get('app.restclient')
-    ->get('api/raids/visible/all', $this->getUser()->getToken());
+    ->get('api/raids/visible/users/'.$this->getUser()->getIdUser(), $this->getUser()->getToken());
 
     return $this->render('landing/index.html.twig', array(
       'user' => $this->getUser(),
@@ -63,21 +63,6 @@ class LandingController extends Controller
           'user' => $this->getUser(),
           'raids_organisateurs' => $raids_organisateurs,
         ));
-      }
-
-     /**
-      * @Route("/admin_benevole", name="admin_benevole")
-      */
-      public function AdminBenevoleAction(Request $request){
-
-       $user = $this->getUser();
-       $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
-                               ->getRepository('AppBundle:Raid')
-                               ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
-       return $this->render('landing/adminBenevole.html.twig', array(
-         'user' => $user,
-         'raids_organisateurs' => $raids_organisateurs,
-      ));
       }
 
     /**
