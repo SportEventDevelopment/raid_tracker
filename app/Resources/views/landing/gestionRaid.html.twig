@@ -10,12 +10,11 @@
   {% for raid in raids_organisateurs %}
     <li class="list-group-item text-left">
       {{raid.nom}}
-      <a href= {{ path('raid_description_edit', {'id_raid': raid.id }) }}>
-        Editer les détails
+      <a href= {{ path('gestion_raid_description', {'id_raid': raid.id }) }}>
+        Editer
       </a>
-
-      <a href= {{ path('gestion_parcours', {'id': raid.id }) }}>
-        Parcours du raid
+      <a href= {{ path('gestion_raid_organisateurs', {'id_raid': raid.id }) }}>
+        Gérer les organisateurs
       </a>
     </li>
   {% endfor %}

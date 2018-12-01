@@ -24,7 +24,7 @@ class LandingController extends Controller
     ->get($url, $this->getUser()->getToken());
 
     $all_raids = $this->get('app.restclient')
-    ->get('api/raids', $this->getUser()->getToken());
+    ->get('api/raids/visible/all', $this->getUser()->getToken());
 
     return $this->render('landing/index.html.twig', array(
       'user' => $this->getUser(),
@@ -35,7 +35,7 @@ class LandingController extends Controller
    }
    
   /**
-    * @Route("/invitation-benevoles", name="inviter")
+    * @Route("/invitations", name="landing_invitation")
     */
     public function inviterBenevoles(Request $request){
 

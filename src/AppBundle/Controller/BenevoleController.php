@@ -17,9 +17,9 @@ class BenevoleController extends Controller
 {
     /**
      * Creates a new parcour entity.
-     * @Route("/benevole/{id_raid}/inviter", name="inviter_benevole")
+     * @Route("/benevoles/raids/{id_raid}/invitations", name="inviter_benevole")
      */
-    public function inviterBenevoles(Request $request, $id_raid)
+    public function inviterBenevolesRaid(Request $request, $id_raid)
     {
         $user = new UserRegistration();
         $form = $this->createForm('AppBundle\Form\InviterBenevoleType',$user);
@@ -27,8 +27,6 @@ class BenevoleController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-
             return $this->redirectToRoute('landing');
         }
 
@@ -40,9 +38,7 @@ class BenevoleController extends Controller
 
     /**
      * Creates a new parcour entity.
-     *
-     * @Route("/benevoles/raids/{id_raid}", name="rejoindre_raid_comme_benevole")
-     * @Method({"GET", "POST"})
+     * @Route("/benevoles/raids/{id_raid}/join", name="rejoindre_raid_comme_benevole")
      */
     public function rejoindreRaidBenevole(Request $request)
     {        
@@ -94,7 +90,6 @@ class BenevoleController extends Controller
      * Displays a form to edit an existing parcour entity.
      *
      * @Route("/user/{iduser}/raid/{idraid}/choixOrga", name="choix_bene_defi")
-     * @Method({"GET"})
      */
     public function ChoixDefinitifBenevoleAction(Request $request,$iduser,$idraid)
     {
