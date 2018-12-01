@@ -5,31 +5,27 @@
     <div class="container col col-md-4">
         <div class="card default-color-dark ">
             {% if not posteNonExistant %}
-            {{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
-                <p class="h4 mb-2 text-center">Rejoindre un raid comme bénévole</p>
+                {{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
+                    <p class="h4 mb-2 text-center">Rejoindre un raid comme bénévole</p>
 
-                <div class="form-row mb-4">
-                    <div class="col">
-                        {{ form_row(form.idPoste, {'attr': {'class': 'form-control'}}) }}
+                    <div class="form-row mb-4">
+                        <div class="col">
+                            {{ form_row(form.idPoste, {'attr': {'class': 'form-control'}}) }}
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-row mb-4">
-                    <div class="col">
-                        <button class="btn btn-info my-4 btn-block" type="submit"> Nous rejoindre</button>
+                    <div class="form-row mb-4">
+                        <div class="col">
+                            <button class="btn btn-info my-4 btn-block" type="submit"> Nous rejoindre</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
+                        </div>
                     </div>
-                    <div class="col">
-                        <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
-                    </div>
-                </div>
-                {{ form_end(form) }}
+                    {{ form_end(form) }}
                 {% else %}
-                Aucun poste n'est disponible pour ce raid.
-                <div>
-                    <button>
-                    <a href="{{ path('landing') }}">Retour à la page d'accueil </a>
-                    </button>
-                </div>
+                    <p class="h4 mb-2 text-center p-4">Aucun poste n'est disponible pour ce raid.</p>
+                    <a class="btn btn-info my-4 btn-block" href="{{ path('landing') }}">Retour à la page d'accueil </a>
                 {% endif %}
 
         </div>
