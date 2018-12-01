@@ -45,15 +45,20 @@ class BenevoleController extends Controller
      * @Method({"GET", "POST"})
      */
     public function rejoindreRaidBenevole(Request $request)
-    {        
+    {
+        $posteNonExistant = false;
         $url = 'api/postes/raids/'.$request->get('id_raid').'/available';
         $postes_availables = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
-
+        if($postes_availables == null){
+          $posteNonExistant = true;
+        }
+        //var_dump($postes_availables);die();
         $PrefPoste = new PrefPoste();
         $form = $this->createForm('AppBundle\Form\PrefPosteType', $PrefPoste, array(
             'postes_disponibles' => $postes_availables
         ));
+
 
         $form->handleRequest($request);
 
@@ -65,8 +70,8 @@ class BenevoleController extends Controller
                 'idRaid' => $request->get('id_raid')
             );
             $response = $this->get('app.restclient')->post(
-                'api/benevoles/raids/'.$benevole['idRaid'].'/users/'.$benevole['idUser'], 
-                $benevole, 
+                'api/benevoles/raids/'.$benevole['idRaid'].'/users/'.$benevole['idUser'],
+                $benevole,
                 $this->getUser()->getToken()
             );
 
@@ -76,17 +81,18 @@ class BenevoleController extends Controller
                 'idBenevole' => $response->body->id
             );
             $request = $this->get('app.restclient')->post(
-                'api/prefpostes', 
+                'api/prefpostes',
                 $prefposte,
                 $this->getUser()->getToken()
             );
-            
+
             return $this->redirectToRoute('landing');
         }
 
         return $this->render('landing/rejoindreRaid.html.twig', array(
             'form' => $form->createView(),
-            'user' =>$this->getUser()
+            'user' =>$this->getUser(),
+            'posteNonExistant' => $posteNonExistant,
         ));
     }
 
