@@ -1,21 +1,24 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-<div class="container">
-   
-        <button type="button" class="btn btn-primary btn-lg btn-block">Parcours</button>
 
-        <ul class="list-group">
-        {% for parcours in all_parcours %} 
-            <a href= {{ path('edit_parcours', {'id':parcours.id} ) }}>
+    <button type="button" class="btn btn-primary btn-lg btn-block">Parcours</button>
+
+    <ul class="list-group">
+    
+    {% if all_parcours != null %}
+        {% for parcours in all_parcours %}
+            <a href= {{ path('carte_edit', {'id_parcours':parcours.id} ) }}>
                 <li class="list-group-item">{{parcours.nom}}</li>
             </a>
         {% endfor %}
+    {% else %}
+        <p>Aucun parcours dans ce raid</p>
+    {% endif %}
         
 
     <a href= {{ path('create_parcours',{'id':raid.id}) }}>
         <i class="fas fa-3x fa-plus-circle"></i>
     </a>
 
-</div>
 {% endblock %}

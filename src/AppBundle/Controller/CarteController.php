@@ -23,4 +23,21 @@ class CarteController extends Controller
         ));
         return new Response($content);
     }
+
+    /**
+     * @Route("/carte/edit/{id_parcours}", name="carte_edit")
+     */
+    public function editCarte(Request $request)
+    {
+        $user = $this->getUser();
+        $url = 'api/traces/parcours/'.$request->get('id_parcours');
+        $traces = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
+            'user' => $user,
+            'traces' => $traces
+        ));
+        return new Response($content);
+    }
 }

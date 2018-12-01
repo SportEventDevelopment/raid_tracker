@@ -16,7 +16,6 @@ use \Unirest;
 /**
  * Raid controller.
  *
- * @Route("raid")
  */
 class RaidController extends Controller
 {
@@ -72,8 +71,7 @@ class RaidController extends Controller
         $url = 'api/parcours/raids/'.$request->get('id');
         $all_parcours = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
-
-                //var_dump($all_parcours);die();
+        
        return $this->render('raid/description_raid_organisateur.html.twig', array(
             'user' => $this->getUser(),
             'all_parcours' => $all_parcours,

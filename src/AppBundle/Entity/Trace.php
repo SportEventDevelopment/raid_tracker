@@ -1,28 +1,19 @@
 <?php
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity()
- * @ORM\Table(name="trace")
- */
 class Trace
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    private $id;
     private $idTrace;
+    private $idParcours;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    protected $idParcours;
+    
+    public function getId()
+    {
+        return $this->id;
+    }
 
-
-    public function getidTrace()
+    public function getIdTrace()
     {
         return $this->idTrace;
     }
@@ -32,7 +23,13 @@ class Trace
         return $this->idParcours;
     }
 
-    public function setidTrace($idTrace)
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function setIdTrace($idTrace)
     {
         $this->idTrace = $idTrace;
         return $this;
