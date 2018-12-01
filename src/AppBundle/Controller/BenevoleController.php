@@ -110,7 +110,7 @@ class BenevoleController extends Controller
                 ->setTo($form->getData()->getEmail())
                 ->setBody(
                     $this->renderView('emails/invitationRaid.html.twig',
-                        array('link' => 'http://localhost/raid_tracker/web/app_dev.php/benevoles/raids/'.$request->get('id_raid').'/join')),
+                        array('link' => 'http://raidtracker.ddns.net/raid_tracker/web/app.php/benevoles/raids/'.$request->get('id_raid').'/join')),
                     'text/html'
                 );
 
@@ -119,8 +119,7 @@ class BenevoleController extends Controller
         }
 
         return $this->render('landing/inviterBenevole.html.twig', array(
-            'form' => $form->createView(),
-            'user' =>$this->getUser()
+            'form' => $form->createView()
         ));
     }
 }
