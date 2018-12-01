@@ -40,6 +40,16 @@ class ParcoursController extends Controller
                 $this->getUser()->getToken()
             );
 
+            $trace_data = array(
+                'idParcours' => $parcours->body->id,
+            );
+            
+            $trace = $this->get('app.restclient')->post(
+                'api/traces',
+                $trace_data,
+                $this->getUser()->getToken()
+            );
+
             return $this->redirectToRoute('carte');
         }
 
