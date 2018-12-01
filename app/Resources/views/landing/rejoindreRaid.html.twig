@@ -4,6 +4,7 @@
 <div class='vertical-center'>
     <div class="container col col-md-4">
         <div class="card default-color-dark ">
+            {% if not posteNonExistant %}
             {{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
                 <p class="h4 mb-2 text-center">Rejoindre un raid comme bénévole</p>
 
@@ -21,7 +22,16 @@
                         <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
                     </div>
                 </div>
-            {{ form_end(form) }}
+                {{ form_end(form) }}
+                {% else %}
+                Aucun poste n'est disponible pour ce raid.
+                <div>
+                    <button>
+                    <a href="{{ path('landing') }}">Retour à la page d'accueil </a>
+                    </button>
+                </div>
+                {% endif %}
+
         </div>
     </div>
 </div>
