@@ -119,7 +119,8 @@ class BenevoleController extends Controller
         }
 
         return $this->render('landing/inviterBenevole.html.twig', array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'user' =>$this->getUser()
         ));
     }
 }
