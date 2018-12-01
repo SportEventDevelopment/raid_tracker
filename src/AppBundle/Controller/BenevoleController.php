@@ -17,27 +17,6 @@ class BenevoleController extends Controller
 {
     /**
      * Creates a new parcour entity.
-     * @Route("/benevoles/raids/{id_raid}/invitations", name="inviter_benevole")
-     */
-    public function inviterBenevolesRaid(Request $request, $id_raid)
-    {
-        $user = new UserRegistration();
-        $form = $this->createForm('AppBundle\Form\InviterBenevoleType',$user);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            return $this->redirectToRoute('landing');
-        }
-
-        return $this->render('landing/inviterBenevole.html.twig', array(
-            'user' =>$this->getUser(),
-            'form' => $form->createView()
-        ));
-    }
-
-    /**
-     * Creates a new parcour entity.
      * @Route("/benevoles/raids/{id_raid}/join", name="rejoindre_raid_comme_benevole")
      */
     public function rejoindreRaidBenevole(Request $request)
@@ -116,21 +95,27 @@ class BenevoleController extends Controller
     /**
      * Creates a new parcour entity.
      *
-     * @Route("/benevole/{id_raid}/inviter", name="inviter_benevole")
-     * @Method({"GET", "POST"})
+     * @Route("/benevoles/raids/{id_raid}/invitations", name="inviter_benevole")
      */
-    public function inviterBenevoleDansRaid(Request $request, $id_raid,\Swift_Mailer $mailer)
+    public function inviterBenevoleDansRaid(Request $request, \Swift_Mailer $mailer)
     {
-        $user = new User();
-        $form = $this->createForm('AppBundle\Form\InviterBenevoleType',$user);
+        $form = $this->createForm('AppBundle\Form\InviterBenevoleType');
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $message = (new \Swift_Message('Invitation pour bénévolat raid'))
+                ->setFrom('sporteventdevelopment@gmail.com')
+                ->setTo($form->getData()->getEmail())
+                ->setBody(
+                    $this->renderView('emails/invitationRaid.html.twig',
+                        array('link' => 'http://localhost/raid_tracker/web/app_dev.php/benevoles/raids/'.$request->get('id_raid').'/join')),
+                    'text/html'
+                );
 
-            $em = $this->getDoctrine()->getManager();
-            $this->get('mailer')->send($message);
-            return $this->redirectToRoute('landing');
+            $mailer->send($message);
+            return $this->redirectToRoute('inviter_benevole', array('id_raid' => $request->get('id_raid')) );
         }
 
         return $this->render('landing/inviterBenevole.html.twig', array(
