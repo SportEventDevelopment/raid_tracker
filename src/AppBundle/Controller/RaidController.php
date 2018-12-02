@@ -139,4 +139,32 @@ class RaidController extends Controller
             //'delete_form' => $deleteForm->createView(),
         ));
     }
+
+
+    /**
+     * @Route("/raids/benevole/{id}", name="postes_benevole_raid")
+     */
+    public function editRaidBenevoleAction(Request $request)
+    {
+      $posteRepartis = true;
+        $url = 'api/raids/'.$request->get('id');
+        $raid = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        $url = 'api/repartitions/users/'.$this->getUser()->getIdUser();
+        $all_postes = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        if($all_postes == null) {
+          $posteRepartis = false;
+        }
+
+                //var_dump($all_parcours);die();
+       return $this->render('raid/postes_benevoles.html.twig', array(
+            'user' => $this->getUser(),
+            'all_postes' => $all_postes,
+            'raid' => $raid,
+            'posteRepartis' => $posteRepartis
+       ));
+    }
 }

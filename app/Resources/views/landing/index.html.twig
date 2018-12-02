@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container">
-  
+
   <section>
     <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.username}}</button>
     <ul class="list-group">
@@ -29,9 +29,10 @@
     <ul class="list-group">
     {% if raids_benevoles != null %}
       {% for raid in raids_benevoles %}
-      {#  <a href= {{ path('create_raid') }}> #}
+  {#    {{dump(raid)}} #}
+        <a href= {{ path('postes_benevole_raid', {'id': raid.id} ) }}>
           <li class="list-group-item">{{raid.nom}}</li>
-        {# </a> #}
+         </a>
       {% endfor %}
     {% else %}
       <p>Vous n'êtes bénévoles d'aucun RAID pour le moment.</p>

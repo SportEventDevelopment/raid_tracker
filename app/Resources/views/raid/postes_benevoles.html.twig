@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div class="container">
+
+{% if posteRepartis %}
+
+        <button type="button" class="btn btn-primary btn-lg btn-block">Liste des postes du bénévoles</button>
+
+        <ul class="list-group">
+        {% for poste in all_postes %}
+{#        {{dump(poste)}} #}
+                <li class="list-group-item">
+                {{poste.idPoste.type}} //
+                {{poste.idPoste.heureDebut }} //
+                {{poste.idPoste.heureFin}}
+
+                </li>
+        {% endfor %}
+{%else%}
+      Vous n'êtes pas encore choisi pour un poste.
+        <div>
+            <button>
+            <a href="{{ path('landing') }}">Retour à la page d'accueil </a>
+            </button>
+        </div>
+{%endif%}
+
+</div>
+{% endblock %}

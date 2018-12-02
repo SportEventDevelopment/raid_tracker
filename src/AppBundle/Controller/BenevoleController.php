@@ -48,6 +48,7 @@ class BenevoleController extends Controller
     {
         $posteNonExistant = false;
         $url = 'api/postes/raids/'.$request->get('id_raid').'/available';
+    //  $url= 'api/postes/benevoles/'.{id_benevole};
         $postes_availables = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
         if($postes_availables == null){
