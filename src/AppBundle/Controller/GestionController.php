@@ -78,7 +78,7 @@ class GestionController extends Controller
                 return $this->render('gestion/edit_organisateurs.html.twig', array(
                     'user'=>$this->getUser(),
                     'organisateurs' => $organisateurs,
-                    'errors' => "L'utilisateur que vous souhaité ajouter n'existe pas!",
+                    'errors' => "L'utilisateur que vous souhaitez ajouter n'existe pas!",
                     'form' => $form->createView()
                 ));
             }

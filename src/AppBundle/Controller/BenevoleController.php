@@ -28,7 +28,7 @@ class BenevoleController extends Controller
         if($postes_availables == null){
           $posteNonExistant = true;
         }
-        //var_dump($postes_availables);die();
+        
         $PrefPoste = new PrefPoste();
         $form = $this->createForm('AppBundle\Form\PrefPosteType', $PrefPoste, array(
             'postes_disponibles' => $postes_availables

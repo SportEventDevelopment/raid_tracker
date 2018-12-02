@@ -32,10 +32,10 @@
     <ul class="list-group">
         {% for prefposte in all_prefpostes %}
             <li class="list-group-item text-left">
-                {{ prefposte.idBenevole.idUser.username}} -
-                {{ prefposte.idPoste.type}} -
-                {{ prefposte.idPoste.heureDebut }} -
-                {{ prefposte.idPoste.heureFin}}
+                {{ prefposte.idBenevole.idUser.username}} souhaiterait le poste
+                {{ prefposte.idPoste.type}} de
+                {{ prefposte.idPoste.heureDebut|date('H:i', "Europe/Paris") }} à
+                {{ prefposte.idPoste.heureFin|date('H:i', "Europe/Paris")}}
 
                 <a href= {{ path('choix_bene_defi', {'idbenevole': prefposte.idBenevole.id, 'idposte':prefposte.idPoste.id }) }}>
                     Attribuer le poste à ce bénévole
