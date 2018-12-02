@@ -83,23 +83,23 @@ class GestionController extends Controller
                 ));
             }
 
-            $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'.$request->get('id_raid');
+            $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'.$userSearch->id;
             $orga_data = array(
                 'idUser' => $userSearch->id,
                 'idRaid' => $request->get('id_raid')
             );
+
             $new_orga = $this->get('app.restclient')->post($url, $orga_data, $this->getUser()->getToken());
-            if(!empty($new_orga)){
-                return $this->redirectToRoute('gestion_raid_organisateurs', array('id_raid' => $request->get('id_raid')));
+            if(empty($new_orga)){
+                return $this->render('gestion/edit_organisateurs.html.twig', array(
+                    'user'=>$this->getUser(),
+                    'organisateurs' => $organisateurs,
+                    'errors' => "Problème rencontré lors de l'enregistrement du nouvel organisateur",
+                    'form' => $form->createView()
+                ));  
             }
 
-            return $this->render('gestion/edit_organisateurs.html.twig', array(
-                'user'=>$this->getUser(),
-                'organisateurs' => $organisateurs,
-                'errors' => "Problème rencontré lors de l'enregistrement du nouvel organisateur",
-                'form' => $form->createView()
-            ));  
-
+            return $this->redirectToRoute('gestion_raid_organisateurs', array('id_raid' => $request->get('id_raid')));
         }
 
         return $this->render('gestion/edit_organisateurs.html.twig', array(
