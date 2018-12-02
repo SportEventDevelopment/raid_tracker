@@ -61,7 +61,7 @@ class RaidController extends Controller
     /**
      * @Route("/raids/{id}", name="edit_raid")
      */
-    public function descriptionRaidOrganisateurAction(Request $request)
+    public function descriptionRaidOrganisateur(Request $request)
     {
         $url = 'api/raids/'.$request->get('id');
         $raid = $this->get('app.restclient')
@@ -71,49 +71,38 @@ class RaidController extends Controller
         $all_parcours = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
+        $url = 'api/prefpostes/raids/'.$request->get('id');
+        $all_prefpostes = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        $url = 'api/repartitions/raids/'.$request->get('id');
+        $all_repartitions = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
        return $this->render('raid/description_raid_organisateur.html.twig', array(
             'user' => $this->getUser(),
             'all_parcours' => $all_parcours,
+            'all_prefpostes' => $all_prefpostes,
+            'all_repartitions' => $all_repartitions,
             'raid' => $raid
        ));
     }
 
     /**
-     * @Route("/raids/{idRaid}/", name="choix_benevole_orga")
+     * @Route("/raids/benevoles/{idbenevole}/postes/{idposte}", name="choix_bene_defi")
      */
-    public function choixBenevoleAction(Request $request,$idRaid)
+    public function ChoixDefinitifBenevole(Request $request)
     {
-     $url = 'api/prefpostes/raids/'.$idRaid;
-     $all_postes = $this->get('app.restclient')
-                           ->get($url, $this->getUser()->getToken());
-
-     $em = $this->getDoctrine()->getManager();
-
-       return $this->render('raid/choixBenevole.html.twig', array(
-           'user' => $this->getUser(),
-            'all_postes' => $all_postes,
-        ));
-    }
-
-    /**
-     * @Route("/raids/{id}/gestion_parcours", name="gestion_parcours")
-     */
-    public function GestionRaidParcoursAction(Request $request,$id)
-    {
-        $raid =  $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Raid')
-            ->findOneBy(array(
-                'id' => $request->get('id')
-            ));
-
-        $all_parcours = $this->getDoctrine()->getManager()
-                ->getRepository('AppBundle:Raid')
-                ->findAllParcoursByIdRaid($request->get('id'));
-
-       return $this->render('raid/GestionParcoursRaid.html.twig', array(
-            'user' => $this->getUser(),
-            'all_parcours' => $all_parcours,
-            'raid' => $raid
-       ));
+        // Ajout de la répartition du poste du bénévole
+        $repartition = array(
+            'idPoste' => $request->get('idposte'),
+            'idBenevole' => $request->get('idbenevole')
+        );
+        $request = $this->get('app.restclient')->post(
+            'api/repartitions',
+            $repartition,
+            $this->getUser()->getToken()
+        );
+        return $this->redirectToRoute('landing');
     }
 }

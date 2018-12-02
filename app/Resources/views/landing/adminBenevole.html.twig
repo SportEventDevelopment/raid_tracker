@@ -7,17 +7,15 @@
   <br/>
 
   <ul class="list-group flexcolumn">
-  {% for raid in raids_organisateurs %}
-{#  {{dump(raid)}} #}
-    <li class="list-group-item text-left">
-      {{raid.nom}}
-     <a href= {{ path('choix_benevole_orga', {'idRaid': raid.id }) }}>
-        Gérer!
-        <span class="glyphicon glyphicon-plus"></span>
-      </a>
-
-    </li>
-  {% endfor %}
+    {% for raid in raids_organisateurs %}
+      <li class="list-group-item text-left">
+        {{raid.nom}}
+        <a href= {{ path('choix_benevole_orga', {'idRaid': raid.id }) }}>
+          Répartir
+          <span class="glyphicon glyphicon-plus"></span>
+        </a>
+      </li>
+    {% endfor %}
   </ul>
 
 

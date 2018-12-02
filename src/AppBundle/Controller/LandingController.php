@@ -64,24 +64,7 @@ class LandingController extends Controller
           'raids_organisateurs' => $raids_organisateurs,
         ));
       }
-
-     /**
-      * @Route("/admin_benevole", name="admin_benevole")
-      */
-      public function AdminBenevoleAction(Request $request){
-
-       $user = $this->getUser();
-
-       //var_dump($user->getUsername());die();
-       $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
-       $raids_organisateurs = $this->get('app.restclient')
-                             ->get($url, $this->getUser()->getToken());
-       return $this->render('landing/adminBenevole.html.twig', array(
-         'user' => $this->getUser(),
-         'raids_organisateurs' => $raids_organisateurs,
-      ));
-      }
-
+    
     /**
       * @Route("/rejoindre-raid-benevole", name="raid_benevole_join")
       */

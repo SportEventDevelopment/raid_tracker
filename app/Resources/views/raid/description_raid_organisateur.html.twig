@@ -28,8 +28,31 @@
         <i class="fas fa-3x fa-plus-circle"></i>
     </a>
 
-    <h2>Affecter les bénévoles</h2>
-    A venir
+    <h2>Attribuer un poste à un bénévole</h2>
+    <ul class="list-group">
+        {% for prefposte in all_prefpostes %}
+            <li class="list-group-item text-left">
+                {{ prefposte.idBenevole.idUser.username}} -
+                {{ prefposte.idPoste.type}} -
+                {{ prefposte.idPoste.heureDebut }} -
+                {{ prefposte.idPoste.heureFin}}
+
+                <a href= {{ path('choix_bene_defi', {'idbenevole': prefposte.idBenevole.id, 'idposte':prefposte.idPoste.id }) }}>
+                    Attribuer le poste à ce bénévole
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Bénévoles déjà affectés</h2>
+     <ul class="list-group">
+        {% for repartition in all_repartitions %}
+            <li class="list-group-item text-left">
+                {{ repartition.idBenevole.idUser.username }} - 
+                {{ repartition.idPoste.type }}
+            </li>
+        {% endfor %}
+    </ul>
 </div>
 
 {% endblock %}
