@@ -122,7 +122,7 @@ class GestionController extends Controller
         $organisateurs = $this->get('app.restclient')
             ->get($url_raids, $this->getUser()->getToken());
 
-        if(count($organisateurs)){
+        if(count($organisateurs) == 1){
             return $this->redirectToRoute('gestion_raid_organisateurs', array(
                 'id_raid' => $request->get('id_raid')
             ));
