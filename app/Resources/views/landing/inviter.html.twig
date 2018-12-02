@@ -8,12 +8,10 @@
 
   <ul class="list-group flexcolumn">
   {% for raid in raids_organisateurs %}
-    <li class="list-group-item text-left">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
       {{raid.nom}}
       <a href= {{ path('inviter_benevole', {'id_raid': raid.id }) }}>
-
         Inviter des bénevoles!
-        <span class="glyphicon glyphicon-plus"></span>
       </a>
     </li>
   {% endfor %}
