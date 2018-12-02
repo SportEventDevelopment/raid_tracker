@@ -28,7 +28,7 @@ class RaidController extends Controller
         $raid = new Raid();
         $form = $this->createForm('AppBundle\Form\RaidType', $raid);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $raid_data =$this->get('app.serialize')->entityToArray($form->getData());
@@ -40,13 +40,13 @@ class RaidController extends Controller
                 $raid_data,
                 $this->getUser()->getToken()
             );
-            
+
             $organisateur_data = array(
                 'idUser' => $this->getUser()->getIdUser(),
                 'idRaid' => $response->body->id
             );
             $response = $this->get('app.restclient')->post(
-                'api/organisateurs/raids/'. $organisateur_data['idRaid'].'/users/'. $organisateur_data['idUser'], 
+                'api/organisateurs/raids/'. $organisateur_data['idRaid'].'/users/'. $organisateur_data['idUser'],
                 $organisateur_data,
                 $this->getUser()->getToken()
             );
@@ -80,28 +80,21 @@ class RaidController extends Controller
             'raid' => $raid
        ));
     }
-    
-    /**
-     * @Route("/raids/{id}/user/{id2}/choix_benevole_orga", name="choix_benevole_orga")
-     */
-    public function choixBenevoleAction(Request $request,$id,$id2)
-    {
-        $raid =  $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Raid')
-            ->findOneBy(array(
-                'id' => $request->get('id')
-            ));
 
-        $all_postes = $this->getDoctrine()->getManager()
-                ->getRepository('AppBundle:Raid')
-                ->findPosteByIdRaid($request->get('id'));
-        $em = $this->getDoctrine()->getManager();
+    /**
+     * @Route("/raids/{idRaid}/", name="choix_benevole_orga")
+     */
+    public function choixBenevoleAction(Request $request,$idRaid)
+    {
+     $url = 'api/prefpostes/raids/'.$idRaid;
+     $all_postes = $this->get('app.restclient')
+                           ->get($url, $this->getUser()->getToken());
+
+     $em = $this->getDoctrine()->getManager();
 
        return $this->render('raid/choixBenevole.html.twig', array(
            'user' => $this->getUser(),
             'all_postes' => $all_postes,
-            'raid' => $raid,
-//          'benes' => $benes
         ));
     }
 

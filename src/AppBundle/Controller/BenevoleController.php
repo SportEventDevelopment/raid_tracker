@@ -99,28 +99,33 @@ class BenevoleController extends Controller
     /**
      * Displays a form to edit an existing parcour entity.
      *
-     * @Route("/user/{iduser}/raid/{idraid}/choixOrga", name="choix_bene_defi")
+     * @Route("/raid/{idraid}/user/{iduser}/raid/{idposte}/choixOrga", name="choix_bene_defi")
      * @Method({"GET"})
      */
-    public function ChoixDefinitifBenevoleAction(Request $request,$iduser,$idraid)
+    public function ChoixDefinitifBenevoleAction(Request $request,$iduser,$idraid,$idposte)
     {
 
       $em = $this->getDoctrine()->getManager();
+$urlRaid = 'api/raids/'.$idraid;
+$raids_organisateurs = $this->get('app.restclient')
+                      ->get($urlRaid, $this->getUser()->getToken());
 
-      $benevole = $this->getDoctrine()->getManager()
-            ->getRepository('AppBundle:Benevole')
-            ->findBenevoleByIdRaid($request->get('idraid'),$request->get('iduser'));
-            $benevole->setEstBenevole(true);
-            $em->persist($benevole);
-            $em->flush();
+// Ajout de la préférence du poste du bénévole
+  $repartition = array(
+    'idPoste' => $idposte,
+    'idBenevole' => $iduser
+  );
 
-            $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
-                                    ->getRepository('AppBundle:Raid')
-                                    ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
+$request = $this->get('app.restclient')->post(
+    'api/repartitions',
+    $repartition,
+    $this->getUser()->getToken()
+);
+return $this->redirectToRoute('landing');
 
             return $this->render('landing/adminBenevole.html.twig', array(
                   'user' => $this->getUser(),
-                  'raids_organisateurs' =>$raids_organisateurs
+                 'raids_organisateurs' =>$raids_organisateurs
               ));
     }
 

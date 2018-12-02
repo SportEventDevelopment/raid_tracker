@@ -8,15 +8,20 @@
         <ul class="list-group">
         {% for poste in all_postes %}
             <li class="list-group-item text-left">
-               {{poste.type}} -
-               {{poste.name}}
+                {{ poste.idBenevole.idUser.username}} -
+                {{ poste.idPoste.type}} -
+                {{ poste.idPoste.heureDebut }} -
+                {{ poste.idPoste.heureFin}}
 
-               <a href= {{ path('choix_bene_defi', {'iduser': poste.idUser,'idraid':poste.idRaid }) }}> 
+              {#    {{ dump(poste)}} #}
+
+               <a href= {{ path('choix_bene_defi', {'iduser': poste.idBenevole.idUser.id,'idraid':poste.idBenevole.idRaid.id, 'idposte':poste.idPoste.id }) }}>
                  Choisir
                </a>
             </li>
 
         {% endfor %}
+
         </ul>
 
 

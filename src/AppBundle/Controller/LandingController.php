@@ -33,7 +33,7 @@ class LandingController extends Controller
       'all_raids' => $all_raids
     ));
    }
-   
+
   /**
     * @Route("/invitation-benevoles", name="inviter")
     */
@@ -43,7 +43,7 @@ class LandingController extends Controller
       $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
       $raids_organisateurs = $this->get('app.restclient')
         ->get($url, $this->getUser()->getToken());
- 
+
       return $this->render('landing/inviter.html.twig', array(
         'user' => $this->getUser(),
         'raids_organisateurs' => $raids_organisateurs
@@ -54,10 +54,10 @@ class LandingController extends Controller
       * @Route("/gerer-raids", name="landing_gerer_raid")
       */
       public function gererRaids(Request $request){
- 
+
         $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
         $raids_organisateurs = $this->get('app.restclient')
- 
+
           ->get($url, $this->getUser()->getToken());
         return $this->render('landing/gestionRaid.html.twig', array(
           'user' => $this->getUser(),
@@ -71,11 +71,13 @@ class LandingController extends Controller
       public function AdminBenevoleAction(Request $request){
 
        $user = $this->getUser();
-       $raids_organisateurs = $this->get('doctrine.orm.entity_manager')
-                               ->getRepository('AppBundle:Raid')
-                               ->findRaidsOrganisateursByIdUser($this->getUser()->getId());
+
+       //var_dump($user->getUsername());die();
+       $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
+       $raids_organisateurs = $this->get('app.restclient')
+                             ->get($url, $this->getUser()->getToken());
        return $this->render('landing/adminBenevole.html.twig', array(
-         'user' => $user,
+         'user' => $this->getUser(),
          'raids_organisateurs' => $raids_organisateurs,
       ));
       }
@@ -85,10 +87,10 @@ class LandingController extends Controller
       */
       public function raidBenevoleJoin(Request $request){
         $url = 'api/raids/benevoles/users/'.$this->getUser()->getIdUser();
- 
+
         $raids_benevoles = $this->get('app.restclient')
           ->get($url, $this->getUser()->getToken());
- 
+
         return $this->render('landing/gestionRaid.html.twig', array(
           'user' => $this->getUser(),
           'raids_benevoles' => $raids_benevoles,
