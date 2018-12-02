@@ -33,7 +33,7 @@ class LandingController extends Controller
       'all_raids' => $all_raids
     ));
    }
-   
+
   /**
     * @Route("/invitations", name="landing_invitation")
     */
@@ -43,7 +43,7 @@ class LandingController extends Controller
       $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
       $raids_organisateurs = $this->get('app.restclient')
         ->get($url, $this->getUser()->getToken());
- 
+
       return $this->render('landing/inviter.html.twig', array(
         'user' => $this->getUser(),
         'raids_organisateurs' => $raids_organisateurs
@@ -54,7 +54,7 @@ class LandingController extends Controller
       * @Route("/gerer-raids", name="landing_gerer_raid")
       */
       public function gererRaids(Request $request){
- 
+
         $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
         $raids_organisateurs = $this->get('app.restclient')
           ->get($url, $this->getUser()->getToken());
@@ -65,15 +65,32 @@ class LandingController extends Controller
         ));
       }
 
+     /**
+      * @Route("/admin_benevole", name="admin_benevole")
+      */
+      public function AdminBenevoleAction(Request $request){
+
+       $user = $this->getUser();
+
+       //var_dump($user->getUsername());die();
+       $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
+       $raids_organisateurs = $this->get('app.restclient')
+                             ->get($url, $this->getUser()->getToken());
+       return $this->render('landing/adminBenevole.html.twig', array(
+         'user' => $this->getUser(),
+         'raids_organisateurs' => $raids_organisateurs,
+      ));
+      }
+
     /**
       * @Route("/rejoindre-raid-benevole", name="raid_benevole_join")
       */
       public function raidBenevoleJoin(Request $request){
         $url = 'api/raids/benevoles/users/'.$this->getUser()->getIdUser();
- 
+
         $raids_benevoles = $this->get('app.restclient')
           ->get($url, $this->getUser()->getToken());
- 
+
         return $this->render('landing/gestionRaid.html.twig', array(
           'user' => $this->getUser(),
           'raids_benevoles' => $raids_benevoles,
