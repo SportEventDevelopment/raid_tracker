@@ -17,9 +17,10 @@ class CarteController extends Controller
      */
     public function carte()
     {
-        $user = $this->getUser();
         $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
-            'user' => $user
+            'user' => $this->getUser(),
+            'trace' => null,
+            'token' => $this->getUser()->getToken()
         ));
         return new Response($content);
     }
@@ -36,7 +37,26 @@ class CarteController extends Controller
 
         $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
             'user' => $user,
-            'traces' => $traces
+            'trace' => $traces,
+            'token' => $this->getUser()->getToken()
+        ));
+        return new Response($content);
+    }
+
+    /**
+     * @Route("/carte/export/{id_parcours}", name="carte_export")
+     */
+    public function exportCarte(Request $request)
+    {
+        $user = $this->getUser();
+        $url = 'api/traces/parcours/'.$request->get('id_parcours');
+        $traces = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
+            'user' => $user,
+            'trace' => $traces,
+            'token' => $this->getUser()->getToken()
         ));
         return new Response($content);
     }

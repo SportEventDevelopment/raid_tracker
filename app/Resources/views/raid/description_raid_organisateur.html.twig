@@ -2,23 +2,34 @@
 
 {% block content %}
 
-    <button type="button" class="btn btn-primary btn-lg btn-block">Parcours</button>
+<div class="container">
+    <h1>Edition du RAID : {{raid.nom}}</h1>
+    <h2>Liste des parcours</h2>
 
-    <ul class="list-group">
-    
     {% if all_parcours != null %}
-        {% for parcours in all_parcours %}
-            <a href= {{ path('carte_edit', {'id_parcours':parcours.id} ) }}>
-                <li class="list-group-item">{{parcours.nom}}</li>
-            </a>
-        {% endfor %}
+        <ul class="list-group">
+            {% for parcours in all_parcours %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{parcours.nom}}
+                        <div>
+                            <a href= {{ path('carte_edit', {'id_parcours': parcours.id} ) }}>Editer</a>
+                            <a href= {{ path('carte_export', {'id_parcours': parcours.id} ) }}>Exporter GPX</a>
+                        </div>
+                    </li>
+                
+            {% endfor %}
+        </ul>
     {% else %}
         <p>Aucun parcours dans ce raid</p>
     {% endif %}
-        
 
     <a href= {{ path('create_parcours',{'id':raid.id}) }}>
+        Créer un nouveau parcours
         <i class="fas fa-3x fa-plus-circle"></i>
     </a>
+
+    <h2>Affecter les bénévoles</h2>
+    A venir
+</div>
 
 {% endblock %}

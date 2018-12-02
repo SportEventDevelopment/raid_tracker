@@ -63,12 +63,6 @@ window.onload = function init(){
         zoomOutTitle: "Dézoomer"
     });
 
-    /*var osmGeocoder = new L.Control.OSMGeocoder({
-        position:'topright',
-        collapsed:false
-    });
-    mymap.addControl(osmGeocoder);*/
-
     L.Control.geocoder().addTo(mymap);
 
     mymap.addControl(zoomControl);
@@ -95,9 +89,6 @@ window.onload = function init(){
             rectangle: false,
         },
     });
-    //console.log(mymap);
-    //console.log(L.drawLocal);
-    console.log(drawControl);
 
     mymap.addControl(drawControl);
 
@@ -107,50 +98,42 @@ window.onload = function init(){
     mymap.on('draw:created', function(e) {
         var type = e.layerType,
             layer = e.layer;
-            //console.log(layer);
 
         if (type === 'polyline') {
             drawnItems.addLayer(layer);
-            //console.log(e.layer.editing.latlngs[0]);
-            //console.log(e.layer.editing.latlngs[0][0]);
-            var tableauPointsParcours = [];
-            e.layer.editing.latlngs[0].forEach(function(element) {
-                //console.log(element.lat);
-                tableauPointsParcours.push(element);
-              });
+
+            let points = [];
+            e.layer.editing.latlngs[0].forEach(function(point) {
+                points.push(point);
+            });
             
-            //console.log(tableauPointsParcours[0]);
-            var points = new Object();
-            var point = [];
-            sizeTableauPointsParcours = tableauPointsParcours.length;
-            for (var i = 0; i < sizeTableauPointsParcours; i++) {
+            let point = [];
+            sizeTabPoints = points.length;
+            console.log($('#mapid').data('trace'));
+            for (let i = 0; i < sizeTabPoints; i++) {
+                point["idTrace"] = $('#mapid').data('trace');
                 point["ordre"] = i;
-                point["lat"] = tableauPointsParcours[i].lat;
-                point["lng"] = tableauPointsParcours[i].lng;
-                points.ordre = i;
-                points.lat = tableauPointsParcours[i].lat;
-                points.lng = tableauPointsParcours[i].lng;
-                if(i = 0){
+                point["lat"] = points[i].lat;
+                point["lng"] = points[i].lng;
+
+                if(i == 0){
                     point["type"] = 1;
-                    points.type = 1;
                 }
-                else if(i = sizeTableauPointsParcours-1){
+                else if(i == sizeTabPoints-1){
                     point["type"]= 2;
-                    points.type = 2;
                 }
                 else{
                     point["type"] = 0;
-                    points.type = 0;
                 }
-                //points.push(point);
 
-                var json = JSON.stringify(points); 
+                console.log(point);
+                var token = $('#mapid').data('token');
                 $.ajax({  
                     url: 'https://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points',  
                     type: 'POST',
-                    headers: {"X-Auth-Token": Comment_Récupérer_Le_Token?xD}, 
+                    headers: {"X-Auth-Token":token}, 
                     dataType: 'json',  
-                    data: json,  
+                    data: point,
                     success: function (data, textStatus, xhr) {  
                         console.log(data);  
                     },  
@@ -159,23 +142,6 @@ window.onload = function init(){
                     }
                 });
             }
-              console.log(point);
-/*
-              
-            person.name = $('#name').val();  
-            person.surname = $('#surname').val();  
-            $.ajax({  
-                url: 'api/points',  
-                type: 'POST',  
-                dataType: 'json',  
-                data: point,  
-                success: function (data, textStatus, xhr) {  
-                    console.log(data);  
-                },  
-                error: function (xhr, textStatus, errorThrown) {  
-                    console.log('Error in Operation');  
-                }
-            });  */
         }
         else if ( type === 'polygon') {
             drawnItems.addLayer(layer);

@@ -50,7 +50,7 @@ class ParcoursController extends Controller
                 $this->getUser()->getToken()
             );
 
-            return $this->redirectToRoute('carte');
+            return $this->redirectToRoute('carte_edit', array('id_parcours' => $parcours->body->id));
         }
 
         return $this->render('parcours/new.html.twig', array(
