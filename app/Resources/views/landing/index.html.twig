@@ -29,13 +29,15 @@
 
   <section>
     <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant que bénévoles {{user.username}}</button>
-    <ul class="list-group">
+    <ul class="list-group flexcolumn">
     {% if raids_benevoles != null %}
       {% for raid in raids_benevoles %}
+        <a href={{ path('postes_benevole_raid', {'id_raid': raid.id})}}>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             {{raid.nom}}
             <span>{{raid.date|date('d/m/Y') }}</span>
           </li>
+        </a>
       {% endfor %}
     {% else %}
       <p>Vous n'êtes bénévoles d'aucun RAID pour le moment.</p>

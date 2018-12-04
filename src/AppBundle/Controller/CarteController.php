@@ -19,7 +19,6 @@ class CarteController extends Controller
     {
         $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
             'user' => $this->getUser(),
-            'trace' => null,
             'token' => $this->getUser()->getToken()
         ));
         return new Response($content);
@@ -30,14 +29,9 @@ class CarteController extends Controller
      */
     public function editCarte(Request $request)
     {
-        $user = $this->getUser();
-        $url = 'api/traces/parcours/'.$request->get('id_parcours');
-        $traces = $this->get('app.restclient')
-            ->get($url, $this->getUser()->getToken());
-
         $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
-            'user' => $user,
-            'trace' => $traces,
+            'user' => $this->getUser(),
+            'idparcours' => $request->get('id_parcours'),
             'token' => $this->getUser()->getToken()
         ));
         return new Response($content);
@@ -48,14 +42,8 @@ class CarteController extends Controller
      */
     public function exportCarte(Request $request)
     {
-        $user = $this->getUser();
-        $url = 'api/traces/parcours/'.$request->get('id_parcours');
-        $traces = $this->get('app.restclient')
-            ->get($url, $this->getUser()->getToken());
-
         $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
-            'user' => $user,
-            'trace' => $traces,
+            'user' => $this->getUser(),
             'token' => $this->getUser()->getToken()
         ));
         return new Response($content);

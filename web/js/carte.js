@@ -1,18 +1,102 @@
 window.onload = function init(){
     var mymap = L.map('mapid',{
-        zoomControl:false
+        zoomControl:false,
+        editable:true
     });
-    longitude = 2.43896484375;
-    latitude = 46.52863469527167;
-    echelle = 6;
+    longitude = -2.93;
+    latitude = 48.2;
+    echelle = 9;
+
+    let token = $('#mapid').data('token');
+    let idparcours = $('#mapid').data('idparcours');
+
+    var drawnItems = new L.FeatureGroup();
+    mymap.addLayer(drawnItems);
+
+    //Toolbar Zoom
+    var zoomControl = new L.control.zoom({
+        zoomInTitle: "Zoomer",
+        zoomOutTitle: "Dézoomer"
+    });
+
+    L.Control.geocoder().addTo(mymap);
+    mymap.addControl(zoomControl);
+
+    var drawControl = new L.Control.Draw({
+        position:'topleft',
+        edit: {
+            featureGroup: drawnItems,
+            remove:true
+        },
+        draw: {
+            polyline: {
+                shapeOptions: {
+                    color: 'orange',
+                    weight: 10,
+                }
+            },
+            circle: false,
+            polygon: false,
+            marker: {
+                repeatMode:true
+            },
+            circlemarker: false,
+            rectangle: false,
+        },
+    });
+
+    mymap.addControl(drawControl);
+
+    mymap.on('load', function(e){
+        $.ajax({  
+            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/'+idparcours,  
+            type: 'GET',
+            dataType: 'json',  
+            headers: {"X-Auth-Token": token},
+            success: function(data){
+                let all_traces = data;
+    
+                sizeTabTraces = all_traces.length;
+                for (let i = 0; i < sizeTabTraces; i++) {
+                
+                    $.ajax({  
+                        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points/traces/'+all_traces[i].id,  
+                        type: 'GET',
+                        dataType: 'json',  
+                        headers: {"X-Auth-Token": token},
+                        success: function(data){
+                            let tab_points= [];
+                            
+                            for (let i = 0; i < data.length; i++) {
+                                let point = []
+                                point.push(data[i]['lat']);
+                                point.push(data[i]['lon']);
+                                tab_points.push(point);
+                            }
+                            
+                            let polylines = L.polyline(tab_points, {
+                                color:'green',
+                                weight: 10
+                            });
+                            polylines.idtrace = all_traces[i].id;                            
+                            drawnItems.addLayer(polylines);
+                        },
+                        error: function (xhr, textStatus, errorThrown) {  
+                            console.log('Erreur lors de la récupération des points du tracé '+all_traces[i].id);  
+                        }
+                    });
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {  
+                console.log('Erreur lors de la récupération des tracés');  
+            }
+        });
+    });
 
     mymap.setView([latitude, longitude], echelle);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(mymap);
-
-    var drawnItems = new L.FeatureGroup();
-    mymap.addLayer(drawnItems);
 
     //Toolbar Visible
     L.drawLocal.draw.toolbar.buttons.polyline = 'Créer un parcours';
@@ -56,45 +140,7 @@ window.onload = function init(){
 
     //Toolbar Suppression Texte
     L.drawLocal.edit.handlers.remove.tooltip.text = "Cliquez sur un élément pour le supprimer";
-
-    //Toolbar Zoom
-    var zoomControl = new L.control.zoom({
-        zoomInTitle: "Zoomer",
-        zoomOutTitle: "Dézoomer"
-    });
-
-    L.Control.geocoder().addTo(mymap);
-
-    mymap.addControl(zoomControl);
-
-    var drawControl = new L.Control.Draw({
-        position:'topleft',
-        edit: {
-            featureGroup: drawnItems,
-            remove:true
-        },
-        draw: {
-            polyline: {
-                shapeOptions: {
-                    color: 'orange',
-                    weight: 10,
-                }
-            },
-            circle: false,
-            polygon: false,
-            marker: {
-                repeatMode:true
-            },
-            circlemarker: false,
-            rectangle: false,
-        },
-    });
-
-    mymap.addControl(drawControl);
-
-    var editableLayers = new L.FeatureGroup();
-    mymap.addLayer(editableLayers);
-
+ 
     mymap.on('draw:created', function(e) {
         var type = e.layerType,
             layer = e.layer;
@@ -107,41 +153,58 @@ window.onload = function init(){
                 points.push(point);
             });
             
-            let point = [];
-            sizeTabPoints = points.length;
-            console.log($('#mapid').data('trace'));
-            for (let i = 0; i < sizeTabPoints; i++) {
-                point["idTrace"] = $('#mapid').data('trace');
-                point["ordre"] = i;
-                point["lat"] = points[i].lat;
-                point["lng"] = points[i].lng;
-
-                if(i == 0){
-                    point["type"] = 1;
-                }
-                else if(i == sizeTabPoints-1){
-                    point["type"]= 2;
-                }
-                else{
-                    point["type"] = 0;
-                }
-
-                console.log(point);
-                var token = $('#mapid').data('token');
-                $.ajax({  
-                    url: 'https://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points',  
-                    type: 'POST',
-                    headers: {"X-Auth-Token":token}, 
-                    dataType: 'json',  
-                    data: point,
-                    success: function (data, textStatus, xhr) {  
-                        console.log(data);  
-                    },  
-                    error: function (xhr, textStatus, errorThrown) {  
-                        console.log('Error in Operation');  
-                    }
-                });
+            let trace = {
+                "idParcours": idparcours
             }
+
+            $.ajax({  
+                url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces',  
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    "X-Auth-Token": token
+                },
+                data: trace,
+                success: function (data, textStatus, xhr) {  
+                    layer.idtrace = data.id;
+                    
+                    let point = [];
+                    sizeTabPoints = points.length;
+                    for (let i = 0; i < sizeTabPoints; i++) {
+                        point["idTrace"] = data['id'];
+                        point["ordre"] = i;
+                        point["lat"] = points[i].lat;
+                        point["lon"] = points[i].lng;
+
+                        if(i == 0){
+                            point["type"] = 1;
+                        }
+                        else if(i == sizeTabPoints-1){
+                            point["type"]= 2;
+                        }
+                        else{
+                            point["type"] = 0;
+                        }
+
+                        $.ajax({  
+                            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points',  
+                            type: 'POST',
+                            dataType: 'json',  
+                            headers: {"X-Auth-Token": token}, 
+                            data: { ...point },
+                            success: function(data){
+                                console.log(data)
+                            },
+                            error: function (xhr, textStatus, errorThrown) {  
+                                console.log('Erreur lors de l\'enregistrement du point');  
+                            }
+                        });
+                    }                    
+                },  
+                error: function (xhr, textStatus, errorThrown) {  
+                    console.log(textStatus);
+                }
+            });           
         }
         else if ( type === 'polygon') {
             drawnItems.addLayer(layer);
@@ -158,16 +221,101 @@ window.onload = function init(){
         else if (type === 'rectangle') {
             drawnItems.addLayer(layer);
         }
-        editableLayers.addLayer(layer);
     });
-/*
-    mymap.on('draw:edited', function(e) {
-        var type = e.layerType,
-            layer = e.layer;
-            drawnItems.addLayer(layer);
-            editableLayers.addLayer(layer);
+
+    mymap.on('draw:edited', function(e){
+        e.layers.eachLayer(function(layer){
+            let idtrace = layer.idtrace
+            $.ajax({
+                url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/' + idtrace,  
+                type: 'DELETE',
+                dataType: 'json',
+                headers: {
+                    "X-Auth-Token": token
+                },
+                success: function(data){
+                    console.log('Tracé supprimé')
+                },
+                error: function (xhr, textStatus, errorThrown) {  
+                    console.log('Erreur lors de l\'enregistrement du point');  
+                }
+            });
+
+            let points = [];
+            layer.editing.latlngs[0].forEach(function(point) {
+                points.push(point);
+            });
+            
+            let trace = {
+                "idParcours": idparcours
+            }
+
+            $.ajax({  
+                url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces',  
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    "X-Auth-Token": token
+                },
+                data: trace,
+                success: function (data, textStatus, xhr) {  
+                    layer.idtrace = data.id;
+                    
+                    let point = [];
+                    sizeTabPoints = points.length;
+                    for (let i = 0; i < sizeTabPoints; i++) {
+                        point["idTrace"] = data['id'];
+                        point["ordre"] = i;
+                        point["lat"] = points[i].lat;
+                        point["lon"] = points[i].lng;
+
+                        if(i == 0){
+                            point["type"] = 1;
+                        }
+                        else if(i == sizeTabPoints-1){
+                            point["type"]= 2;
+                        }
+                        else{
+                            point["type"] = 0;
+                        }
+
+                        $.ajax({  
+                            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points',  
+                            type: 'POST',
+                            dataType: 'json',  
+                            headers: {"X-Auth-Token": token}, 
+                            data: { ...point },
+                            success: function(data){
+                                console.log(data)
+                            },
+                            error: function (xhr, textStatus, errorThrown) {  
+                                console.log('Erreur lors de l\'enregistrement du point');  
+                            }
+                        });
+                    }                    
+                },  
+                error: function (xhr, textStatus, errorThrown) {  
+                    console.log(textStatus);
+                }
+            });           
+        });
     });
-*/
+
+    mymap.on('draw:deleted', function(e) {
+        $.ajax({  
+            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/'+idparcours,  
+            type: 'DELETE',
+            dataType: 'json',  
+            headers: {"X-Auth-Token": token},
+            success: function(data){
+                console.log('Tracés supprimés')
+            },
+            error: function (xhr, textStatus, errorThrown) {  
+                console.log('Erreur lors de l\'enregistrement du point');  
+            }
+        });
+    });
+    
     var positionUser = function() {
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);

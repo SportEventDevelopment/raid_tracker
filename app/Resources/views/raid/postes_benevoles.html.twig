@@ -1,30 +1,32 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}    
+    {{ parent() }}
+{% endblock %}
+
 {% block content %}
 <div class="container">
 
-{% if posteRepartis %}
-
-        <button type="button" class="btn btn-primary btn-lg btn-block">Liste des postes du bénévoles</button>
-
-        <ul class="list-group">
-        {% for poste in all_postes %}
-{#        {{dump(poste)}} #}
-                <li class="list-group-item">
-                {{poste.idPoste.type}} //
-                {{poste.idPoste.heureDebut }} //
-                {{poste.idPoste.heureFin}}
-
-                </li>
-        {% endfor %}
-{%else%}
-      Vous n'êtes pas encore choisi pour un poste
-        <div>
-            <button>
-            <a href="{{ path('landing') }}">Retour à la page d'accueil </a>
-            </button>
-        </div>
-{%endif%}
-
+        <h1>Description du RAID : {{raid.nom}}</h1>
+        {% if posteRepartis %}
+                <h2>Vous êtes affectés aux postes suivants</h2>
+                <ul class="list-group">
+                {% for repartition in all_repartitions %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                        Poste : {{ repartition.idPoste.type}}<br />
+                                        Heure de début : {{ repartition.idPoste.heureDebut|date('H:i', "Europe/Paris") }}<br />
+                                        Heure de fin : {{ repartition.idPoste.heureFin|date('H:i', "Europe/Paris") }}
+                                </div>
+                                <div>
+                                        <a href={{ path('benevole_guide', {'id_poste': repartition.idPoste.id})}}>Me guider à mon poste</a>
+                                        <a href={{ path('benevole_checkin')}}>Valider ma présence</a>
+                                </div>
+                        </li>
+                {% endfor %}
+        {% else %}
+                Vous n'êtes pas encore choisi pour un poste
+                <a href="{{ path('landing') }}">Retour à la page d'accueil </a>
+        {% endif %}
 </div>
 {% endblock %}

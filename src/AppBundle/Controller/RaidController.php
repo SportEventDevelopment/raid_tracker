@@ -108,27 +108,26 @@ class RaidController extends Controller
 
 
     /**
-     * @Route("/raids/benevole/{id}", name="postes_benevole_raid")
+     * @Route("/raids/benevole/{id_raid}", name="postes_benevole_raid")
      */
-    public function editRaidBenevoleAction(Request $request)
+    public function editRaidBenevole(Request $request)
     {
-      $posteRepartis = true;
-        $url = 'api/raids/'.$request->get('id');
+        $posteRepartis = true;
+        $url = 'api/raids/'.$request->get('id_raid');
         $raid = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
         $url = 'api/repartitions/users/'.$this->getUser()->getIdUser();
-        $all_postes = $this->get('app.restclient')
+        $all_repartitions = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
-        if($all_postes == null) {
+        if($all_repartitions == null) {
           $posteRepartis = false;
         }
 
-                //var_dump($all_parcours);die();
        return $this->render('raid/postes_benevoles.html.twig', array(
             'user' => $this->getUser(),
-            'all_postes' => $all_postes,
+            'all_repartitions' => $all_repartitions,
             'raid' => $raid,
             'posteRepartis' => $posteRepartis
        ));

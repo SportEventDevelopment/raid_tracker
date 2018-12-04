@@ -23,9 +23,9 @@ class BenevoleController extends Controller
     {
         $posteNonExistant = false;
         $url = 'api/postes/raids/'.$request->get('id_raid').'/available';
-    //  $url= 'api/postes/benevoles/'.{id_benevole};
         $postes_availables = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
+
         if($postes_availables == null){
           $posteNonExistant = true;
         }
@@ -73,7 +73,6 @@ class BenevoleController extends Controller
     }
 
     /**
-     * Creates a new parcour entity.
      *
      * @Route("/benevoles/raids/{id_raid}/invitations", name="inviter_benevole")
      */
@@ -102,5 +101,27 @@ class BenevoleController extends Controller
             'form' => $form->createView(),
             'user' =>$this->getUser()
         ));
+    }
+
+    /**
+     *
+     * @Route("/benevoles/guide/{id_poste}", name="benevole_guide")
+     */
+    public function guiderBenevolePoste(Request $request)
+    {
+        $url = 'api/postes/'.$request->get('id_poste');
+        $poste = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        // $linkGoogleMaps = "https://www.google.com/maps/dir/".$poste["lon"].",".$poste["lat"]."/48.814614,-3.4563867/@48.7689028,-3.4551629,12z";
+    }
+
+    /**
+     *
+     * @Route("/benevoles/checkin", name="benevole_checkin")
+     */
+    public function confirmerPresenceBenevole(Request $request)
+    {
+
     }
 }
