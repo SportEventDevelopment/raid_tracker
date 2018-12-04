@@ -1,7 +1,6 @@
 window.onload = function init(){
     var mymap = L.map('mapid',{
-        zoomControl:false,
-        editable:true
+        zoomControl:false
     });
     longitude = -2.93;
     latitude = 48.2;
