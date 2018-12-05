@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+<div class="container">
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.username}}</button>
+  <br/>
+
+  <ul class="list-group flexcolumn">
+  {% for raid in raids_organisateurs %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{raid.nom}}
+      <div>
+        <a href= {{ path('gestion_raid_description', {'id_raid': raid.id }) }}>Editer</a>
+        <a href= {{ path('gestion_raid_organisateurs', {'id_raid': raid.id }) }}>Gérer les organisateurs</a>
+      </div>
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+{% endblock %}

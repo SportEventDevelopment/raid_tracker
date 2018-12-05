@@ -7,72 +7,67 @@ use AppBundle\Entity\Raid;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Parcour controller.
- *
- * @Route("parcours")
- */
 class ParcoursController extends Controller
 {
-    /**
-     * Lists all parcour entities.
-     *
-     * @Route("/parcours", name="parcours")
-     * @Method("GET")
-     */
-    public function indexAction()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $parcours = $em->getRepository('AppBundle:Parcours')->findAll();
-
-        return $this->render('parcours/index.html.twig', array(
-            'parcours' => $parcours,
-            'user' =>$this->getUser()
-
-        ));
-    }
 
     /**
      * Creates a new parcour entity.
-     *
-     * @Route("/parcours/{id}/new", name="create_parcours")
-     * @Method({"GET", "POST"})
+     * @Route("/parcours/raids/{id}", name="create_parcours")
      */
-    public function newAction(Request $request, $id)
+    public function createParcours(Request $request)
     {
-        $parcour = new Parcours();
-        $form = $this->createForm('AppBundle\Form\ParcoursType', $parcour);
+        $parcours = new Parcours();
+        $form = $this->createForm('AppBundle\Form\ParcoursType', $parcours);
 
         $form->handleRequest($request);
 
+        $raid = $this->get('app.restclient')->get(
+            'api/raids/'. $request->get('id'),
+            $this->getUser()->getToken()
+        );
+
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $parcour->setIdRaid($id);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($parcour);
-            $em->flush();
-            return $this->redirectToRoute('landing');
+            $parcours_data = $this->get('app.serialize')->entityToArray($form->getData());
+            $parcours_data['idRaid'] = $request->get('id');
+            
+            $parcours = $this->get('app.restclient')->post(
+                'api/parcours',
+                $parcours_data,
+                $this->getUser()->getToken()
+            );
 
-          //  return $this->redirectToRoute('parcours_show', array('id' => $parcour->getId()));
+            $trace_data = array(
+                'idParcours' => $parcours->body->id,
+            );
+            
+            $trace = $this->get('app.restclient')->post(
+                'api/traces',
+                $trace_data,
+                $this->getUser()->getToken()
+            );
+
+            return $this->redirectToRoute('carte_edit', array('id_parcours' => $parcours->body->id));
         }
 
         return $this->render('parcours/new.html.twig', array(
-            'parcour' => $parcour,
+            'user' =>$this->getUser(),
+            'parcours' => $parcours,
             'form' => $form->createView(),
-            'user' =>$this->getUser()
+            'raid' => $raid
         ));
     }
 
     /**
      * Finds and displays a parcour entity.
      *
-     * @Route("/{id}", name="parcours_show")
+     * @Route("/parcours/{id}", name="parcours_show")
      * @Method("GET")
      */
-    public function showAction(Parcours $parcour)
+    public function showParcours(Parcours $parcour)
     {
         $deleteForm = $this->createDeleteForm($parcour);
 
@@ -83,24 +78,26 @@ class ParcoursController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing parcour entity.
+     * Displays a form to edit an existing parcours.
      *
-     * @Route("/{id}/edit", name="parcours_edit")
-     * @Method({"GET", "POST"})
+     * @Route("/parcours/{id}/edit", name="edit_parcours")
      */
-    public function editAction(Request $request, Parcours $parcour)
+    public function editParcours(Request $request)
     {
-        $deleteForm = $this->createDeleteForm($parcour);
-        $editForm = $this->createForm('AppBundle\Form\ParcoursType', $parcour);
+        $url = 'api/raids/organisateurs/users/'.$this->getUser()->getIdUser();
+        $parcours = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+            
+        $editForm = $this->createForm('AppBundle\Form\ParcoursType', $parcours);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('parcours_edit', array('id' => $parcour->getId()));
+           
+            return $this->redirectToRoute('edit_parcours', array('id' => $parcours->getId()));
         }
 
         return $this->render('parcours/edit.html.twig', array(
+            'user' => $this->getUser(),
             'parcour' => $parcour,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
@@ -110,10 +107,9 @@ class ParcoursController extends Controller
     /**
      * Deletes a parcour entity.
      *
-     * @Route("/{id}", name="parcours_delete")
-     * @Method("DELETE")
+     * @Route("/parcours/remove/{id}", name="parcours_delete")
      */
-    public function deleteAction(Request $request, Parcours $parcour)
+    public function deleteParcours(Request $request, Parcours $parcour)
     {
         $form = $this->createDeleteForm($parcour);
         $form->handleRequest($request);
@@ -139,7 +135,6 @@ class ParcoursController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('parcours_delete', array('id' => $parcour->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
     }
 }

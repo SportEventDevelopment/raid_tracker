@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+<div class="container">
+  <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.username}}</button>
+  <br/>
+
+  <ul class="list-group flexcolumn">
+  {% for raid in raids_organisateurs %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{raid.nom}}
+      <a href= {{ path('inviter_benevole', {'id_raid': raid.id }) }}>
+        Inviter des bénevoles!
+      </a>
+    </li>
+  {% endfor %}
+  </ul>
+
+</div>
+{% endblock %}

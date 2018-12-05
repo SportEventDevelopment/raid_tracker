@@ -5,8 +5,6 @@
 
 .list-group li {
     padding:2rem;
-    margin-left:1rem;
-    margin-right:1rem;
     min-width:10rem;
     text-align:center;   
 }
@@ -19,14 +17,13 @@
 .list-group a:hover li{
     background-color: #007bff;
     color:white;
-    font-size: 1.2rem;
-}
-
-.list-group a:last-child{
-    padding:1rem;
 }
 
 .flexcolumn {
     display:flex;
     flex-direction:column;
+}
+
+.raid-row {
+    padding:3rem !important;
 }

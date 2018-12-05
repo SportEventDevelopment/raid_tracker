@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div class="container">
+    <ul class="list-group">
+        <button type="button" class="btn btn-primary btn-lg btn-block">Parcours</button>
+
+        <ul class="list-group">
+        {% for parcours in all_parcours %}
+            <li class="list-group-item text-left">
+                {{parcours.nom}}
+                <a href= {{ path('parcours_edit', {'id': parcours.id }) }}>
+                Editer!
+                <span class="glyphicon glyphicon-plus"></span>
+                </a>
+            </li>
+
+        {% endfor %}
+        </ul>
+
+
+    </ul>
+</div>
+{% endblock %}

@@ -8,223 +8,127 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Benevole;
+use AppBundle\Entity\UserRegistration;
+
+use AppBundle\Entity\PrefPoste;
+use AppBundle\Entity\User;
 
 class BenevoleController extends Controller
 {
     /**
-     * @Route("/api/benevoles", name="benevoles")
-     * @Method({"GET"})
+     * Creates a new parcour entity.
+     * @Route("/benevoles/raids/{id_raid}/join", name="rejoindre_raid_comme_benevole")
      */
-    public function getBenevolesAction(Request $request)
+    public function rejoindreRaidBenevole(Request $request)
     {
-        $benevoles = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Benevole')
-                ->findAll();
-        /* @var $benevoles benevoles[] */
+        $posteNonExistant = false;
+        $url = 'api/postes/raids/'.$request->get('id_raid').'/available';
+        $postes_availables = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
 
-        if (empty($benevoles)) {
-            return new JsonResponse(['message' => "Aucun benevoles présents dans la BDD !"], Response::HTTP_NOT_FOUND);
-        }
-
-        $formatted = [];
-        foreach ($benevoles as $benevole) {
-            $formatted[] = [
-                'id' => $benevole->getId(),
-                'idUser' => $benevole->getIdUser(),
-                'idRaid' => $benevole->getIdRaid()    
-            ];
-        }
-
-        return new JsonResponse($formatted, Response::HTTP_OK);
-    }
-
-    /**
-     * @Route("/api/benevoles", name="delete_all_benevoles")
-     * @Method({"DELETE"})
-     */
-    public function deleteBenevolesAction(Request $request)
-    {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $benevoles = $em->getRepository('AppBundle:Benevole')->findAll();
-
-        foreach ($benevoles as $benevole) {
-            $em->remove($benevole);
-        }
-
-        $em->flush();
-
-        return new JsonResponse(["message" => "Les benevoles ont ete supprimes avec succes !"], Response::HTTP_OK);
-    }
-
-    /**
-     * @Route("/api/benevoles/{id_benevole}", name="benevoles_one")
-     * @Method({"GET"})
-     */
-    public function getBenevoleAction(Request $request)
-    {
-        $benevole = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Benevole')
-                ->find($request->get('id_benevole'));
-        /* @var $benevole Benevole */
-
-        if (empty($benevole)) {
-            return new JsonResponse(['message' => "Le bénévole recherché n'a pas été trouvé !"], Response::HTTP_NOT_FOUND);
-        }
-
-        $formatted = [
-            'id' => $benevole->getId(),
-            'idUser' => $benevole->getIdUser(),
-            'idRaid' => $benevole->getIdRaid()
-        ];
-        return new JsonResponse($formatted);
-    }
-
-
-    /**
-     * @Route("/api/benevoles/{id_benevole}", name="delete_benevoles_one")
-     * @Method({"DELETE"})
-     */
-    public function deleteBenevoleAction(Request $request)
-    {
-        $sn = $this->getDoctrine()->getManager();
-        $benevole = $this->getDoctrine()->getRepository('AppBundle:Benevole')->find($request->get('id_benevole'));
-       
-        if (empty($benevole)) {
-            return new JsonResponse(['message' => "Le bénévole recherché n'a pas été trouvé !"], Response::HTTP_NOT_FOUND);
-        }
-
-        $sn->remove($benevole);
-        $sn->flush();
-        
-        return new JsonResponse(['message' => "Bénévole supprimé avec succès !"], Response::HTTP_OK); 
-    }
-
-
-    /**
-     * @Route("/api/benevoles/raids/{id_raid}", name="get_all_benevoles_raid")
-     * @Method({"GET"})
-     */
-    public function getBenevolesByIdRaidAction(Request $request)
-    {
-        $benevoles = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Benevole')
-                ->findBy(array(
-                    "idRaid" => $request->get('id_raid')));
-        /* @var $benevole Benevole */
-
-        if (empty($benevoles)) {
-            return new JsonResponse(['message' => "Le raid ne contient pas encore de bénévoles !"], Response::HTTP_NOT_FOUND);
-        }
-
-        $formatted = [];
-        foreach ($benevoles as $benevole) {
-            $formatted[] = [
-                'id' => $benevole->getId(),
-                'idUser' => $benevole->getIdUser(),
-                'idRaid' => $benevole->getIdRaid()
-            ];
+        if($postes_availables == null){
+          $posteNonExistant = true;
         }
         
-        return new JsonResponse($formatted, Response::HTTP_OK);
+        $PrefPoste = new PrefPoste();
+        $form = $this->createForm('AppBundle\Form\PrefPosteType', $PrefPoste, array(
+            'postes_disponibles' => $postes_availables
+        ));
+
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // Ajout bénévole
+            $benevole = array(
+                'idUser' => $this->getUser()->getIdUser(),
+                'idRaid' => $request->get('id_raid')
+            );
+            $response = $this->get('app.restclient')->post(
+                'api/benevoles/raids/'.$benevole['idRaid'].'/users/'.$benevole['idUser'],
+                $benevole,
+                $this->getUser()->getToken()
+            );
+
+            // Ajout de la préférence du poste du bénévole
+            $prefposte = array(
+                'idPoste' => $form->getData()->getIdPoste()->id,
+                'idBenevole' => $response->body->id
+            );
+            $request = $this->get('app.restclient')->post(
+                'api/prefpostes',
+                $prefposte,
+                $this->getUser()->getToken()
+            );
+
+            return $this->redirectToRoute('landing');
+        }
+
+        return $this->render('landing/rejoindreRaid.html.twig', array(
+            'form' => $form->createView(),
+            'user' =>$this->getUser(),
+            'posteNonExistant' => $posteNonExistant,
+        ));
     }
 
     /**
-     * @Route("/api/benevoles/raids/{id_raid}", name="delete_all_benevoles_raid")
-     * @Method({"DELETE"})
+     *
+     * @Route("/benevoles/raids/{id_raid}/invitations", name="inviter_benevole")
      */
-    public function deleteBenevolesByIdRaidAction(Request $request)
-    {   
-        $sn = $this->getDoctrine()->getManager();
-        $benevoles = $this->getDoctrine()->getRepository('AppBundle:Benevole')
-                    ->findBy(array(
-                        "idRaid" => $request->get('id_raid')
-                    ));
-       
-        if (empty($benevoles)) {
-            return new JsonResponse(['message' => "Aucun bénévole à supprimer trouvé dans ce raid !"], Response::HTTP_NOT_FOUND);
-        }
-
-        foreach ($benevoles as $benevole) {
-            $sn->remove($benevole);
-        }
-        $sn->flush();
-        
-        return new JsonResponse(['message' => "Tous les bénévoles du raid ont été supprimés avec succes !"], Response::HTTP_OK); 
-    }
-
-
-
-
-    /**
-     * @Route("/api/benevoles/raids/{id_raid}/users/{id_user}", name="get_raid_if_user_is_benevole")
-     * @Method({"GET"})
-     */
-    public function getIsOrganisateurByUserId(Request $request)
+    public function inviterBenevoleDansRaid(Request $request, \Swift_Mailer $mailer)
     {
-        $benevole = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Benevole')
-                ->findOneBy(array(  
-                    'idRaid' => $request->get('id_raid'), 
-                    'idUser' => $request->get('id_user'))
+        $form = $this->createForm('AppBundle\Form\InviterBenevoleType');
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $message = (new \Swift_Message('Invitation pour bénévolat raid'))
+                ->setFrom('sporteventdevelopment@gmail.com')
+                ->setTo($form->getData()->getEmail())
+                ->setBody(
+                    $this->renderView('gestion/invitationRaid.html.twig',
+                        array('link' => 'http://raidtracker.ddns.net/raid_tracker/web/app.php/benevoles/raids/'.$request->get('id_raid').'/join')),
+                    'text/html'
                 );
 
-        if(empty($benevole)){
-            return new JsonResponse(["message" => "L'utilisateur n'est pas bénévole du raid"], Response::HTTP_NOT_FOUND);
+            $mailer->send($message);
+            return $this->redirectToRoute('inviter_benevole', array('id_raid' => $request->get('id_raid')) );
         }
 
-        $formatted = [
-            'id' => $benevole->getId(),
-            'idRaid' => $benevole->getIdRaid(),
-            'idUser' => $benevole->getIdUser()
-        ];
-
-        return new JsonResponse($formatted,Response::HTTP_OK);
-    }
-
-
-    /**
-     *  @Route("/api/benevoles/raids/{id_raid}/users/{id_user}", name="post_benevole_one_raid")
-     *  @Method({"POST"})
-     */
-    public function postBenevoleByIdRaidAndByIdUser(Request $request)
-    {
-        $benevole = new Benevole();
-
-        $benevole->setIdUser($request->get('id_user'));
-        $benevole->setIdRaid($request->get('id_raid'));
-
-        if(empty($benevole)){
-            return new JsonResponse(["message" => "Champs vide, création refusée !"], Response::HTTP_NOT_FOUND);
-        }
-        // Save
-        $em = $this->get('doctrine.orm.entity_manager');
-        $em->persist($benevole);
-        $em->flush();
-
-        return new JsonResponse(['message' => 'Nouveau bénévole ajouté !'], Response::HTTP_OK);
+        return $this->render('landing/inviterBenevole.html.twig', array(
+            'form' => $form->createView(),
+            'user' =>$this->getUser()
+        ));
     }
 
     /**
-     * @Route("/api/benevoles/raids/{id_raid}/users/{id_user}", name="delete_benevole_one_raid")
-     * @Method({"DELETE"})
+     *
+     * @Route("/benevoles/guide/{id_poste}", name="benevole_guide")
      */
-    public function deleteBenevoleByIdRaidAndByIdUser(Request $request)
+    public function guiderBenevolePoste(Request $request)
     {
-        
-        $sn = $this->getDoctrine()->getManager();
-        $benevole = $this->getDoctrine()->getRepository('AppBundle:Benevole')
-                        ->findOneBy(array(
-                            "idUser" => $request->get('id_user'),
-                            "idRaid" => $request->get('id_raid')
-                        ));
-       
-        if (empty($benevole)) {
-            return new JsonResponse(['message' => "Le bénévole n'est pas dans ce raid !"], Response::HTTP_NOT_FOUND);
+        $url = 'api/postes/'.$request->get('id_poste');
+        $poste = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        if($poste){
+            $url = 'api/points/'.$poste->body->idPoint;
+            $point = $this->get('app.restclient')
+                ->get($url, $this->getUser()->getToken());
+              
+            return $this->redirect('https://www.google.com/maps/dir/'. $point->response->lon .','. $point->response->lat .'/48.814614,-3.4563867');
         }
 
-        $sn->remove($benevole);
-        $sn->flush();
-        
-        return new JsonResponse(['message' => "Bénévole supprimé du raid avec succes !"], Response::HTTP_OK); 
+    }
+
+    /**
+     *
+     * @Route("/benevoles/checkin", name="benevole_checkin")
+     */
+    public function confirmerPresenceBenevole(Request $request)
+    {
+
     }
 }

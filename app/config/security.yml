@@ -1,20 +1,32 @@
 security:
-    encoders:
-        AppBundle\Entity\User: bcrypt
     providers:
-        database_users:
-            entity: { class: AppBundle:User, property: email }
+        webservice:
+            id: AppBundle\Security\User\WebserviceUserProvider
+
+    encoders:
+        AppBundle\Entity\WebserviceUser: plaintext
+
     firewalls:
-        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
         main:
             anonymous: ~
+            provider: webservice
+            pattern: ^/
+            form_login:
+                check_path: login_check
+                login_path: login
+                default_target_path: landing
+            logout:
+                path: logout
+                target: login
+                handlers: [app.logout.listener]
             guard:
                 authenticators:
-                    - app.form_login_authenticator
-            logout:
-                path: /logout
-                target: /
+                    - app.webservice_authenticator
+    access_control:
+        - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, role: ROLE_USER }

@@ -1,0 +1,198 @@
+
+{% extends 'base.html.twig' %}
+{% block title %}
+    Carte Interactive
+{% endblock %}
+
+{% block content %}    
+
+
+<body onload="init();">
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.js')}}"></script>
+    <script src="{{asset('js/leaflet-draw-toolbar/dist/leaflet.draw-toolbar.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+    <link rel="stylesheet" href="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.css')}}"/>
+    <link rel="stylesheet" href="{{asset('js/leaflet-draw-toolbar/dist/leaflet.draw-toolbar.css')}}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+
+    <div id="mapid"></div>
+
+    <script>
+        function init(){
+            var mymap = L.map('mapid');
+            longitude = 2.43896484375;
+            latitude = 46.52863469527167;
+            echelle = 6;
+            
+            mymap.setView([latitude, longitude], echelle);
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mymap);
+
+            var drawnItems = new L.FeatureGroup();
+            mymap.addLayer(drawnItems);
+            
+            {#var drawControl = new L.Control.Draw({
+                edit: {
+                    featureGroup: drawnItems
+                }
+            });
+            mymap.addControl(drawControl);"}#}
+
+
+            var options = new L.Control.Draw({
+                draw: {
+                    polygon: {
+                    allowIntersection: false, // Restricts shapes to simple polygons
+                    drawError: {
+                        color: '#e1e100', // Color the shape will turn when intersects
+                        message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+                    },
+                    shapeOptions: {
+                        color: '#97009c'
+                    }
+                    },
+                    polyline: {
+                        shapeOptions: {
+                        color: '#f357a1',
+                        weight: 10
+                        }
+                    },
+                    // disable toolbar item by setting it to false
+                    polyline: true,
+                    circle: false,
+                    polygon: false,
+                    marker: false,
+                    rectangle: false,
+                },
+                edit: {
+                    featureGroup: drawnItems, //REQUIRED!!
+                    remove: false
+                }
+            });
+
+            
+            mymap.addControl(options);
+
+            var editableLayers = new L.FeatureGroup();
+            mymap.addLayer(editableLayers);
+
+            editActions = [
+                LeafletToolbar.EditAction.Popup.Edit,
+                LeafletToolbar.EditAction.Popup.Delete,
+                LeafletToolbar.ToolbarAction.extendOptions({
+                  toolbarIcon: { 
+                    className: 'leaflet-color-picker', 
+                    html: '<span class="fa fa-eyedropper"></span>' 
+                  },
+                  subToolbar: new LeafletToolbar({ actions: [
+                    L.ColorPicker.extendOptions({ color: '#db1d0f' }),
+                    L.ColorPicker.extendOptions({ color: '#025100' }),
+                    L.ColorPicker.extendOptions({ color: '#ffff00' }),
+                    L.ColorPicker.extendOptions({ color: '#0000ff' })
+                  ]})
+                })
+              ];
+
+            mymap.on('draw:created', function(e) {
+                var type = e.layerType,
+                    layer = e.layer;
+
+                if (type === 'polyline') {
+                
+                }
+                else if ( type === 'polygon') {
+                
+                }
+                else if (type === 'marker') {
+                
+                }
+                else if (type === 'circle') {
+
+                }
+                else if (type === 'rectangle') {
+                    
+                }
+
+                editableLayers.addLayer(layer);
+            });
+
+            mymap.on('draw:edited', function(e) {
+                var type = e.layerType,
+                    layer = e.layer;
+
+                if (type === 'polyline') {
+                
+                }
+                else if ( type === 'polygon') {
+                
+                }
+                else if (type === 'marker') {
+                
+                }
+                else if (type === 'circle') {
+
+                }
+                else if (type === 'rectangle') {
+
+                }
+
+                editableLayers.addLayer(layer);
+            });
+
+            mymap.on('draw:deleted', function(e) {
+                var type = e.layerType,
+                    layer = e.layer;
+
+                if (type === 'polyline') {
+                
+                }
+                else if ( type === 'polygon') {
+                
+                }
+                else if (type === 'marker') {
+                
+                }
+                else if (type === 'circle') {
+
+                }
+                else if (type === 'rectangle') {
+                    
+                }
+
+                editableLayers.addLayer(layer);
+            });
+
+
+            var positionUser = function() {
+                if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                }
+                else {
+                    alert("La localisation n'est pas disponible avec votre navigateur !");
+                }
+            }
+
+            var showPosition = function(position) {
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+                echelle = 18;
+
+                mymap.setView([latitude, longitude], echelle);
+                L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(mymap);
+
+                var latlng = [latitude, longitude];
+                var marker = L.marker([latitude, longitude]).addTo(mymap);
+                var popup = L.popup().setLatLng(latlng).setContent('<p>Vous êtes ici<br>Latitude: '+ latitude +'<br>Longitude: '+longitude+'</p>').openOn(mymap);
+                marker.bindPopup(popup).openPopup();
+                
+            }
+            positionUser();
+        }
+    </script>
+
+</body>
+{% endblock %}

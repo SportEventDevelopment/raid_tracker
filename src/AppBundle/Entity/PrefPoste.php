@@ -1,62 +1,58 @@
 <?php
+
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity()
- * @ORM\Table(name="prefposte")
- */
-class Prefposte
+class PrefPoste
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $idPrefPoste;
+    private $id;
+    private $idPoste;
+    private $idBenevole;
 
     /**
-     * @ORM\Column(type="integer")
+     * Set id
      */
-    protected $idUser;
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     /**
-     * @ORM\Column(type="integer")
+     * Get id
      */
-    protected $idPoste;
-
-
-    public function getIdPrefPoste()
+    public function getId()
     {
-        return $this->getIdPrefPoste;
+        return $this->id;
     }
 
-    public function getIdUser()
+    /**
+     * Set idBenevole
+     */
+    public function setIdBenevole($idBenevole)
     {
-        return $this->idUser;
+        $this->idBenevole = $idBenevole;
     }
 
-    public function getIdPoste()
+    /**
+     * Get idBenevole
+     */
+    public function getIdBenevole()
     {
-        return $this->idPoste;
+        return $this->idBenevole;
     }
 
-    public function setIdPrefPoste($idPrefPoste)
-    {
-        $this->idPrefPoste = $idPrefPoste;
-        return $this;
-    }
-    
-    public function setIdUser($idUser)
-    {
-        $this->idUser = $idUser;
-        return $this;
-    }
-
+    /**
+     * Set idPoste
+     */
     public function setIdPoste($idPoste)
     {
         $this->idPoste = $idPoste;
-        return $this;
+    }
+
+    /**
+     * Get idPoste
+     */
+    public function getIdPoste()
+    {
+        return $this->idPoste;
     }
 }

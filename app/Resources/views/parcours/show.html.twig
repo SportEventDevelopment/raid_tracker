@@ -1,35 +1,35 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Parcour</h1>
+    <h1>Parcours</h1>
 
     <table>
         <tbody>
             <tr>
                 <th>Id</th>
-                <td>{{ parcour.id }}</td>
+                <td>{{ parcours.id }}</td>
             </tr>
             <tr>
                 <th>Nom</th>
-                <td>{{ parcour.nom }}</td>
+                <td>{{ parcours.nom }}</td>
             </tr>
             <tr>
                 <th>Type</th>
-                <td>{{ parcour.type }}</td>
+                <td>{{ parcours.type }}</td>
             </tr>
             <tr>
                 <th>Etat</th>
-                <td>{% if parcour.etat %}Yes{% else %}No{% endif %}</td>
+                <td>{% if parcours.etat %}Yes{% else %}No{% endif %}</td>
             </tr>
         </tbody>
     </table>
 
     <ul>
         <li>
-            <a href="{{ path('parcours_index') }}">Back to the list</a>
+            <a href={{ path('parcours_index') }}>Back to the list</a>
         </li>
         <li>
-            <a href="{{ path('parcours_edit', { 'id': parcour.id }) }}">Edit</a>
+            <a href={{ path('parcours_edit', { 'id': parcours.id }) }}>Edit</a>
         </li>
         <li>
             {{ form_start(delete_form) }}

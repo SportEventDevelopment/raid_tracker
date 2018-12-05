@@ -17,9 +17,14 @@ class BenevoleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        //->add('idUser')->add('poste')->add('idRaid')
-        ->add('poste', ChoiceType::class, array("label" => 'Choix du poste', "invalid_message" => "Le champ est incorrect", "choices_as_values"=>true ,
-        "choices"=>array_flip(Benevole::$tabPoste), "multiple" => false, "expanded" => false));
+        ->add('idUser')
+        ->add('idRaid');
+        // ->add('poste', ChoiceType::class, array(
+        //     "label" => 'Choix du poste',
+        //     "invalid_message" => "Le champ est incorrect",
+        //     "choices_as_values"=>true ,
+        //     "choices"=>array_flip(Benevole::$tabPoste), "multiple" => false, "expanded" => false)
+        // );
     }
 
     /**
@@ -28,7 +33,8 @@ class BenevoleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Benevole'
+            'data_class' => 'AppBundle\Entity\Benevole',
+            'csrf_protection' => false
         ));
     }
 

@@ -17,6 +17,13 @@ services:
         # but if a service is unused, it's removed anyway
         exclude: '../../src/AppBundle/{Entity,Repository}'
 
-    app.form_login_authenticator:
-        class: AppBundle\Security\FormLoginAuthenticator
-        arguments: ["@router", "@security.password_encoder"]
+    app.webservice_authenticator:
+        class: AppBundle\Security\User\WebserviceAuthenticator
+    app.restclient:
+        class: AppBundle\Service\RestClient
+        public: true
+    app.serialize:
+        class: AppBundle\Service\Serialize
+        public: true
+    app.logout.listener:
+        class: AppBundle\Listener\LogoutListener

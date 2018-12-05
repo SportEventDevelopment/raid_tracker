@@ -2,39 +2,22 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * Benevole
- *
- * @ORM\Table(name="benevole")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\BenevoleRepository")
- */
 class Benevole
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
     private $id;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="idUser", type="integer")
-     */
     private $idUser;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="idRaid", type="integer")
-     */
     private $idRaid;
-
+    
+    /**
+     * Set id
+     *
+     * @param integer $id
+     *
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * Get id
@@ -45,6 +28,7 @@ class Benevole
     {
         return $this->id;
     }
+
 
     /**
      * Set idUser
@@ -94,4 +78,3 @@ class Benevole
         return $this->idRaid;
     }
 }
-

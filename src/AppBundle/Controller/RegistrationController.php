@@ -1,57 +1,35 @@
 <?php
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\User;
-use AppBundle\Form\UserType;
+use AppBundle\Entity\UserRegistration;
+use AppBundle\Form\UserRegistrationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 class RegistrationController extends Controller
 {
+
     /**
      * @Route("/register", name="register")
      */
-    public function registerAction(Request $request)
+    public function register(Request $request)
     {
         // Create a new blank user and process the form
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $user = new UserRegistration();
+        $form = $this->createForm(UserRegistrationType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Encode the new users password
-            $encoder = $this->get('security.password_encoder');
-            $password = $encoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);
 
-            // Set their role
-            $user->setRole('ROLE_USER');
-
-            // Save
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
+            $data =$this->get('app.serialize')->entityToArray($form->getData());            
+            $response = $this->get('app.restclient')->post('api/users', $data);
+            
             return $this->redirectToRoute('login');
         }
 
         return $this->render('auth/register.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form->createView()
         ]);
-    }
-
-    /**
-     * @Route("/login_check", name="security_login_check")
-     */
-    public function securityLoginCheckAction(Request $request)
-    {
-    }
-
-    /**
-     * @Route("/logout", name="logout")
-     */
-    public function logoutAction(Request $request)
-    {
     }
 }

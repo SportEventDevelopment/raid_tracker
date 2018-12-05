@@ -6,22 +6,36 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\User;
-use AppBundle\Form\UserType;
 
 class SecurityController extends Controller
 {
     /**
      * @Route("/", name="login")
      */
-    public function loginAction(AuthenticationUtils $authenticationUtils)
+    public function login(AuthenticationUtils $authenticationUtils)
     {
-       return $this->render(
+        $url = 'api/raids/visible/all';
+        $raids_visibles = $this->get('app.restclient')->get($url);
+
+        return $this->render(
            'auth/login.html.twig',
-           array(
-               'last_username' => $authenticationUtils->getLastUsername(),
-               'error'         => $authenticationUtils->getLastAuthenticationError(),
-           )
-       );
+            array(
+                'last_username' => $authenticationUtils->getLastUsername(),
+                'error'         => $authenticationUtils->getLastAuthenticationError(),
+                'raids_visibles'=> $raids_visibles
+            )
+        );
+    }
+    
+    /**
+     * @Route("/login_check", name="login_check")
+     */
+    public function loginCheck(Request $request){}
+
+    /**
+     * @Route("/logout", name="logout")
+     */
+    public function logout(Request $request){
+        throw new \RuntimeException('Michel, active le logout dans le pare-feu...');
     }
 }

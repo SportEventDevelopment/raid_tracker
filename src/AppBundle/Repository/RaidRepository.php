@@ -10,6 +10,7 @@ namespace AppBundle\Repository;
  */
 class RaidRepository extends \Doctrine\ORM\EntityRepository
 {
+
     function findRaidsOrganisateursByIdUser($id_user)
     {
         $conn = $this->getEntityManager()->getConnection();
@@ -22,7 +23,17 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
     function findRaidsBenevolesByIdUser($id_user)
     {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT * FROM Raid r INNER JOIN Benevole b WHERE b.idUser = :idUser AND r.id = b.idRaid";
+        $sql = "SELECT * FROM Raid r INNER JOIN Benevole b  WHERE  b.idUser = :idUser AND r.id = b.idRaid";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['idUser' => $id_user]);
+        return $stmt->fetchAll();
+    }
+
+    function findRaidsBenevolesChoisisByIdUser($id_user)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM Raid r INNER JOIN Benevole b WHERE
+         b.est_benevole = true and b.idUser = :idUser AND r.id = b.idRaid";
         $stmt = $conn->prepare($sql);
         $stmt->execute(['idUser' => $id_user]);
         return $stmt->fetchAll();
@@ -44,4 +55,24 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
         $stmt->execute(['idRaid' => $id_raid]);
         return $stmt->fetchAll();
     }
+
+    function findPosteByIdRaid($id_raid)
+    {
+
+      $conn = $this->getEntityManager()->getConnection();
+      $sql = "SELECT * FROM raid r inner join pref_poste p inner join poste po inner join user
+      where
+      po.id = p.poste_id and user.id = idUser and  r.id = idRaid and r.id = :idRaid";
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['idRaid' => $id_raid]);
+      return $stmt->fetchAll();
+    /*    $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM pref_poste p  WHERE p.idRaid = :idRaid ";
+        $stmt = $conn->prepare($sql);
+        return $stmt->fetchAll(); */
+        $stmt->execute(['idRaid' => $id_raid]);
+    }
+
+
+
 }
