@@ -13,9 +13,8 @@ class Benevole
      *
      * @param integer $id
      *
-     * @return Benevole
      */
-    public function setIdUser($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -29,6 +28,7 @@ class Benevole
     {
         return $this->id;
     }
+
 
     /**
      * Set idUser
