@@ -16,7 +16,9 @@ class ParcoursType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class)
-            ->add('type', TextType::class);
+            ->add('type', TextType::class, array(
+                'label' => 'Sport'
+            ));
     }/**
      * {@inheritdoc}
      */

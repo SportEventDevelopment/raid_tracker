@@ -21,8 +21,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-
-    <script src={{asset('js/carte.js')}}></script>
+    
+    <script type="text/javascript">
+        var asset_images = "{{asset('images')}}"; 
+    </script>
+    <script src={{asset('js/carte.js')}}>
+    </script>
 {% endblock %}
 
 

@@ -32,6 +32,7 @@ class RaidController extends Controller
             $raid_data =$this->get('app.serialize')->entityToArray($form->getData());
             $date = $form->getData()->getDate()->format('Y/m/d H:i');
             $raid_data['date'] = $date;
+            array_pop($raid_data);
 
             $response = $this->get('app.restclient')->post(
                 'api/raids',
@@ -117,7 +118,7 @@ class RaidController extends Controller
         $raid = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
-        $url = 'api/repartitions/users/'.$this->getUser()->getIdUser();
+        $url = 'api/repartitions/raids/'.$request->get('id_raid').'/users/'.$this->getUser()->getIdUser();
         $all_repartitions = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 

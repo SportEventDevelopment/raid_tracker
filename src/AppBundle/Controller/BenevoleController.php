@@ -113,7 +113,14 @@ class BenevoleController extends Controller
         $poste = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
-        // $linkGoogleMaps = "https://www.google.com/maps/dir/".$poste["lon"].",".$poste["lat"]."/48.814614,-3.4563867/@48.7689028,-3.4551629,12z";
+        if($poste){
+            $url = 'api/points/'.$poste->body->idPoint;
+            $point = $this->get('app.restclient')
+                ->get($url, $this->getUser()->getToken());
+              
+            return $this->redirect('https://www.google.com/maps/dir/'. $point->response->lon .','. $point->response->lat .'/48.814614,-3.4563867');
+        }
+
     }
 
     /**

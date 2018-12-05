@@ -32,7 +32,7 @@ class RaidType extends AbstractType
             ->add('edition', IntegerType::class, array('label' => 'Numéro d\'édition'))
             ->add('equipe', TextType::class, array('label' => 'Nom d\'équipe'))
             ->add('visibility', CheckboxType::class, array(
-                'label' => 'Rendre public',
+                'label' => 'Visible',
                 'required' => false
             ));
     }

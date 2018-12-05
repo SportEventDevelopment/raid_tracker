@@ -6,60 +6,55 @@ window.onload = function init(){
     latitude = 48.2;
     echelle = 9;
 
-    let token = $('#mapid').data('token');
-    let idparcours = $('#mapid').data('idparcours');
+    var token = $('#mapid').data('token');
+    var idparcours = $('#mapid').data('idparcours');
 
     var drawnItems = new L.FeatureGroup();
     mymap.addLayer(drawnItems);
 
-    //Toolbar Zoom
-    var zoomControl = new L.control.zoom({
-        zoomInTitle: "Zoomer",
-        zoomOutTitle: "Dézoomer"
+    var departIcon = L.icon({
+        iconUrl: asset_images+'/depart.png',
+        iconSize: [40, 60],
+        iconAnchor: [0, 60],
+    });
+    var passageIcon = L.icon({
+        iconUrl: asset_images+'/passage.png',
+        iconSize: [31, 47],
+        iconAnchor: [16, 47],
+    });
+    var arriveeIcon = L.icon({
+        iconUrl: asset_images+'/arrivee.png',
+        iconSize: [40, 60],
+        iconAnchor: [0, 60],
+    });
+    var posteIcon = L.icon({
+        iconUrl: asset_images+'/poste.png',
+        iconSize: [40, 60],
+        iconAnchor: [0, 60],
     });
 
-    L.Control.geocoder().addTo(mymap);
-    mymap.addControl(zoomControl);
-
-    var drawControl = new L.Control.Draw({
-        position:'topleft',
-        edit: {
-            featureGroup: drawnItems,
-            remove:true
-        },
-        draw: {
-            polyline: {
-                shapeOptions: {
-                    color: 'orange',
-                    weight: 10,
-                }
-            },
-            circle: false,
-            polygon: false,
-            marker: {
-                repeatMode:true
-            },
-            circlemarker: false,
-            rectangle: false,
-        },
-    });
-
-    mymap.addControl(drawControl);
+    var markers;
 
     mymap.on('load', function(e){
+        
+        var zoomControl = addZoom();
+        L.Control.geocoder().addTo(mymap);
+        mymap.addControl(zoomControl);
+        
+        traduireToolbar();
+
         $.ajax({  
-            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/'+idparcours,  
+            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/' + idparcours,  
             type: 'GET',
             dataType: 'json',  
             headers: {"X-Auth-Token": token},
             success: function(data){
                 let all_traces = data;
-    
-                sizeTabTraces = all_traces.length;
-                for (let i = 0; i < sizeTabTraces; i++) {
+
+                for (let i = 0; i < all_traces.length; i++) {
                 
                     $.ajax({  
-                        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points/traces/'+all_traces[i].id,  
+                        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points/traces/' + all_traces[i].id,  
                         type: 'GET',
                         dataType: 'json',  
                         headers: {"X-Auth-Token": token},
@@ -70,6 +65,20 @@ window.onload = function init(){
                                 let point = []
                                 point.push(data[i]['lat']);
                                 point.push(data[i]['lon']);
+
+                                if(data[i]['type'] == 1){
+                                    let depart = L.marker([data[i]['lat'], data[i]['lon']], {icon: departIcon})
+                                        .addTo(mymap)
+                                        .bindPopup('Point de départ');
+                                    depart.idtrace = data[i]['idTrace']
+                        
+                                }
+                                else if(data[i]['type'] == 2){
+                                    let arrivee = L.marker([data[i]['lat'], data[i]['lon']], {icon: arriveeIcon})
+                                        .addTo(mymap)
+                                        .bindPopup('Point d\'arrivée');
+                                    arrivee.idtrace = data[i]['idTrace']
+                                }
                                 tab_points.push(point);
                             }
                             
@@ -77,7 +86,7 @@ window.onload = function init(){
                                 color:'green',
                                 weight: 10
                             });
-                            polylines.idtrace = all_traces[i].id;                            
+                            polylines.idtrace = all_traces[i].id;
                             drawnItems.addLayer(polylines);
                         },
                         error: function (xhr, textStatus, errorThrown) {  
@@ -90,55 +99,10 @@ window.onload = function init(){
                 console.log('Erreur lors de la récupération des tracés');  
             }
         });
+
+        drawControl = addDrawControl(drawnItems);
+        mymap.addControl(drawControl);
     });
-
-    mymap.setView([latitude, longitude], echelle);
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(mymap);
-
-    //Toolbar Visible
-    L.drawLocal.draw.toolbar.buttons.polyline = 'Créer un parcours';
-    L.drawLocal.draw.toolbar.buttons.marker = 'Ajouter un point d\'intérêt';
-    L.drawLocal.edit.toolbar.buttons.editDisabled = "Aucun élément à éditer";
-    L.drawLocal.edit.toolbar.buttons.removeDisabled = "Aucun élément à supprimer";
-
-    //Toolbar Visible Element Placé
-    L.drawLocal.edit.toolbar.buttons.edit = "Editer parcours/points";
-    L.drawLocal.edit.toolbar.buttons.remove = "Supprimer parcours/points";
-
-    //Toolbar Polyline
-    L.drawLocal.draw.toolbar.actions.text = "Annuler";
-    L.drawLocal.draw.toolbar.actions.title = "Annuler";
-    L.drawLocal.draw.toolbar.finish.text = "Terminer";
-    L.drawLocal.draw.toolbar.finish.title = "Terminer la création du parcours";
-    L.drawLocal.draw.toolbar.undo.text = "Supprimer le dernier point";
-    L.drawLocal.draw.toolbar.undo.title = "Supprimer le dernier point dessiné";
-
-    //Toolbar Polyline Texte Carte
-    L.drawLocal.draw.handlers.polyline.tooltip.start = 'Cliquer sur la carte pour positionner le point de départ';
-    L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Cliquer sur la carte pour continuer le tracé';
-    L.drawLocal.draw.handlers.polyline.tooltip.end = 'Cliquer sur le dernier point pour finaliser le parcours';
-
-    //Toolbar Marker Texte
-    L.drawLocal.draw.handlers.marker.tooltip.start = 'Cliquer sur la carte pour placer un point d\'intérêt';
-
-    //Toolbar Edition
-    L.drawLocal.edit.toolbar.actions.cancel.text = "Annuler";
-    L.drawLocal.edit.toolbar.actions.cancel.title = "Annuler les derniers changements";
-    L.drawLocal.edit.toolbar.actions.save.text = "Sauvegarder";
-    L.drawLocal.edit.toolbar.actions.save.title = "Sauvegarder les changements";
-    
-    //Toolbar Edition Texte
-    L.drawLocal.edit.handlers.edit.tooltip.text = "Maintenir un élément pour le déplacer";
-    L.drawLocal.edit.handlers.edit.tooltip.subtext = "Retirer un point de passage en double-cliquant dessus";
-    
-    //Toolbar Suppression
-    L.drawLocal.edit.toolbar.actions.clearAll.text = "Tout supprimer";
-    L.drawLocal.edit.toolbar.actions.clearAll.title = "Supprimer tous les éléments sur la carte";
-
-    //Toolbar Suppression Texte
-    L.drawLocal.edit.handlers.remove.tooltip.text = "Cliquez sur un élément pour le supprimer";
  
     mymap.on('draw:created', function(e) {
         var type = e.layerType,
@@ -152,9 +116,7 @@ window.onload = function init(){
                 points.push(point);
             });
             
-            let trace = {
-                "idParcours": idparcours
-            }
+            let trace = {"idParcours": idparcours}
 
             $.ajax({  
                 url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces',  
@@ -177,9 +139,11 @@ window.onload = function init(){
 
                         if(i == 0){
                             point["type"] = 1;
+                            L.marker([point["lat"], point["lon"]], {icon: departIcon}).addTo(mymap);
                         }
                         else if(i == sizeTabPoints-1){
                             point["type"]= 2;
+                            L.marker([point["lat"], point["lon"]], {icon: arriveeIcon}).addTo(mymap);
                         }
                         else{
                             point["type"] = 0;
@@ -191,9 +155,6 @@ window.onload = function init(){
                             dataType: 'json',  
                             headers: {"X-Auth-Token": token}, 
                             data: { ...point },
-                            success: function(data){
-                                console.log(data)
-                            },
                             error: function (xhr, textStatus, errorThrown) {  
                                 console.log('Erreur lors de l\'enregistrement du point');  
                             }
@@ -223,7 +184,9 @@ window.onload = function init(){
     });
 
     mymap.on('draw:edited', function(e){
+
         e.layers.eachLayer(function(layer){
+            
             let idtrace = layer.idtrace
             $.ajax({
                 url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/' + idtrace,  
@@ -270,9 +233,18 @@ window.onload = function init(){
 
                         if(i == 0){
                             point["type"] = 1;
+                            
+                            L.marker([point['lat'], point['lon']], {icon: departIcon})
+                                .addTo(mymap)
+                                .bindPopup('Point de départ');
+                            
                         }
                         else if(i == sizeTabPoints-1){
                             point["type"]= 2;
+                            
+                            L.marker([point['lat'], point['lon']], {icon: arriveeIcon})
+                                .addTo(mymap)
+                                .bindPopup('Point de d\'arrivée');
                         }
                         else{
                             point["type"] = 0;
@@ -284,9 +256,6 @@ window.onload = function init(){
                             dataType: 'json',  
                             headers: {"X-Auth-Token": token}, 
                             data: { ...point },
-                            success: function(data){
-                                console.log(data)
-                            },
                             error: function (xhr, textStatus, errorThrown) {  
                                 console.log('Erreur lors de l\'enregistrement du point');  
                             }
@@ -301,6 +270,7 @@ window.onload = function init(){
     });
 
     mymap.on('draw:deleted', function(e) {
+
         $.ajax({  
             url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/'+idparcours,  
             type: 'DELETE',
@@ -314,31 +284,117 @@ window.onload = function init(){
             }
         });
     });
+
+    mymap.setView([latitude, longitude], echelle);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mymap);
+       
+    positionUser();
+}
+
+function addZoom(){
+     //Toolbar Zoom
+     let zoomControl = new L.control.zoom({
+        zoomInTitle: "Zoomer",
+        zoomOutTitle: "Dézoomer"
+    });
+
+    return zoomControl;
+}
+
+function traduireToolbar(){
+    //Toolbar Visible
+    L.drawLocal.draw.toolbar.buttons.polyline = 'Créer un parcours';
+    L.drawLocal.draw.toolbar.buttons.marker = 'Ajouter un point d\'intérêt';
+    L.drawLocal.edit.toolbar.buttons.editDisabled = "Aucun élément à éditer";
+    L.drawLocal.edit.toolbar.buttons.removeDisabled = "Aucun élément à supprimer";
     
-    var positionUser = function() {
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        }
-        else {
-            alert("La localisation n'est pas disponible avec votre navigateur !");
-        }
+    //Toolbar Visible Element Placé
+    L.drawLocal.edit.toolbar.buttons.edit = "Editer parcours/points";
+    L.drawLocal.edit.toolbar.buttons.remove = "Supprimer parcours/points";
+
+    //Toolbar Polyline
+    L.drawLocal.draw.toolbar.actions.text = "Annuler";
+    L.drawLocal.draw.toolbar.actions.title = "Annuler";
+    L.drawLocal.draw.toolbar.finish.text = "Terminer";
+    L.drawLocal.draw.toolbar.finish.title = "Terminer la création du parcours";
+    L.drawLocal.draw.toolbar.undo.text = "Supprimer le dernier point";
+    L.drawLocal.draw.toolbar.undo.title = "Supprimer le dernier point dessiné";
+
+    //Toolbar Polyline Texte Carte
+    L.drawLocal.draw.handlers.polyline.tooltip.start = 'Cliquer sur la carte pour positionner le point de départ';
+    L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Cliquer sur la carte pour continuer le tracé';
+    L.drawLocal.draw.handlers.polyline.tooltip.end = 'Cliquer sur le dernier point pour finaliser le parcours';
+
+    //Toolbar Marker Texte
+    L.drawLocal.draw.handlers.marker.tooltip.start = 'Cliquer sur la carte pour placer un point d\'intérêt';
+
+    //Toolbar Edition
+    L.drawLocal.edit.toolbar.actions.cancel.text = "Annuler";
+    L.drawLocal.edit.toolbar.actions.cancel.title = "Annuler les derniers changements";
+    L.drawLocal.edit.toolbar.actions.save.text = "Sauvegarder";
+    L.drawLocal.edit.toolbar.actions.save.title = "Sauvegarder les changements";
+    
+    //Toolbar Edition Texte
+    L.drawLocal.edit.handlers.edit.tooltip.text = "Maintenir un élément pour le déplacer";
+    L.drawLocal.edit.handlers.edit.tooltip.subtext = "Retirer un point de passage en double-cliquant dessus";
+    
+    //Toolbar Suppression
+    L.drawLocal.edit.toolbar.actions.clearAll.text = "Tout supprimer";
+    L.drawLocal.edit.toolbar.actions.clearAll.title = "Supprimer tous les éléments sur la carte";
+
+    //Toolbar Suppression Texte
+    L.drawLocal.edit.handlers.remove.tooltip.text = "Cliquez sur un élément pour le supprimer";    
+}
+
+function addDrawControl(drawnItems){
+    let drawControl = new L.Control.Draw({
+        position:'topleft',
+        edit: {
+            featureGroup: drawnItems,
+            remove:true
+        },
+        draw: {
+            polyline: {
+                shapeOptions: {
+                    color: 'orange',
+                    weight: 10,
+                }
+            },
+            circle: false,
+            polygon: false,
+            marker: {
+                repeatMode:true
+            },
+            circlemarker: false,
+            rectangle: false,
+        },
+    });
+    return drawControl;
+}
+
+function positionUser() {
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);                
     }
+    else {
+        alert("La localisation n'est pas disponible avec votre navigateur !");
+    }
+}
 
-    var showPosition = function(position) {
-        latitude = position.coords.latitude;
-        longitude = position.coords.longitude;
-        echelle = 18;
+function showPosition(position) {
+    latitude = position.coords.latitude;
+    longitude = position.coords.longitude;
+    echelle = 18;
 
-        mymap.setView([latitude, longitude], echelle);
+    mymap.setView([latitude, longitude], echelle);
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(mymap);
+    }).addTo(mymap);
 
-        var latlng = [latitude, longitude];
-        var marker = L.marker([latitude, longitude]).addTo(mymap);
-        var popup = L.popup().setLatLng(latlng).setContent('<p>Vous êtes ici<br>Latitude: '+ latitude +'<br>Longitude: '+longitude+'</p>').openOn(mymap);
-        marker.bindPopup(popup).openPopup();
-        
-    }
-    positionUser();
+    let latlng = [latitude, longitude];
+    let marker = L.marker([latitude, longitude]).addTo(mymap);
+    let popup = L.popup().setLatLng(latlng).setContent('<p>Vous êtes ici<br>Latitude: '+ latitude +'<br>Longitude: '+longitude+'</p>').openOn(mymap);
+    marker.bindPopup(popup).openPopup();
 }
