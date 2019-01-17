@@ -56,7 +56,7 @@ window.onload = function init(){
 
         traduireToolbar();
         
-        $.when(dessinerParcours(this)
+        $.when(dessinerParcours()
             .done(function(a1, a2, a3, a4){                
                 console.log('Parcours dessiné avec succès');   
             })
@@ -98,11 +98,11 @@ window.onload = function init(){
     });
 
     mymap.on('draw:edited', function(e){
-
         e.layers.eachLayer(function(layer){
             
-            let idtrace = layer.idtrace
-            supprimerTrace(idtrace)
+            $.when(supprimerTrace(layer.idtrace).done(function(a1, a2, a3, a4){
+                console.log('Tracé supprimé ['+ layer.idtrace +']');
+            }));
 
             points = [];
             layer.editing.latlngs[0].forEach(function(point) {
@@ -110,14 +110,18 @@ window.onload = function init(){
             });
             
             let trace = {"idParcours": idparcours}
-            creerTrace(trace);
+            $.when(creerTrace(trace).done(function(a1, a2, a3, a4){
+                console.log('Nouveau tracé enregistré');
+            }));
         });
     });
 
     mymap.on('draw:deleted', function(e) {
-        $.when(supprimerParcours(idparcours).done(function(a1, a2, a3, a4){
-            console.log('Parcours supprimés avec succès');
-        }));
+        e.layers.eachLayer(function(layer){
+            $.when(supprimerTrace(layer.idtrace).done(function(a1, a2, a3, a4){
+                console.log('Tracé supprimé avec succès ['+ layer.idtrace + ']');
+            }));
+        });
     });
 
     mymap.setView([latitude, longitude], echelle);
@@ -139,6 +143,8 @@ function addZoom(){
 }
 
 function traduireToolbar(){
+    console.log('Début de la traduction barre d\'outils...');
+    
     //Toolbar Visible
     L.drawLocal.draw.toolbar.buttons.polyline = 'Créer un parcours';
     L.drawLocal.draw.toolbar.buttons.marker = 'Créer un nouveau poste';
@@ -180,7 +186,9 @@ function traduireToolbar(){
     L.drawLocal.edit.toolbar.actions.clearAll.title = "Supprimer tous les éléments sur la carte";
 
     //Toolbar Suppression Texte
-    L.drawLocal.edit.handlers.remove.tooltip.text = "Cliquez sur un élément pour le supprimer";    
+    L.drawLocal.edit.handlers.remove.tooltip.text = "Cliquez sur un élément pour le supprimer";
+    
+    console.log('Fin de traduction...');
 }
 
 function dessinerParcours(){
@@ -196,7 +204,7 @@ function dessinerParcours(){
             }
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la récupération des tracés');  
+            console.log('Erreur lors de la récupération du parcours ['+ idparcours + ']');  
         }
     });
 }
@@ -226,10 +234,9 @@ function creerTrace(trace){
         },
         data: trace,
         success: function (data, textStatus, xhr) {  
-            layer.idtrace = data.id;
-            
             let point = [];
-            sizeTabPoints = points.length;
+            let sizeTabPoints = points.length;
+            
             for (let i = 0; i < sizeTabPoints; i++) {
                 point["idTrace"] = data['id'];
                 point["ordre"] = i;
@@ -255,16 +262,9 @@ function creerTrace(trace){
                     point["type"] = 0;
                 }
 
-                $.ajax({  
-                    url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points',  
-                    type: 'POST',
-                    dataType: 'json',  
-                    headers: {"X-Auth-Token": token}, 
-                    data: { ...point },
-                    error: function (xhr, textStatus, errorThrown) {  
-                        console.log('Erreur lors de l\'enregistrement du point');  
-                    }
-                });
+                $.when(creerPoint(point).done(function(a1, a2, a3, a4){
+                    console.log(a1);
+                }));
             }                    
         },  
         error: function (xhr, textStatus, errorThrown) {  
@@ -332,6 +332,20 @@ function supprimerTrace(id){
         }
     });
 }
+
+function creerPoint(point){
+    return $.ajax({  
+        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points',  
+        type: 'POST',
+        dataType: 'json',  
+        headers: {"X-Auth-Token": token}, 
+        data: { ...point },
+        error: function (xhr, textStatus, errorThrown) {  
+            console.log('Erreur lors de l\'enregistrement du point');  
+        }
+    });
+}
+
 
 function addDrawControl(drawnItems){
     let drawControl = new L.Control.Draw({
