@@ -54,13 +54,14 @@ window.onload = function init(){
         drawControl = addDrawControl(drawnItems);
         this.addControl(drawControl);
 
-        traduireToolbar();
         
         $.when(dessinerParcours()
-            .done(function(a1, a2, a3, a4){                
+            .done(function(data, textStatus, jqXHR){                
                 console.log('Parcours dessiné avec succès');   
             })
         );
+
+        traduireToolbar();
     });
  
     mymap.on('draw:created', function(e) {
@@ -76,7 +77,7 @@ window.onload = function init(){
             });
             
             let trace = {"idParcours": idparcours}
-            $.when(creerTrace(trace).done(function(a1, a2, a3, a4){
+            $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
                 console.log("Nouveau trajet sauvegardé avec succès");
             }));
         }
@@ -100,7 +101,7 @@ window.onload = function init(){
     mymap.on('draw:edited', function(e){
         e.layers.eachLayer(function(layer){
             
-            $.when(supprimerTrace(layer.idtrace).done(function(a1, a2, a3, a4){
+            $.when(supprimerTrace(layer.idtrace).done(function(data, textStatus, jqXHR){
                 console.log('Tracé supprimé ['+ layer.idtrace +']');
             }));
 
@@ -110,15 +111,16 @@ window.onload = function init(){
             });
             
             let trace = {"idParcours": idparcours}
-            $.when(creerTrace(trace).done(function(a1, a2, a3, a4){
+            $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
                 console.log('Nouveau tracé enregistré');
             }));
         });
     });
 
     mymap.on('draw:deleted', function(e) {
+       
         e.layers.eachLayer(function(layer){
-            $.when(supprimerTrace(layer.idtrace).done(function(a1, a2, a3, a4){
+            $.when(supprimerTrace(layer.idtrace).done(function(data, textStatus, jqXHR){
                 console.log('Tracé supprimé avec succès ['+ layer.idtrace + ']');
             }));
         });
@@ -144,7 +146,7 @@ function addZoom(){
 
 function traduireToolbar(){
     console.log('Début de la traduction barre d\'outils...');
-    
+
     //Toolbar Visible
     L.drawLocal.draw.toolbar.buttons.polyline = 'Créer un parcours';
     L.drawLocal.draw.toolbar.buttons.marker = 'Créer un nouveau poste';
@@ -198,6 +200,9 @@ function dessinerParcours(){
         type: 'GET',
         dataType: 'json',  
         headers: {"X-Auth-Token": token},
+        beforeSend: function(){
+            $("#loader").show();
+        },
         success: function(data){
             for (let i = 0; i < data.length; i++) {
                 recupererTrace(data[i].id)
@@ -205,6 +210,9 @@ function dessinerParcours(){
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de la récupération du parcours ['+ idparcours + ']');  
+        },
+        complete:function(data){   
+            $("#loader").hide();
         }
     });
 }
@@ -215,11 +223,17 @@ function supprimerParcours(id) {
         type: 'DELETE',
         dataType: 'json',  
         headers: {"X-Auth-Token": token},
+        beforeSend: function(){
+            $("#loader").show();
+        },
         success: function(data){
             console.log('Tracés supprimés')
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de l\'enregistrement du point');  
+        },
+        complete:function(data){   
+            $("#loader").hide();
         }
     });
 }
@@ -233,6 +247,9 @@ function creerTrace(trace){
             "X-Auth-Token": token
         },
         data: trace,
+        beforeSend: function(){
+            $("#loader").show();
+        },
         success: function (data, textStatus, xhr) {  
             let point = [];
             let sizeTabPoints = points.length;
@@ -262,13 +279,16 @@ function creerTrace(trace){
                     point["type"] = 0;
                 }
 
-                $.when(creerPoint(point).done(function(a1, a2, a3, a4){
-                    console.log(a1);
+                $.when(creerPoint(point).done(function(data, textStatus, jqXHR){
+                    console.log(data)
                 }));
             }                    
         },  
         error: function (xhr, textStatus, errorThrown) {  
             console.log(textStatus);
+        },
+        complete:function(data){   
+            $("#loader").hide();
         }
     });
 }
@@ -279,6 +299,9 @@ function recupererTrace(id){
         type: 'GET',
         dataType: 'json',  
         headers: {"X-Auth-Token": token},
+        beforeSend: function(){
+            $("#loader").show();
+        },
         success: function(data){
             let tab_points= [];
 
@@ -312,6 +335,9 @@ function recupererTrace(id){
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de la récupération des points du tracé [' + id + ']');  
+        },
+        complete:function(data){   
+            $("#loader").hide();
         }
     });
 }
@@ -324,11 +350,14 @@ function supprimerTrace(id){
         headers: {
             "X-Auth-Token": token
         },
-        success: function(data){
-            console.log('Tracé supprimé');
+        beforeSend: function(){
+            $("#loader").show();
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de la suppression du tracé ['+ id +']');  
+        },
+        complete:function(data){   
+            $("#loader").hide();
         }
     });
 }
@@ -340,12 +369,39 @@ function creerPoint(point){
         dataType: 'json',  
         headers: {"X-Auth-Token": token}, 
         data: { ...point },
+        beforeSend: function(){
+            $("#loader").show();
+        },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de l\'enregistrement du point');  
+        },
+        complete:function(data){   
+            $("#loader").hide();
         }
     });
 }
 
+function creerPoste(poste){
+    return $.ajax({  
+        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/postes',  
+        type: 'POST',
+        dataType: 'json',  
+        headers: {"X-Auth-Token": token}, 
+        data: poste,
+        beforeSend: function(){
+            $("#loader").show();
+        },
+        success: function(data){
+            console.log('Nouveau poste créé!');
+        },
+        error: function (xhr, textStatus, errorThrown) {  
+            console.log('Erreur lors de l\'enregistrement du poste');  
+        },
+        complete:function(data){   
+            $("#loader").hide();
+        }
+    });
+}
 
 function addDrawControl(drawnItems){
     let drawControl = new L.Control.Draw({

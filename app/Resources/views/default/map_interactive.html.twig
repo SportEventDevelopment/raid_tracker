@@ -31,5 +31,10 @@
 
 
 {% block content %}
-    <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}></div>
+    <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}>
+        <!-- Image loader -->
+        <div id='loader'>
+            <img src={{asset('images/loader.gif')}}>
+        </div>
+    </div>
 {% endblock %}
