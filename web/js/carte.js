@@ -10,6 +10,7 @@ var departIcon;
 var passageIcon;
 var arriveeIcon;
 var posteIcon;
+var markers ;
 
 window.onload = function init(){
     mymap = L.map('mapid',{
@@ -43,10 +44,13 @@ window.onload = function init(){
     });
 
     mymap.on('load', function(e){
+        
         let zoomControl = addZoom();
         this.addControl(zoomControl);
 
         L.Control.geocoder().addTo(this);
+
+        traduireToolbar();
 
         drawnItems = new L.FeatureGroup();
         this.addLayer(drawnItems);
@@ -54,14 +58,11 @@ window.onload = function init(){
         drawControl = addDrawControl(drawnItems);
         this.addControl(drawControl);
 
+        markers = L.layerGroup().addTo(this);
         
-        $.when(dessinerParcours()
-            .done(function(data, textStatus, jqXHR){                
-                console.log('Parcours dessiné avec succès');   
-            })
-        );
-
-        traduireToolbar();
+        $.when(dessinerParcours().done(function(data, textStatus, jqXHR){                
+            console.log('Parcours dessiné avec succès');   
+        }));
     });
  
     mymap.on('draw:created', function(e) {
@@ -72,13 +73,13 @@ window.onload = function init(){
         if (type === 'polyline') {
             drawnItems.addLayer(layer);
 
-            e.layer.editing.latlngs[0].forEach(function(point) {
+            layer.getLatLngs().forEach(function(point) {
                 points.push(point);
             });
             
             let trace = {"idParcours": idparcours}
             $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
-                console.log("Nouveau trajet sauvegardé avec succès");
+                layer.idtrace = data.id
             }));
         }
         else if ( type === 'polygon') {
@@ -86,6 +87,11 @@ window.onload = function init(){
         }
         else if (type === 'marker') {
             drawnItems.addLayer(layer);
+
+            // let poste = {
+            //     "idPoint":
+            // }
+            // creerPoste(poste)
         }
         else if (type === 'circlemarker') {
             drawnItems.addLayer(layer);
@@ -97,32 +103,53 @@ window.onload = function init(){
             drawnItems.addLayer(layer);
         }
     });
-
+        
     mymap.on('draw:edited', function(e){
+        
         e.layers.eachLayer(function(layer){
-            
-            $.when(supprimerTrace(layer.idtrace).done(function(data, textStatus, jqXHR){
-                console.log('Tracé supprimé ['+ layer.idtrace +']');
-            }));
 
-            points = [];
-            layer.editing.latlngs[0].forEach(function(point) {
-                points.push(point);
-            });
-            
-            let trace = {"idParcours": idparcours}
-            $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
-                console.log('Nouveau tracé enregistré');
+            let markers_to_remove = [];
+
+            for (let i = 0; i < markers.getLayers().length; i++) {       
+                if( markers.getLayers()[i].idtrace == layer.idtrace 
+                    || markers.getLayers()[i].idtrace.id == layer.idtrace){
+                    markers_to_remove.push(markers.getLayers()[i])
+                }
+            }
+            for (let j = 0; j < markers_to_remove.length; j++) {
+                markers.removeLayer(markers_to_remove[j])
+            }
+
+            $.when(supprimerTrace(layer.idtrace).done(function(data, textStatus, jqXHR){
+                points = [];
+                layer.getLatLngs().forEach(function(point) {
+                    points.push(point);
+                });
+                
+                let trace = {"idParcours": idparcours}
+                $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
+                    layer.idtrace = data.id
+                }));
             }));
         });
     });
 
     mymap.on('draw:deleted', function(e) {
-       
         e.layers.eachLayer(function(layer){
-            $.when(supprimerTrace(layer.idtrace).done(function(data, textStatus, jqXHR){
-                console.log('Tracé supprimé avec succès ['+ layer.idtrace + ']');
-            }));
+
+            let markers_to_remove = [];
+
+            for (let i = 0; i < markers.getLayers().length; i++) {       
+                if( markers.getLayers()[i].idtrace == layer.idtrace 
+                    || markers.getLayers()[i].idtrace.id == layer.idtrace){
+                    markers_to_remove.push(markers.getLayers()[i])
+                }
+            }
+            for (let j = 0; j < markers_to_remove.length; j++) {
+                markers.removeLayer(markers_to_remove[j])
+            }
+
+            supprimerTrace(layer.idtrace);
         });
     });
 
@@ -227,7 +254,7 @@ function supprimerParcours(id) {
             $("#loader").show();
         },
         success: function(data){
-            console.log('Tracés supprimés')
+            console.log('Parcours supprimé ['+ data.id +']')
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de l\'enregistrement du point');  
@@ -262,27 +289,25 @@ function creerTrace(trace){
 
                 if(i == 0){
                     point["type"] = 1;
-                    
-                    L.marker([point['lat'], point['lon']], {icon: departIcon})
-                        .addTo(mymap)
+                    let depart = L.marker([point["lat"], point["lon"]], {icon: departIcon})
+                        .addTo(markers)
                         .bindPopup('Point de départ');
-                    
+                    depart.idtrace = point['idTrace'];
                 }
                 else if(i == sizeTabPoints-1){
-                    point["type"]= 2;
-                    
-                    L.marker([point['lat'], point['lon']], {icon: arriveeIcon})
-                        .addTo(mymap)
+                    point["type"] = 2;
+                    let arrivee = L.marker([point["lat"], point["lon"]], {icon: arriveeIcon})
+                        .addTo(markers)
                         .bindPopup('Point de d\'arrivée');
+                    arrivee.idtrace = point['idTrace'];
                 }
                 else{
                     point["type"] = 0;
                 }
 
-                $.when(creerPoint(point).done(function(data, textStatus, jqXHR){
-                    console.log(data)
-                }));
-            }                    
+                creerPoint(point);
+            }
+            console.log('Nouveau tracé créé ['+ data.id +']');
         },  
         error: function (xhr, textStatus, errorThrown) {  
             console.log(textStatus);
@@ -312,14 +337,13 @@ function recupererTrace(id){
 
                 if(data[i]['type'] == 1){
                     let depart = L.marker([data[i]['lat'], data[i]['lon']], {icon: departIcon})
-                        .addTo(mymap)
+                        .addTo(markers)
                         .bindPopup('Point de départ');
-                    depart.idtrace = data[i]['idTrace']
-        
+                    depart.idtrace = data[i]['idTrace']  
                 }
                 else if(data[i]['type'] == 2){
                     let arrivee = L.marker([data[i]['lat'], data[i]['lon']], {icon: arriveeIcon})
-                        .addTo(mymap)
+                        .addTo(markers)
                         .bindPopup('Point d\'arrivée');
                     arrivee.idtrace = data[i]['idTrace']
                 }
@@ -353,6 +377,9 @@ function supprimerTrace(id){
         beforeSend: function(){
             $("#loader").show();
         },
+        success: function(data){
+            console.log('Tracé supprimé [' + id + ']');
+        },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de la suppression du tracé ['+ id +']');  
         },
@@ -371,6 +398,9 @@ function creerPoint(point){
         data: { ...point },
         beforeSend: function(){
             $("#loader").show();
+        },
+        success: function(data){
+            console.log(data)
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de l\'enregistrement du point');  
@@ -392,7 +422,7 @@ function creerPoste(poste){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Nouveau poste créé!');
+            console.log('Nouveau poste créé ['+ data.id +']');
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log('Erreur lors de l\'enregistrement du poste');  
