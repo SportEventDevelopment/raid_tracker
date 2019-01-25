@@ -29,6 +29,10 @@ class ParcoursController extends Controller
             $this->getUser()->getToken()
         );
 
+        $url = 'api/organisateurs/raids/'.$request->get('id').'/users/'. $this->getUser()->getIdUser();
+        $est_organisateur = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $parcours_data = $this->get('app.serialize')->entityToArray($form->getData());
@@ -40,21 +44,26 @@ class ParcoursController extends Controller
                 $this->getUser()->getToken()
             );
 
-            $trace_data = array(
-                'idParcours' => $parcours->body->id,
-            );
-            
-            $trace = $this->get('app.restclient')->post(
-                'api/traces',
-                $trace_data,
-                $this->getUser()->getToken()
-            );
+            if($parcours){
+                $trace_data = array(
+                    'idParcours' => $parcours->body->id,
+                );
+                
+                $trace = $this->get('app.restclient')->post(
+                    'api/traces',
+                    $trace_data,
+                    $this->getUser()->getToken()
+                );
 
-            return $this->redirectToRoute('carte_edit', array('id_parcours' => $parcours->body->id));
+                if($trace){
+                    return $this->redirectToRoute('carte_edit', array('id_parcours' => $parcours->body->id));
+                }
+            }
         }
 
         return $this->render('parcours/new.html.twig', array(
             'user' =>$this->getUser(),
+            'est_organisateur' => $est_organisateur,
             'parcours' => $parcours,
             'form' => $form->createView(),
             'raid' => $raid

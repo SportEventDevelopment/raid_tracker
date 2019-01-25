@@ -68,6 +68,10 @@ class RaidController extends Controller
         $raid = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
+        $url = 'api/organisateurs/raids/'.$request->get('id').'/users/'. $this->getUser()->getIdUser();
+        $est_organisateur = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+            
         $url = 'api/parcours/raids/'.$request->get('id');
         $all_parcours = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
@@ -82,6 +86,7 @@ class RaidController extends Controller
 
        return $this->render('raid/description_raid_organisateur.html.twig', array(
             'user' => $this->getUser(),
+            'est_organisateur' =>$est_organisateur,
             'all_parcours' => $all_parcours,
             'all_prefpostes' => $all_prefpostes,
             'all_repartitions' => $all_repartitions,

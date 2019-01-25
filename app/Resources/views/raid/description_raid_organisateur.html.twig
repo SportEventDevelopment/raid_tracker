@@ -3,56 +3,63 @@
 {% block content %}
 
 <div class="container">
-    <h1>Edition du RAID : {{raid.nom}}</h1>
-    <h2>Liste des parcours</h2>
+    {% if est_organisateur %}
+        <h1>Edition du RAID : {{raid.nom}}</h1>
+        <h2>Liste des parcours</h2>
 
-    {% if all_parcours != null %}
+        {% if all_parcours != null %}
+            <ul class="list-group">
+                {% for parcours in all_parcours %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{parcours.nom}}
+                            <div>
+                                <a href= {{ path('carte_edit', {'id_parcours': parcours.id} ) }}>Editer</a>
+                                <a href= {{ path('carte_export', {'id_parcours': parcours.id} ) }}>Exporter GPX</a>
+                            </div>
+                        </li>
+                    
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucun parcours dans ce raid</p>
+        {% endif %}
+
+        <a href= {{ path('create_parcours',{'id':raid.id}) }}>
+            Créer un nouveau parcours
+            <i class="fas fa-3x fa-plus-circle"></i>
+        </a>
+
+        <h2>Attribuer un poste à un bénévole</h2>
         <ul class="list-group">
-            {% for parcours in all_parcours %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{parcours.nom}}
-                        <div>
-                            <a href= {{ path('carte_edit', {'id_parcours': parcours.id} ) }}>Editer</a>
-                            <a href= {{ path('carte_export', {'id_parcours': parcours.id} ) }}>Exporter GPX</a>
-                        </div>
-                    </li>
-                
+            {% for prefposte in all_prefpostes %}
+                <li class="list-group-item text-left">
+                    {{ prefposte.idBenevole.idUser.username}} souhaiterait le poste
+                    {{ prefposte.idPoste.type}} de
+                    {{ prefposte.idPoste.heureDebut|date('H:i', "Europe/Paris") }} à
+                    {{ prefposte.idPoste.heureFin|date('H:i', "Europe/Paris")}}
+
+                    <a href= {{ path('choix_bene_defi', {'idbenevole': prefposte.idBenevole.id, 'idposte':prefposte.idPoste.id }) }}>
+                        Attribuer le poste à ce bénévole
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Bénévoles déjà affectés</h2>
+        <ul class="list-group">
+            {% for repartition in all_repartitions %}
+                <li class="list-group-item text-left">
+                    {{ repartition.idBenevole.idUser.username }} - 
+                    {{ repartition.idPoste.type }}
+                </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>Aucun parcours dans ce raid</p>
+        <div class="alert alert-danger" role="alert">
+            Vous n'êtes pas organisateur de ce RAID.<br>
+            Merci de vous adressez à un des organisateurs pour accéder à cette page
+        </div>
     {% endif %}
-
-    <a href= {{ path('create_parcours',{'id':raid.id}) }}>
-        Créer un nouveau parcours
-        <i class="fas fa-3x fa-plus-circle"></i>
-    </a>
-
-    <h2>Attribuer un poste à un bénévole</h2>
-    <ul class="list-group">
-        {% for prefposte in all_prefpostes %}
-            <li class="list-group-item text-left">
-                {{ prefposte.idBenevole.idUser.username}} souhaiterait le poste
-                {{ prefposte.idPoste.type}} de
-                {{ prefposte.idPoste.heureDebut|date('H:i', "Europe/Paris") }} à
-                {{ prefposte.idPoste.heureFin|date('H:i', "Europe/Paris")}}
-
-                <a href= {{ path('choix_bene_defi', {'idbenevole': prefposte.idBenevole.id, 'idposte':prefposte.idPoste.id }) }}>
-                    Attribuer le poste à ce bénévole
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <h2>Bénévoles déjà affectés</h2>
-     <ul class="list-group">
-        {% for repartition in all_repartitions %}
-            <li class="list-group-item text-left">
-                {{ repartition.idBenevole.idUser.username }} - 
-                {{ repartition.idPoste.type }}
-            </li>
-        {% endfor %}
-    </ul>
 </div>
 
 {% endblock %}

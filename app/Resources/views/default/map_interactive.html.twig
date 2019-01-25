@@ -31,10 +31,18 @@
 
 
 {% block content %}
-    <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}>
-        <!-- Image loader -->
-        <div id='loader'>
-            <img src={{asset('images/loader.gif')}}>
+
+    {% if est_organisateur %}
+        <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}>
+            <!-- Image loader -->
+            <div id='loader'>
+                <img src={{asset('images/loader.gif')}}>
+            </div>
         </div>
-    </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            Vous n'êtes pas organisateur de ce RAID.<br>
+            Merci de vous adressez à un des organisateurs pour accéder à cette page
+        </div>
+    {% endif %}
 {% endblock %}

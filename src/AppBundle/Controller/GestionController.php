@@ -26,6 +26,10 @@ class GestionController extends Controller
         $raid_data = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
+        $url = 'api/organisateurs/raids/'.$request->get('id').'/users/'. $this->getUser()->getIdUser();
+        $est_organisateur = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
         $raid = new Raid();
         $raid->setEquipe($raid_data->equipe);
         $raid->setDate(new \DateTime($raid_data->date));
@@ -54,6 +58,7 @@ class GestionController extends Controller
 
         return $this->render('raid/edit.html.twig', array(
             'user'=>$this->getUser(),
+            'est_organisateur', $est_organisateur,
             'edit_form' => $editForm->createView()
         ));
     }
@@ -63,6 +68,10 @@ class GestionController extends Controller
      */
     public function gestionRaidOrganisateurs(Request $request)
     {
+        $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'. $this->getUser()->getIdUser();
+        $est_organisateur = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
         $url = 'api/organisateurs/raids/'.$request->get('id_raid');
         $organisateurs = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
@@ -77,6 +86,7 @@ class GestionController extends Controller
             if(empty($userSearch)){
                 return $this->render('gestion/edit_organisateurs.html.twig', array(
                     'user'=>$this->getUser(),
+                    'est_organisateur' => $est_organisateur,
                     'organisateurs' => $organisateurs,
                     'errors' => "L'utilisateur que vous souhaitez ajouter n'existe pas!",
                     'form' => $form->createView()
@@ -93,6 +103,7 @@ class GestionController extends Controller
             if(empty($new_orga)){
                 return $this->render('gestion/edit_organisateurs.html.twig', array(
                     'user'=>$this->getUser(),
+                    'est_organisateur' => $est_organisateur,
                     'organisateurs' => $organisateurs,
                     'errors' => "Problème rencontré lors de l'enregistrement du nouvel organisateur",
                     'form' => $form->createView()
@@ -104,6 +115,7 @@ class GestionController extends Controller
 
         return $this->render('gestion/edit_organisateurs.html.twig', array(
             'user'=>$this->getUser(),
+            'est_organisateur' => $est_organisateur,
             'organisateurs' => $organisateurs,
             'errors' => null,
             'form' => $form->createView()
@@ -118,6 +130,10 @@ class GestionController extends Controller
         $id_raid = $request->get('id_raid');
         $id_user = $request->get('id_user');
        
+        $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'. $this->getUser()->getIdUser();
+        $est_organisateur = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+            
         $url_raids = 'api/organisateurs/raids/'.$id_raid;
         $organisateurs = $this->get('app.restclient')
             ->get($url_raids, $this->getUser()->getToken());

@@ -61,22 +61,7 @@ class LandingController extends Controller
           
         return $this->render('landing/gestionRaid.html.twig', array(
           'user' => $this->getUser(),
-          'raids_organisateurs' => $raids_organisateurs,
-        ));
-      }
-    
-    /**
-      * @Route("/rejoindre-raid-benevole", name="raid_benevole_join")
-      */
-      public function raidBenevoleJoin(Request $request){
-        $url = 'api/raids/benevoles/users/'.$this->getUser()->getIdUser();
-
-        $raids_benevoles = $this->get('app.restclient')
-          ->get($url, $this->getUser()->getToken());
-
-        return $this->render('landing/gestionRaid.html.twig', array(
-          'user' => $this->getUser(),
-          'raids_benevoles' => $raids_benevoles,
+          'raids_organisateurs' => $raids_organisateurs
         ));
       }
 }
