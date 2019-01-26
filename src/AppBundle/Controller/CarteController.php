@@ -36,16 +36,4 @@ class CarteController extends Controller
         ));
         return new Response($content);
     }
-
-    /**
-     * @Route("/carte/export/{id_parcours}", name="carte_export")
-     */
-    public function exportCarte(Request $request)
-    {
-        $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
-            'user' => $this->getUser(),
-            'token' => $this->getUser()->getToken()
-        ));
-        return new Response($content);
-    }
 }

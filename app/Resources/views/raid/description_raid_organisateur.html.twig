@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container">
+<div data-token={{token}} class="container">
     <h1>Edition du RAID : {{raid.nom}}</h1>
     <h2>Liste des parcours</h2>
 
@@ -13,12 +13,124 @@
                         {{parcours.nom}}
                         <div>
                             <a href= {{ path('carte_edit', {'id_parcours': parcours.id} ) }}>Editer</a>
-                            <a href= {{ path('carte_export', {'id_parcours': parcours.id} ) }}>Exporter GPX</a>
+                            <button id={{parcours.id}} type="submit" class="btn btn-primary">Save to file</button>         
                         </div>
-                    </li>
-                
+                    </li>                
             {% endfor %}
         </ul>
+
+        <script type="text/javascript">
+            var token = $('.container').data('token');
+            //let raid = $('.container').data('raid');
+            var tous_points_traces;
+            var tab_traces_points = [];
+
+            $(".btn-primary").click( function() {
+                var id_parcours = this.getAttribute('id');
+                
+                $.when(recuperer_points_traces(id_parcours).done(function(data, textStatus, jqXHR){
+                    let length_tab_traces_points = tab_traces_points.length;
+
+                    for (let i = 0 ; i < length_tab_traces_points ; i++) {
+
+                        // Building the CSV from the Data two-dimensional array
+                        // Each column is separated by ";" and new line "\n" for next row
+                    /*    var csvContent = '';
+                        tab_traces_points.forEach(function(infoArray, index) {
+                            dataString = infoArray.join(';');
+                            csvContent += index < data.length ? dataString + '\n' : dataString;
+                        });
+
+                        // The download function takes a CSV string, the filename and mimeType as parameters
+                        // Scroll/look down at the bottom of this snippet to see how download is called
+                        var download = function(content, fileName, mimeType) {
+                            var a = document.createElement('a');
+                            mimeType = mimeType || 'application/octet-stream';
+
+                            if (navigator.msSaveBlob) { // IE10
+                                navigator.msSaveBlob(new Blob([content], {
+                                    type: mimeType
+                                }),fileName);
+                            }
+                            
+                            else if (URL && 'download' in a) { //html5 A[download]
+                                a.href = URL.createObjectURL(new Blob([content], {
+                                    type: mimeType
+                                }));
+                                a.setAttribute('download', fileName);
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                            }
+                            
+                            else {
+                                location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+                            }
+                        }
+                        download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
+                    */
+                        function downloadableCSV(rows) {
+                            //var content = "data:text/csv;charset=utf-8," + "\n";
+                            var content = "";
+  
+                            rows.forEach(function(element) {
+                                var lat = element.lat;
+                                var lon = element.lon;
+                                var row = lat+","+lon;
+                                content += row + "\n";
+                            })
+                            
+                            /*rows.forEach(function(row, index) {
+                                content += row.join(",") + "\n";
+                            });*/
+
+                            console.log(content);
+                            var blob = new Blob([content], {
+                                type: "text/csv;charset=utf-8"
+                            });
+
+                            saveAs(blob, "test.csv");
+
+                            return encodeURI(content);
+                        }
+                        window.open(downloadableCSV(tab_traces_points[i]),"example.csv");
+                    }
+                }));
+            });
+
+            function recuperer_points_traces(id){
+                return $.ajax({  
+                    url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points/parcours/'+id,  
+                    type: 'GET',
+                    dataType: 'json',  
+                    headers: {"X-Auth-Token": token},
+                    success: function(data){
+                        console.log(data);
+                        let data_length = data.length;
+                        let tab_trace_points = [];
+                        let tab_point = [];
+                        let j = 0;
+                        tab_traces_points = [];
+
+                        for (let i = 0 ; i < data_length ; i++) {
+                            tab_point = [];
+                            tab_point["lon"] = data[i].lon;
+                            tab_point["lat"] = data[i].lat;
+                            tab_trace_points.push(tab_point);
+
+                            if(data[i].type == 2) {
+                                tab_traces_points[j] = tab_trace_points;
+                                tab_trace_points = [];
+                                j++;
+                            }
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {  
+                        console.log('Erreur lors de la récupération des points des tracés');  
+                    }
+                });
+            }
+        </script>
     {% else %}
         <p>Aucun parcours dans ce raid</p>
     {% endif %}

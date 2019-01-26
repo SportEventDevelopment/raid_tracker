@@ -24,9 +24,13 @@
                         <button class="btn btn-info my-4 btn-block" type="submit">Créer un parcours</button>
                     </div>
                     <div class="col">
-                        <a href={{ path('landing') }}>
+                        <button class="btn btn-info my-4 btn-block">
+                            <a href="{{ path('edit_raid', { 'id': raid.id }) }}">Retour à la page d'accueil </a>
+                            
+                        </button>
+                      {# <a href={{ path('landing') }}>
                             <button class="btn btn-info my-4 btn-block">Annuler</button>
-                        </a>
+                        </a> #}
                     </div>
                 </div>
             {{ form_end(form) }}
