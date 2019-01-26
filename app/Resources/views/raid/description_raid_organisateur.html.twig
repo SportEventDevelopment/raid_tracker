@@ -16,7 +16,7 @@
                             <a href= {{ path('carte_export', {'id_parcours': parcours.id} ) }}>Exporter GPX</a>
                         </div>
                     </li>
-                
+
             {% endfor %}
         </ul>
     {% else %}
@@ -29,6 +29,30 @@
     </a>
 
     <h2>Attribuer un poste à un bénévole</h2>
+    <ul class="list-group">
+
+      {% if not posteAndBenevoleNonExistant %}
+       {{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
+          {{ form_row(form.idPoste, {'attr': {'class': 'form-control'}}) }}
+          {{ form_row(form.idBenevole, {'attr': {'class': 'form-control'}}) }} <br/>
+
+      <div class="form-row mb-4">
+          <div class="col">
+               <button class="btn btn-info my-4 btn-block" type="submit"> Répartir ce bénévole à ce poste</button>
+
+          </div>
+      </div>
+      {{ form_end(form) }}
+
+{% else %}
+<p class="h4 mb-2 text-center p-4">La fonctionnalité répartition d'un bénévole  à un poste est actuellement indisponible.</p>
+{#<a class="btn btn-info my-4 btn-block" href="{{ path('landing') }}">Retour à la page d'accueil </a> #}
+
+{% endif %}
+</li>
+
+    </ul>
+
     <ul class="list-group">
         {% for prefposte in all_prefpostes %}
             <li class="list-group-item text-left">
@@ -48,7 +72,7 @@
      <ul class="list-group">
         {% for repartition in all_repartitions %}
             <li class="list-group-item text-left">
-                {{ repartition.idBenevole.idUser.username }} - 
+                {{ repartition.idBenevole.idUser.username }} -
                 {{ repartition.idPoste.type }}
             </li>
         {% endfor %}

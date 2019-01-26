@@ -12,6 +12,7 @@ use AppBundle\Entity\Raid;
 use AppBundle\Entity\Organisateur;
 use AppBundle\Entity\Parcours;
 use \Unirest;
+use AppBundle\Entity\PrefPoste;
 
 /**
  * Raid controller.
@@ -59,10 +60,12 @@ class RaidController extends Controller
     }
 
     /**
-     * @Route("/raids/{id}", name="edit_raid")
+     * @Route("/raids/{id}/", name="edit_raid")
      */
     public function descriptionRaidOrganisateur(Request $request)
     {
+
+        $posteAndBenevoleNonExistant = false;
         $url = 'api/raids/'.$request->get('id');
         $raid = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
@@ -79,14 +82,58 @@ class RaidController extends Controller
         $all_repartitions = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
+        $url = 'api/benevoles/raids/'.$request->get('id');
+        $all_benevoles = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        $url = 'api/postes/raids/'.$request->get('id').'/available';
+        $postes_availables = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+            if($postes_availables == null  || $all_benevoles==null){
+              $posteAndBenevoleNonExistant = true;
+            }
+        $PrefPoste = new PrefPoste();
+        $form = $this->createForm('AppBundle\Form\PrefPosteV2Type', $PrefPoste, array(
+            'postes_disponibles' => $postes_availables,
+            'benevoles_raid'   => $all_benevoles
+        ));
+
+           $form->handleRequest($request);
+             if ($form->isSubmitted() && $form->isValid()) {
+          //   var_dump($form->getData()->getIdBenevole()->id);die();
+                  // Ajout bénévole et post dans repartition
+              $repartition = array(
+                  'idPoste' => $form->getData()->getIdPoste()->id,
+                  'idBenevole' => $form->getData()->getIdBenevole()->id,
+                  'estConfirme' =>true
+              );
+              $request = $this->get('app.restclient')->post(
+                  'api/repartitions',
+                  $repartition,
+                  $this->getUser()->getToken()
+              );
+
+          /*      return $this->redirectToRoute("landing");
+              }*/
+              return $this->redirectToRoute('edit_raid', array('id' => $raid->id ));
+
+            }
        return $this->render('raid/description_raid_organisateur.html.twig', array(
+            'form' => $form->createView(),
+            //'formv' => $form,
             'user' => $this->getUser(),
             'all_parcours' => $all_parcours,
             'all_prefpostes' => $all_prefpostes,
             'all_repartitions' => $all_repartitions,
-            'raid' => $raid
+            'all_benevoles' => $all_benevoles,
+          //  'all_postes_disponible' =>$all_postes_disponible,
+            'raid' => $raid,
+            'posteAndBenevoleNonExistant' => $posteAndBenevoleNonExistant
+
        ));
     }
+
 
     /**
      * @Route("/raids/benevoles/{idbenevole}/postes/{idposte}", name="choix_bene_defi")
@@ -132,4 +179,7 @@ class RaidController extends Controller
             'posteRepartis' => $posteRepartis
        ));
     }
+
+
+
 }

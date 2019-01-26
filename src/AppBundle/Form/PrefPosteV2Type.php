@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
-class PrefPosteType extends AbstractType
+class PrefPosteV2Type extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -17,18 +17,27 @@ class PrefPosteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
        $postes = $options['postes_disponibles'];
+       $benevoles = $options['benevoles_raid'];
+
 
         $builder
             ->add('idPoste', ChoiceType::class, array(
                 'choices' => $postes,
-                'label' => 'Ma préférence de poste',
+                'label' => 'Choisir un poste',
                 'choice_label' => function ($postes, $key, $value) {
                     return strtoupper($postes->type);
-                }
-            )
-        )
+                })
+                  )
+        ->add('idBenevole', ChoiceType::class, array(
+            'choices' => $benevoles,
+            'label' => 'Choisir un bénévole',
+            'choice_label' => function ($benevoles, $key, $value) {
+                return strtoupper($benevoles->idUser->username);
+            })
+    )
         ;
-    }
+
+  }
 
     /**
      * {@inheritdoc}
@@ -38,6 +47,7 @@ class PrefPosteType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\PrefPoste',
             'postes_disponibles' => null,
+            'benevoles_raid' =>null,
             'csrf_protection' =>false
         ));
     }
