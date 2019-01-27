@@ -28,19 +28,24 @@
         </a>
 
         <h2>Gestion des bénévoles</h2>
-        <ul class="list-group">
-            {% for repartition in all_repartitions %}
-                <li class="list-group-item text-left">
-                    {{ repartition.idBenevole.idUser.username }}
-                    <select class="attribution-poste" 
-                        data-id-raid={{raid.id}} 
-                        data-id-user={{repartition.idBenevole.idUser.id}}
-                        data-id-poste={{repartition.idPoste.id}}>
-                        <option>{{ repartition.idPoste.type }}</option>
-                    </select>
-                </li>
-            {% endfor %}
-        </ul>
+        {% if all_repartitions %}
+            <ul class="list-group">
+                {% for repartition in all_repartitions %}
+                    <li class="list-group-item text-left">
+                        {{ repartition.idBenevole.idUser.username }}
+                        <select class="attribution-poste" 
+                            data-id-raid={{raid.id}} 
+                            data-id-user={{repartition.idBenevole.idUser.id}}
+                            data-id-poste={{repartition.idPoste.id}}
+                            data-name-poste={{repartition.idPoste.type}}>
+                            <option>{{ repartition.idPoste.type }}</option>
+                        </select>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucun bénévole n'a été affecté à un poste pour le moment</p>
+        {% endif %}
     {% else %}
         <div class="alert alert-danger" role="alert">
             Vous n'êtes pas organisateur de ce RAID.<br>
@@ -100,8 +105,16 @@
             $(this).empty();
             
             let raid_id =$(this).data('idRaid');
-
+            let poste_id =$(this).data('idPoste');
+            let poste_name =$(this).data('namePoste');
             $.when(charger_postes_disponibles(raid_id).done(function(data, textStatus, jqXHR){
+
+                let option = document.createElement('option');
+                option.value = poste_id;
+                option.selected= "selected";
+                option.innerHTML = "Poste actuel : " + poste_name;
+                e.target.append(option);
+
                 for(let i=0; i< data.length;i++){
         
                     let option = document.createElement('option');
@@ -227,6 +240,4 @@
         });
     }
 </script>
-
-
 {% endblock %}
