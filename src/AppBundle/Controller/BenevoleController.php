@@ -39,9 +39,9 @@ class BenevoleController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-  //  var_dump($form->getData());die();
+
             // Ajout bénévole
-    /*       $benevole = array(
+            $benevole = array(
                 'idUser' => $this->getUser()->getIdUser(),
                 'idRaid' => $request->get('id_raid')
             );
@@ -60,10 +60,8 @@ class BenevoleController extends Controller
                 'api/prefpostes',
                 $prefposte,
                 $this->getUser()->getToken()
-            );*/
-          //  var_dump($form->getData()->getIdPoste()->id);die();
+            );
 
-          //  var_dump($form);die();
             return $this->redirectToRoute('landing');
         }
 
