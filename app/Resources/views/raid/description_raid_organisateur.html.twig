@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container" data-token={{token}}>
     {% if est_organisateur %}
         <h1>Edition du RAID : {{raid.nom}}</h1>
         <h2>Liste des parcours</h2>
@@ -62,7 +62,6 @@
 
 <script type="text/javascript">
     var token = $('.container').data('token');
-    //let raid = $('.container').data('raid');
     var tous_points_traces;
     var tab_traces_points = [];
 
@@ -98,8 +97,6 @@
                     });
 
                     saveAs(blob, "test.geojson");
-
-                    //return encodeURI(content);
                 }
                 downloadableCSV(tab_traces_points[i]);
             }
@@ -130,11 +127,11 @@
                         tab_trace_points = [];
                         j++;
                     }
-                },
-                error: function (xhr, textStatus, errorThrown) {  
-                    console.log('Erreur lors de la récupération des points des tracés');  
                 }
-            });
+            },
+            error: function (xhr, textStatus, errorThrown) {  
+                console.log('Erreur lors de la récupération des points des tracés');  
+            }
         });
     }
 </script>
