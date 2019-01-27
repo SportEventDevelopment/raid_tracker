@@ -445,6 +445,7 @@ function importGPX(){
         weight: 1,
         clickable: false
     };
+    L.Control.FileLayerLoad.TITLE = 'Importer parcours (GPX, GeoJSON)';
     L.Control.FileLayerLoad.LABEL = '<img class="icon" src="/raid_tracker/web/images/folder.png">';
 
     return L.Control.fileLayerLoad({
@@ -455,24 +456,26 @@ function importGPX(){
                 return L.circleMarker(latlng, {style: style});
             },
             onEachFeature: function (data, layer) {
-                let i = 0;
                 let tab_points_import_gpx = [];
                 
                 layer.editing.latlngs.forEach(function(element) {
                     tab_points_import_gpx.push(element);
                 });
                 
-                var firstpolyline = new L.Polyline(tab_points_import_gpx, {
+                layer.setStyle({
                     color: 'red',
                     weight: 10,
                     opacity: 1,
-                    clickable:true   
-                });
+                    clickable:true
+                })
+                console.log(layer);
                 
-                drawnItems.addLayer(firstpolyline);
-    
                 let trace = {"idParcours": idparcours}
-                creerTrace(trace, tab_points_import_gpx[0]);
+                $.when(creerTrace(trace, tab_points_import_gpx[0]).done(function(data, textStatus, jqXHR){
+                    layer.idtrace = data.id
+                }));
+                
+                drawnItems.addLayer(layer);
             }
         }
     })
