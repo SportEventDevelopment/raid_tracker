@@ -13,23 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 class CarteController extends Controller
 {
     /**
-     * @Route("/carte", name="carte")
-     */
-    public function carte()
-    {
-        $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
-            'user' => $this->getUser(),
-            'token' => $this->getUser()->getToken()
-        ));
-        return new Response($content);
-    }
-
-    /**
      * @Route("/carte/edit/{id_parcours}", name="carte_edit")
      */
     public function editCarte(Request $request)
     {
-
+        $est_organisateur = null;
         $url = 'api/raids/parcours/'.$request->get('id_parcours');
         $raid = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());

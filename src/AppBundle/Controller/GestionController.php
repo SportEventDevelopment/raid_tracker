@@ -22,21 +22,26 @@ class GestionController extends Controller
      */
     public function gestionRaidDescription(Request $request)
     {
+        $raid_data = null;
         $url = 'api/raids/'.$request->get('id_raid');
         $raid_data = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
-
-        $url = 'api/organisateurs/raids/'.$request->get('id').'/users/'. $this->getUser()->getIdUser();
+        
+        $est_organisateur = null;
+        $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'. $this->getUser()->getIdUser();
         $est_organisateur = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
-        $raid = new Raid();
-        $raid->setEquipe($raid_data->equipe);
-        $raid->setDate(new \DateTime($raid_data->date));
-        $raid->setNom($raid_data->nom);
-        $raid->setLieu($raid_data->lieu);
-        $raid->setEdition($raid_data->edition);
-        $raid->setVisibility($raid_data->visibility);
+        $raid = null;
+        if($raid_data != null){
+            $raid = new Raid();
+            $raid->setEquipe($raid_data->equipe);
+            $raid->setDate(new \DateTime($raid_data->date));
+            $raid->setNom($raid_data->nom);
+            $raid->setLieu($raid_data->lieu);
+            $raid->setEdition($raid_data->edition);
+            $raid->setVisibility($raid_data->visibility);
+        }
 
         $editForm = $this->createForm('AppBundle\Form\RaidType', $raid);
         $editForm->handleRequest($request);
@@ -58,7 +63,7 @@ class GestionController extends Controller
 
         return $this->render('raid/edit.html.twig', array(
             'user'=>$this->getUser(),
-            'est_organisateur', $est_organisateur,
+            'est_organisateur' => $est_organisateur,
             'edit_form' => $editForm->createView()
         ));
     }
@@ -68,6 +73,7 @@ class GestionController extends Controller
      */
     public function gestionRaidOrganisateurs(Request $request)
     {
+        $est_organisateur = null;
         $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'. $this->getUser()->getIdUser();
         $est_organisateur = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
