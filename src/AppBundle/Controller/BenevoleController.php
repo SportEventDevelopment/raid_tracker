@@ -29,7 +29,7 @@ class BenevoleController extends Controller
         if($postes_availables == null){
           $posteNonExistant = true;
         }
-        
+
         $PrefPoste = new PrefPoste();
         $form = $this->createForm('AppBundle\Form\PrefPosteType', $PrefPoste, array(
             'postes_disponibles' => $postes_availables
@@ -39,9 +39,9 @@ class BenevoleController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+  //  var_dump($form->getData());die();
             // Ajout bénévole
-            $benevole = array(
+    /*       $benevole = array(
                 'idUser' => $this->getUser()->getIdUser(),
                 'idRaid' => $request->get('id_raid')
             );
@@ -60,8 +60,10 @@ class BenevoleController extends Controller
                 'api/prefpostes',
                 $prefposte,
                 $this->getUser()->getToken()
-            );
+            );*/
+          //  var_dump($form->getData()->getIdPoste()->id);die();
 
+          //  var_dump($form);die();
             return $this->redirectToRoute('landing');
         }
 
@@ -87,7 +89,7 @@ class BenevoleController extends Controller
         $form->handleRequest($request);
  
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             $message = (new \Swift_Message('Invitation pour bénévolat raid'))
                 ->setFrom('sporteventdevelopment@gmail.com')
                 ->setTo($form->getData()->getEmail())

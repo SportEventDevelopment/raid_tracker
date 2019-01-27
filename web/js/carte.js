@@ -468,7 +468,6 @@ function importGPX(){
                     opacity: 1,
                     clickable:true
                 })
-                console.log(layer);
                 
                 let trace = {"idParcours": idparcours}
                 $.when(creerTrace(trace, tab_points_import_gpx[0]).done(function(data, textStatus, jqXHR){
@@ -480,7 +479,6 @@ function importGPX(){
         }
     })
 }
-
 
 function addDrawControl(drawnItems){
     let drawControl = new L.Control.Draw({
