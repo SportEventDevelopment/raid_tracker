@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.css')}}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    <link rel="stylesheet" href="http://makinacorpus.github.io/Leaflet.FileLayer/Font-Awesome/css/font-awesome.min.css"
-/>
 {% endblock %}
 
 {% block javascripts %}    
@@ -22,11 +20,12 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-    <script src="http://makinacorpus.github.io/Leaflet.FileLayer/leaflet.filelayer.js"></script>
-    <script src="http://makinacorpus.github.io/Leaflet.FileLayer/togeojson/togeojson.js"></script>
     <script src="https://unpkg.com/togeojson@0.16.0"></script>
     <script src="https://unpkg.com/leaflet-filelayer@1.2.0"></script>
 
+    <script type="text/javascript">
+        var asset_images = "{{asset('images')}}"; 
+    </script>
     <script src={{asset('js/carte.js')}}></script>
 {% endblock %}
 

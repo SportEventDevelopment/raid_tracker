@@ -10,7 +10,7 @@ var departIcon;
 var passageIcon;
 var arriveeIcon;
 var posteIcon;
-var markers ;
+var markers;
 
 window.onload = function init(){
     mymap = L.map('mapid',{
@@ -48,10 +48,13 @@ window.onload = function init(){
         let zoomControl = addZoom();
         this.addControl(zoomControl);
 
+        let controlImport = importGPX();
+        controlImport.addTo(mymap);
+        
         L.Control.geocoder().addTo(this);
 
         traduireToolbar();
-
+        
         drawnItems = new L.FeatureGroup();
         this.addLayer(drawnItems);
     
@@ -59,7 +62,7 @@ window.onload = function init(){
         this.addControl(drawControl);
 
         markers = L.layerGroup().addTo(this);
-        
+
         $.when(dessinerParcours().done(function(data, textStatus, jqXHR){                
             console.log('Parcours dessiné avec succès');   
         }));
@@ -78,7 +81,7 @@ window.onload = function init(){
             });
             
             let trace = {"idParcours": idparcours}
-            $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
+            $.when(creerTrace(trace, points).done(function(data, textStatus, jqXHR){
                 layer.idtrace = data.id
             }));
         }
@@ -127,7 +130,7 @@ window.onload = function init(){
                 });
                 
                 let trace = {"idParcours": idparcours}
-                $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
+                $.when(creerTrace(trace, points).done(function(data, textStatus, jqXHR){
                     layer.idtrace = data.id
                 }));
             }));
@@ -265,7 +268,7 @@ function supprimerParcours(id) {
     });
 }
 
-function creerTrace(trace){
+function creerTrace(trace, points){
     return $.ajax({  
         url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces',  
         type: 'POST',
@@ -432,6 +435,49 @@ function creerPoste(poste){
         }
     });
 }
+
+function importGPX(){
+
+    let style = {
+        color:'purple',
+        opacity: 0,
+        fillOpacity: 0.5,
+        weight: 1,
+        clickable: false
+    };
+    L.Control.FileLayerLoad.LABEL = '<img class="icon" src="/raid_tracker/web/images/folder.png">';
+
+    return L.Control.fileLayerLoad({
+        fitBounds: true,
+        layerOptions: {
+            style: style,
+            pointToLayer: function (data, latlng){
+                return L.circleMarker(latlng, {style: style});
+            },
+            onEachFeature: function (data, layer) {
+                let i = 0;
+                let tab_points_import_gpx = [];
+                
+                layer.editing.latlngs.forEach(function(element) {
+                    tab_points_import_gpx.push(element);
+                });
+                
+                var firstpolyline = new L.Polyline(tab_points_import_gpx, {
+                    color: 'red',
+                    weight: 10,
+                    opacity: 1,
+                    clickable:true   
+                });
+                
+                drawnItems.addLayer(firstpolyline);
+    
+                let trace = {"idParcours": idparcours}
+                creerTrace(trace, tab_points_import_gpx[0]);
+            }
+        }
+    })
+}
+
 
 function addDrawControl(drawnItems){
     let drawControl = new L.Control.Draw({
