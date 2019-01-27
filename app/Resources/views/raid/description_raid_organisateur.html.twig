@@ -32,68 +32,35 @@
                     let length_tab_traces_points = tab_traces_points.length;
 
                     for (let i = 0 ; i < length_tab_traces_points ; i++) {
-
-                        // Building the CSV from the Data two-dimensional array
-                        // Each column is separated by ";" and new line "\n" for next row
-                    /*    var csvContent = '';
-                        tab_traces_points.forEach(function(infoArray, index) {
-                            dataString = infoArray.join(';');
-                            csvContent += index < data.length ? dataString + '\n' : dataString;
-                        });
-
-                        // The download function takes a CSV string, the filename and mimeType as parameters
-                        // Scroll/look down at the bottom of this snippet to see how download is called
-                        var download = function(content, fileName, mimeType) {
-                            var a = document.createElement('a');
-                            mimeType = mimeType || 'application/octet-stream';
-
-                            if (navigator.msSaveBlob) { // IE10
-                                navigator.msSaveBlob(new Blob([content], {
-                                    type: mimeType
-                                }),fileName);
-                            }
-                            
-                            else if (URL && 'download' in a) { //html5 A[download]
-                                a.href = URL.createObjectURL(new Blob([content], {
-                                    type: mimeType
-                                }));
-                                a.setAttribute('download', fileName);
-                                document.body.appendChild(a);
-                                a.click();
-                                document.body.removeChild(a);
-                            }
-                            
-                            else {
-                                location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
-                            }
-                        }
-                        download(csvContent, 'dowload.csv', 'text/csv;encoding:utf-8');
-                    */
                         function downloadableCSV(rows) {
-                            //var content = "data:text/csv;charset=utf-8," + "\n";
-                            var content = "";
+                            var geojson = {
+                                "name":"NewFeatureType",
+                                "type":"FeatureCollection",
+                                "features":[{
+                                    "type":"Feature",
+                                    "geometry":{
+                                        "type":"LineString",
+                                        "coordinates":[]
+                                    },
+                                    "properties":null
+                                }]
+                            };
   
                             rows.forEach(function(element) {
                                 var lat = element.lat;
                                 var lon = element.lon;
-                                var row = lat+","+lon;
-                                content += row + "\n";
+                                geojson.features[0].geometry.coordinates.push([lon, lat]);
                             })
-                            
-                            /*rows.forEach(function(row, index) {
-                                content += row.join(",") + "\n";
-                            });*/
 
-                            console.log(content);
-                            var blob = new Blob([content], {
-                                type: "text/csv;charset=utf-8"
+                            var blob = new File([JSON.stringify(geojson)], {
+                                type: "text/plain;charset=utf-8"
                             });
 
-                            saveAs(blob, "test.csv");
+                            saveAs(blob, "test.geojson");
 
-                            return encodeURI(content);
+                            //return encodeURI(content);
                         }
-                        window.open(downloadableCSV(tab_traces_points[i]),"example.csv");
+                        downloadableCSV(tab_traces_points[i]);
                     }
                 }));
             });
@@ -105,7 +72,6 @@
                     dataType: 'json',  
                     headers: {"X-Auth-Token": token},
                     success: function(data){
-                        console.log(data);
                         let data_length = data.length;
                         let tab_trace_points = [];
                         let tab_point = [];
