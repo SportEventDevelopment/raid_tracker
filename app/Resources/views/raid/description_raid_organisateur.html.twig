@@ -60,7 +60,7 @@
     var token = $('.container').data('token');
     var tous_points_traces;
     var tab_traces_points = [];
-    var open = false;
+    var open = [];
 
     $(".btn-primary").click( function() {
         var id_parcours = this.getAttribute('id');
@@ -101,14 +101,15 @@
     });
 
     $(".attribution-poste").click( function(e){
-        open = !open;
+        let raid_id =$(this).data('idRaid');
+        let poste_id =$(this).data('idPoste');
+        let poste_name =$(this).data('namePoste');
+        let user_id = $(this).data('idUser');
 
-        if(open){
+        open[user_id] = !open[user_id];
+        
+        if(open[user_id]){
             $(this).empty();
-
-            let raid_id =$(this).data('idRaid');
-            let poste_id =$(this).data('idPoste');
-            let poste_name =$(this).data('namePoste');
 
             $.when(charger_postes_disponibles(raid_id)
                 .done(function(data, textStatus, jqXHR){
@@ -119,7 +120,9 @@
                     e.target.append(option);
 
                     for(let i=0; i< data.length;i++){
+
                         if(poste_id != data[i].id){
+                            
                             let option = document.createElement('option');
                             option.value = data[i].id;
                             option.innerHTML = data[i].type;

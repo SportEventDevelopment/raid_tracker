@@ -89,12 +89,8 @@ window.onload = function init(){
             drawnItems.addLayer(layer);
         }
         else if (type === 'marker') {
+            creerPoste();
             drawnItems.addLayer(layer);
-
-            // let poste = {
-            //     "idPoint":
-            // }
-            // creerPoste(poste)
         }
         else if (type === 'circlemarker') {
             drawnItems.addLayer(layer);
@@ -414,7 +410,18 @@ function creerPoint(point){
     });
 }
 
-function creerPoste(poste){
+function creerPoste(poste=null){
+    if(poste == null){
+
+        poste = {
+            "idPoint": 7708,
+            "type": "Buvette",
+            "nombre": 5,
+            "heureDebut": "29/01/2019 10:00",
+            "heureFin": "29/01/2019 12:00"
+        }
+    }
+
     return $.ajax({  
         url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/postes',  
         type: 'POST',
