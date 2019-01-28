@@ -18,10 +18,6 @@
                                         Heure de début : {{ repartition.idPoste.heureDebut|date('H:i', "Europe/Paris") }}<br />
                                         Heure de fin : {{ repartition.idPoste.heureFin|date('H:i', "Europe/Paris") }}
                                 </div>
-                                <div>
-                                        <a href={{ path('benevole_guide', {'id_poste': repartition.idPoste.id})}}>Me guider à mon poste</a>
-                                        <a href={{ path('benevole_checkin')}}>Valider ma présence</a>
-                                </div>
                         </li>
                 {% endfor %}
         {% else %}
