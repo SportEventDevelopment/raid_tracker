@@ -28,17 +28,19 @@
         </a>
 
         <h2>Gestion des bénévoles</h2>
-        {% if all_repartitions %}
-            <ul class="list-group">
+        {% if all_repartitions != null %}
+            <ul>
                 {% for repartition in all_repartitions %}
-                    <li class="list-group-item text-left">
-                        {{ repartition.idBenevole.idUser.username }}
-                        <select class="attribution-poste" 
+                    <li class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text">{{ repartition.idBenevole.idUser.username }}</label>
+                        </div>
+                        <select class="custom-select attribution-poste"
                             data-id-raid={{raid.id}} 
                             data-id-user={{repartition.idBenevole.idUser.id}}
                             data-id-poste={{repartition.idPoste.id}}
-                            data-name-poste={{repartition.idPoste.type}}>
-                            <option>{{ repartition.idPoste.type }}</option>
+                            data-name-poste="{{repartition.idPoste.type}}">
+                            <option selected="selected" value={{repartition.idPoste.id}}>Poste actuel : {{ repartition.idPoste.type }}</option>
                         </select>
                     </li>
                 {% endfor %}
@@ -103,26 +105,29 @@
 
         if(open){
             $(this).empty();
-            
+
             let raid_id =$(this).data('idRaid');
             let poste_id =$(this).data('idPoste');
             let poste_name =$(this).data('namePoste');
-            $.when(charger_postes_disponibles(raid_id).done(function(data, textStatus, jqXHR){
 
-                let option = document.createElement('option');
-                option.value = poste_id;
-                option.selected= "selected";
-                option.innerHTML = "Poste actuel : " + poste_name;
-                e.target.append(option);
-
-                for(let i=0; i< data.length;i++){
-        
+            $.when(charger_postes_disponibles(raid_id)
+                .done(function(data, textStatus, jqXHR){
+   
                     let option = document.createElement('option');
-                    option.value = data[i].id;
-                    option.innerHTML = data[i].type;
+                    option.value = poste_id;
+                    option.innerHTML = "Poste actuel : " + poste_name;
                     e.target.append(option);
-                }
-            }));
+
+                    for(let i=0; i< data.length;i++){
+                        if(poste_id != data[i].id){
+                            let option = document.createElement('option');
+                            option.value = data[i].id;
+                            option.innerHTML = data[i].type;
+                            e.target.append(option);
+                        }
+                    }
+                })
+            );
         }
     });
 
