@@ -2,57 +2,250 @@
 
 {% block content %}
 
-<div class="container">
-    <h1>Edition du RAID : {{raid.nom}}</h1>
-    <h2>Liste des parcours</h2>
-
-    {% if all_parcours != null %}
-        <ul class="list-group">
-            {% for parcours in all_parcours %}
+<div class="container" data-token={{token}}>
+    {% if est_organisateur %}
+        <h1>Edition du RAID : {{raid.nom}}</h1>
+        <h2>Liste des parcours</h2>
+        {% if all_parcours != null %}
+            <ul class="list-group">
+                {% for parcours in all_parcours %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{parcours.nom}}
                         <div>
                             <a href= {{ path('carte_edit', {'id_parcours': parcours.id} ) }}>Editer</a>
-                            <a href= {{ path('carte_export', {'id_parcours': parcours.id} ) }}>Exporter GPX</a>
+                            <button id={{parcours.id}} type="submit" class="btn btn-primary">Exporter</button>         
                         </div>
+                    </li>                
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucun parcours dans ce raid</p>
+        {% endif %}
+    
+        <a href= {{ path('create_parcours',{'id':raid.id}) }}>
+            Créer un nouveau parcours
+            <i class="fas fa-3x fa-plus-circle"></i>
+        </a>
+
+        <h2>Gestion des bénévoles</h2>
+        {% if all_repartitions != null %}
+            <ul>
+                {% for repartition in all_repartitions %}
+                    <li class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text">{{ repartition.idBenevole.idUser.username }}</label>
+                        </div>
+                        <select class="custom-select attribution-poste"
+                            data-id-raid={{raid.id}} 
+                            data-id-user={{repartition.idBenevole.idUser.id}}
+                            data-id-poste={{repartition.idPoste.id}}
+                            data-name-poste="{{repartition.idPoste.type}}">
+                            <option selected="selected" value={{repartition.idPoste.id}}>Poste actuel : {{ repartition.idPoste.type }}</option>
+                        </select>
                     </li>
-                
-            {% endfor %}
-        </ul>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucun bénévole n'a été affecté à un poste pour le moment</p>
+        {% endif %}
     {% else %}
-        <p>Aucun parcours dans ce raid</p>
+        <div class="alert alert-danger" role="alert">
+            Vous n'êtes pas organisateur de ce RAID.<br>
+            Merci de vous adresser à un des organisateurs pour accéder à cette page
+        </div>
     {% endif %}
-
-    <a href= {{ path('create_parcours',{'id':raid.id}) }}>
-        Créer un nouveau parcours
-        <i class="fas fa-3x fa-plus-circle"></i>
-    </a>
-
-    <h2>Attribuer un poste à un bénévole</h2>
-    <ul class="list-group">
-        {% for prefposte in all_prefpostes %}
-            <li class="list-group-item text-left">
-                {{ prefposte.idBenevole.idUser.username}} souhaiterait le poste
-                {{ prefposte.idPoste.type}} de
-                {{ prefposte.idPoste.heureDebut|date('H:i', "Europe/Paris") }} à
-                {{ prefposte.idPoste.heureFin|date('H:i', "Europe/Paris")}}
-
-                <a href= {{ path('choix_bene_defi', {'idbenevole': prefposte.idBenevole.id, 'idposte':prefposte.idPoste.id }) }}>
-                    Attribuer le poste à ce bénévole
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <h2>Bénévoles déjà affectés</h2>
-     <ul class="list-group">
-        {% for repartition in all_repartitions %}
-            <li class="list-group-item text-left">
-                {{ repartition.idBenevole.idUser.username }} - 
-                {{ repartition.idPoste.type }}
-            </li>
-        {% endfor %}
-    </ul>
 </div>
 
+<script type="text/javascript">
+    var token = $('.container').data('token');
+    var tous_points_traces;
+    var tab_traces_points = [];
+    var open = [];
+
+    $(".btn-primary").click( function() {
+        var id_parcours = this.getAttribute('id');
+        
+        $.when(recuperer_points_traces(id_parcours).done(function(data, textStatus, jqXHR){
+            let length_tab_traces_points = tab_traces_points.length;
+
+            for (let i = 0 ; i < length_tab_traces_points ; i++) {
+                function downloadableCSV(rows) {
+                    var geojson = {
+                        "name":"NewFeatureType",
+                        "type":"FeatureCollection",
+                        "features":[{
+                            "type":"Feature",
+                            "geometry":{
+                                "type":"LineString",
+                                "coordinates":[]
+                            },
+                            "properties":null
+                        }]
+                    };
+
+                    rows.forEach(function(element) {
+                        var lat = element.lat;
+                        var lon = element.lon;
+                        geojson.features[0].geometry.coordinates.push([lon, lat]);
+                    })
+
+                    var blob = new File([JSON.stringify(geojson)], {
+                        type: "text/plain;charset=utf-8"
+                    });
+
+                    saveAs(blob, "test.geojson");
+                }
+                downloadableCSV(tab_traces_points[i]);
+            }
+        }));
+    });
+
+    $(".attribution-poste").click( function(e){
+        let raid_id =$(this).data('idRaid');
+        let poste_id =$(this).data('idPoste');
+        let poste_name =$(this).data('namePoste');
+        let user_id = $(this).data('idUser');
+
+        open[user_id] = !open[user_id];
+        
+        if(open[user_id]){
+            $(this).empty();
+
+            $.when(charger_postes_disponibles(raid_id)
+                .done(function(data, textStatus, jqXHR){
+   
+                    let option = document.createElement('option');
+                    option.value = poste_id;
+                    option.innerHTML = "Poste actuel : " + poste_name;
+                    e.target.append(option);
+
+                    for(let i=0; i< data.length;i++){
+
+                        if(poste_id != data[i].id){
+                            
+                            let option = document.createElement('option');
+                            option.value = data[i].id;
+                            option.innerHTML = data[i].type;
+                            e.target.append(option);
+                        }
+                    }
+                })
+            );
+        }
+    });
+
+    $(".attribution-poste").change( function(e){
+
+        let raid_id = $(this).data('idRaid');
+        let user_id = $(this).data('idUser');
+
+        $.when(recuperer_repartition(raid_id, user_id).done(function(data, textStatus, jqXHR){
+            for(let i=0; i < data.length;i++){
+
+                let repartition = {
+                    "idBenevole": data[i].idBenevole.id,
+                    "idPoste": e.target.value
+                }
+                maj_repartition(repartition, data[i].id);
+            }
+        }));
+    });
+
+    function recuperer_points_traces(id){
+        return $.ajax({  
+            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points/parcours/'+id,  
+            type: 'GET',
+            dataType: 'json',  
+            headers: {"X-Auth-Token": token},
+            success: function(data){
+                let data_length = data.length;
+                let tab_trace_points = [];
+                let tab_point = [];
+                let j = 0;
+                tab_traces_points = [];
+
+                for (let i = 0 ; i < data_length ; i++) {
+                    tab_point = [];
+                    tab_point["lon"] = data[i].lon;
+                    tab_point["lat"] = data[i].lat;
+                    tab_trace_points.push(tab_point);
+
+                    if(data[i].type == 2) {
+                        tab_traces_points[j] = tab_trace_points;
+                        tab_trace_points = [];
+                        j++;
+                    }
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {  
+                console.log('Erreur lors de la récupération des points des tracés');  
+            }
+        });
+    }
+
+    function charger_postes_disponibles(id_raid){
+        return $.ajax({  
+            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/postes/raids/'+ id_raid +'/available',  
+            type: 'GET',
+            dataType: 'json',  
+            headers: {"X-Auth-Token": token},
+            beforeSend: function(){
+                $("#loader").show();
+            },
+            success: function(data){
+                console.log('Récupération des postes disponibles effectuée');
+            },
+            error: function (xhr, textStatus, errorThrown) {  
+                console.log('Erreur lors de la récupération des postes disponibles');  
+            },
+            complete:function(data){   
+                $("#loader").hide();
+            }
+        });
+    }
+
+    function recuperer_repartition(id_raid, id_user){
+        return $.ajax({  
+            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/repartitions/raids/'+ id_raid +'/users/'+ id_user,  
+            type: 'GET',
+            dataType: 'json',  
+            headers: {"X-Auth-Token": token},
+            beforeSend: function(){
+                $("#loader").show();
+            },
+            success: function(data){
+                console.log('Récupération de la répartition utilisateur réussie');
+            },
+            error: function (xhr, textStatus, errorThrown) {  
+                console.log('Erreur lors de la récupération de la répartition utilisateur');  
+            },
+            complete:function(data){   
+                $("#loader").hide();
+            }
+        });
+    }
+
+    function maj_repartition(repartition, id){
+        
+        return $.ajax({  
+            url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/repartitions/'+ id,  
+            type: 'POST',
+            dataType: 'json',  
+            headers: {"X-Auth-Token": token}, 
+            data: { ...repartition },
+            beforeSend: function(){
+                $("#loader").show();
+            },
+            success: function(data){
+                console.log(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {  
+                console.log('Erreur lors de la MAJ de la répartition');  
+            },
+            complete:function(data){   
+                $("#loader").hide();
+            }
+        });
+    }
+</script>
 {% endblock %}

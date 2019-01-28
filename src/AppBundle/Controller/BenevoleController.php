@@ -29,7 +29,7 @@ class BenevoleController extends Controller
         if($postes_availables == null){
           $posteNonExistant = true;
         }
-        
+
         $PrefPoste = new PrefPoste();
         $form = $this->createForm('AppBundle\Form\PrefPosteType', $PrefPoste, array(
             'postes_disponibles' => $postes_availables
@@ -78,12 +78,16 @@ class BenevoleController extends Controller
      */
     public function inviterBenevoleDansRaid(Request $request, \Swift_Mailer $mailer)
     {
-        $form = $this->createForm('AppBundle\Form\InviterBenevoleType');
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        $est_organisateur = null;
+        $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'. $this->getUser()->getIdUser();
+        $est_organisateur = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
             
+        $form = $this->createForm('AppBundle\Form\InviterBenevoleType');
+        $form->handleRequest($request);
+ 
+        if ($form->isSubmitted() && $form->isValid()) {
+
             $message = (new \Swift_Message('Invitation pour bénévolat raid'))
                 ->setFrom('sporteventdevelopment@gmail.com')
                 ->setTo($form->getData()->getEmail())
@@ -97,9 +101,10 @@ class BenevoleController extends Controller
             return $this->redirectToRoute('inviter_benevole', array('id_raid' => $request->get('id_raid')) );
         }
 
-        return $this->render('landing/inviterBenevole.html.twig', array(
-            'form' => $form->createView(),
-            'user' =>$this->getUser()
+        return $this->render('landing/inviter_benevole.html.twig', array(
+            'est_organisateur' => $est_organisateur,
+            'user' =>$this->getUser(),
+            'form' => $form->createView()
         ));
     }
 

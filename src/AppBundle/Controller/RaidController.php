@@ -60,7 +60,7 @@ class RaidController extends Controller
     }
 
     /**
-     * @Route("/raids/{id}", name="edit_raid")
+     * @Route("/raids/{id}/", name="edit_raid")
      */
     public function descriptionRaidOrganisateur(Request $request)
     {
@@ -68,26 +68,28 @@ class RaidController extends Controller
         $raid = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
+        $url = 'api/organisateurs/raids/'.$request->get('id').'/users/'. $this->getUser()->getIdUser();
+        $est_organisateur = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+            
         $url = 'api/parcours/raids/'.$request->get('id');
         $all_parcours = $this->get('app.restclient')
-            ->get($url, $this->getUser()->getToken());
-
-        $url = 'api/prefpostes/raids/'.$request->get('id');
-        $all_prefpostes = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
         $url = 'api/repartitions/raids/'.$request->get('id');
         $all_repartitions = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
 
-       return $this->render('raid/description_raid_organisateur.html.twig', array(
+        return $this->render('raid/description_raid_organisateur.html.twig', array(
             'user' => $this->getUser(),
+            'est_organisateur' =>$est_organisateur,
+            'raid' => $raid,
             'all_parcours' => $all_parcours,
-            'all_prefpostes' => $all_prefpostes,
             'all_repartitions' => $all_repartitions,
-            'raid' => $raid
-       ));
+            'token' => $this->getUser()->getToken()
+        ));
     }
+
 
     /**
      * @Route("/raids/benevoles/{idbenevole}/postes/{idposte}", name="choix_bene_defi")
@@ -133,4 +135,7 @@ class RaidController extends Controller
             'posteRepartis' => $posteRepartis
        ));
     }
+
+
+
 }

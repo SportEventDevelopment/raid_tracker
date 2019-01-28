@@ -16,7 +16,8 @@ class PrefPosteType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $postes = $options['postes_disponibles'];
+       $postes = $options['postes_disponibles'];
+
         $builder
             ->add('idPoste', ChoiceType::class, array(
                 'choices' => $postes,
@@ -25,7 +26,8 @@ class PrefPosteType extends AbstractType
                     return strtoupper($postes->type);
                 }
             )
-        );
+        )
+        ;
     }
 
     /**

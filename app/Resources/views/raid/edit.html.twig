@@ -2,58 +2,65 @@
 
 {% block content %}
 <div class='vertical-center'>
-    <div class="container col col-md-4">
-            <div class="card default-color-dark ">
-                {{ form_start(edit_form, {'attr': {'class': 'center border border-light p-5'}}) }}
-                    <p class="h4 mb-4 text-center">Edition du Raid</p>
+    {% if est_organisateur %}
+        <div class="container col col-md-4">
+                <div class="card default-color-dark ">
+                    {{ form_start(edit_form, {'attr': {'class': 'center border border-light p-5'}}) }}
+                        <p class="h4 mb-4 text-center">Edition du Raid</p>
 
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.nom, {'attr': {'class': 'form-control'}}) }}
+                        <div class="form-row mb-4">
+                            <div class="col">
+                                {{ form_row(edit_form.nom, {'attr': {'class': 'form-control'}}) }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.lieu, {'attr': {'class': 'form-control'}}) }}
+                        <div class="form-row mb-4">
+                            <div class="col">
+                                {{ form_row(edit_form.lieu, {'attr': {'class': 'form-control'}}) }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.date, {'attr': {'class': 'form-control'}}) }}
+                        <div class="form-row mb-4">
+                            <div class="col">
+                                {{ form_row(edit_form.date, {'attr': {'class': 'form-control'}}) }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.edition, {'attr': {'class': 'form-control'}}) }}
+                        <div class="form-row mb-4">
+                            <div class="col">
+                                {{ form_row(edit_form.edition, {'attr': {'class': 'form-control'}}) }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.equipe, {'attr': {'class': 'form-control'}}) }}
+                        <div class="form-row mb-4">
+                            <div class="col">
+                                {{ form_row(edit_form.equipe, {'attr': {'class': 'form-control'}}) }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            {{ form_row(edit_form.visibility, {'attr': {'class': 'form-control'}}) }}
+                        <div class="form-row mb-4">
+                            <div class="col">
+                                {{ form_row(edit_form.visibility, {'attr': {'class': 'form-control'}}) }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-row mb-4">
-                        <div class="col">
-                            <button class="btn btn-info my-4 btn-block" type="submit">Sauvegarder les modifications</button>
+                        <div class="form-row mb-4">
+                            <div class="col">
+                                <button class="btn btn-info my-4 btn-block" type="submit">Sauvegarder les modifications</button>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
+                            </div>
                         </div>
-                        <div class="col">
-                            <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
-                        </div>
-                    </div>
 
-                {{ form_end(edit_form) }}
-          </div>
-    </div>
+                    {{ form_end(edit_form) }}
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            Vous n'êtes pas organisateur de ce RAID.<br>
+            Merci de vous adresser à un des organisateurs pour accéder à cette page
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -3,47 +3,54 @@
 {% block content %}
 
 <div class="container col col-md-6">
-    <h2>Membres organisateurs du RAID :</h2>
-    <ul class="list-group">
-    {% if organisateurs != null %}
-        {% for organisateur in organisateurs %}
-            <li class="list-group-item text-left">
-                {{organisateur.idUser.username}}
-                <a href={{ path('gestion_raid_remove_organisateur', {
-                    'id_raid': organisateur.idRaid.id, 
-                    'id_user': organisateur.idUser.id
-                })}}>Retirer</a>
-            </li>
-      {% endfor %}
-      {% else %}
-        <p>Aucun organisateur enregistré.</p>
-      {% endif %}
-    </ul>
+    {% if est_organisateur %}
+        <h2>Membres organisateurs du RAID :</h2>
+        <ul class="list-group">
+        {% if organisateurs != null %}
+            {% for organisateur in organisateurs %}
+                <li class="list-group-item text-left">
+                    {{organisateur.idUser.username}}
+                    <a href={{ path('gestion_raid_remove_organisateur', {
+                        'id_raid': organisateur.idRaid.id, 
+                        'id_user': organisateur.idUser.id
+                    })}}>Retirer</a>
+                </li>
+            {% endfor %}
+        {% else %}
+            <p>Aucun organisateur enregistré.</p>
+        {% endif %}
+        </ul>
 
-    <div class="card default-color-dark">
-        {{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
-            <p class="h4 mb-2 text-center">Ajouter un organisateur</p>
+        <div class="card default-color-dark">
+            {{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
+                <p class="h4 mb-2 text-center">Ajouter un organisateur</p>
 
-            <div class="form-row mb-4">
-                <div class="col">
-                    {{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}
+                <div class="form-row mb-4">
+                    <div class="col">
+                        {{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}
+                    </div>
                 </div>
-            </div>
 
-            {% if errors %}
-                <div> 
-                    <b style="color:red">{{ errors }}</b>
+                {% if errors %}
+                    <div> 
+                        <b style="color:red">{{ errors }}</b>
+                    </div>
+                {% endif %}
+                <div class="form-row mb-4">
+                    <div class="col">
+                        <button class="btn btn-info my-4 btn-block" type="submit">Confirmer</button>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
+                    </div>
                 </div>
-            {% endif %}
-            <div class="form-row mb-4">
-                <div class="col">
-                    <button class="btn btn-info my-4 btn-block" type="submit">Confirmer</button>
-                </div>
-                <div class="col">
-                    <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
-                </div>
-            </div>
-        {{ form_end(form) }}
-    </div>
+            {{ form_end(form) }}
+        </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            Vous n'êtes pas organisateur de ce RAID.<br>
+            Merci de vous adresser à un des organisateurs pour accéder à cette page
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

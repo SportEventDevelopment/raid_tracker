@@ -20,16 +20,29 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    
+    <script src="https://unpkg.com/togeojson@0.16.0"></script>
+    <script src="https://unpkg.com/leaflet-filelayer@1.2.0"></script>
+
     <script type="text/javascript">
         var asset_images = "{{asset('images')}}"; 
     </script>
-    <script src={{asset('js/carte.js')}}>
-    </script>
+    <script src={{asset('js/carte.js')}}></script>
 {% endblock %}
 
 
 {% block content %}
-    <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}></div>
+
+    {% if est_organisateur %}
+        <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}>
+            <!-- Image loader -->
+            <div id='loader'>
+                <img src={{asset('images/loader.gif')}}>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            Vous n'êtes pas organisateur de ce RAID.<br>
+            Merci de vous adresser à un des organisateurs pour accéder à cette page
+        </div>
+    {% endif %}
 {% endblock %}
