@@ -3,6 +3,11 @@
 {% block content %}
 
 <div class="container col col-md-6">
+{% for message in app.flashes('notice') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
     {% if est_organisateur %}
         <h2>Membres organisateurs du RAID :</h2>
         <ul class="list-group">
@@ -11,7 +16,7 @@
                 <li class="list-group-item text-left">
                     {{organisateur.idUser.username}}
                     <a href={{ path('gestion_raid_remove_organisateur', {
-                        'id_raid': organisateur.idRaid.id, 
+                        'id_raid': organisateur.idRaid.id,
                         'id_user': organisateur.idUser.id
                     })}}>Retirer</a>
                 </li>
@@ -32,7 +37,7 @@
                 </div>
 
                 {% if errors %}
-                    <div> 
+                    <div>
                         <b style="color:red">{{ errors }}</b>
                     </div>
                 {% endif %}

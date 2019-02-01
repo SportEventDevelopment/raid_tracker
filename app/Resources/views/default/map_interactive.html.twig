@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 {% endblock %}
 
-{% block javascripts %}    
+{% block javascripts %}
     {{ parent() }}
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
     <script src="{{asset('js/leaflet-toolbar/dist/leaflet.toolbar.js')}}"></script>
@@ -24,7 +24,7 @@
     <script src="https://unpkg.com/leaflet-filelayer@1.2.0"></script>
 
     <script type="text/javascript">
-        var asset_images = "{{asset('images')}}"; 
+        var asset_images = "{{asset('images')}}";
     </script>
     <script src={{asset('js/carte.js')}}></script>
 {% endblock %}
@@ -32,6 +32,11 @@
 
 {% block content %}
 
+ <div class="text-center">
+<a href= {{ path('edit_raid', {'id' : idraid }) }}>  <input class="btn btn-primary btn-sx" type="button" name="Retour" value="Retour"/></a>
+<br/> <br/>
+</div>
+{# class="btn btn-info my-4 btn-block" #}
     {% if est_organisateur %}
         <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}>
             <!-- Image loader -->

@@ -2,7 +2,13 @@
 
 {% block content %}
 <div class='vertical-center'>
-    {% if est_organisateur %}   
+
+{% for message in app.flashes('notice') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+    {% if est_organisateur %}
         <div class="container col col-md-4">
             <div class="card default-color-dark ">
                 {{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
