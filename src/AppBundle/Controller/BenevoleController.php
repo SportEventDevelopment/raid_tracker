@@ -82,10 +82,10 @@ class BenevoleController extends Controller
         $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'. $this->getUser()->getIdUser();
         $est_organisateur = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
-            
+
         $form = $this->createForm('AppBundle\Form\InviterBenevoleType');
         $form->handleRequest($request);
- 
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $message = (new \Swift_Message('Invitation pour bénévolat raid'))
@@ -98,6 +98,9 @@ class BenevoleController extends Controller
                 );
 
             $mailer->send($message);
+
+            $this->addFlash('notice'," L'invitation a été transmise !");
+
             return $this->redirectToRoute('inviter_benevole', array('id_raid' => $request->get('id_raid')) );
         }
 
@@ -122,7 +125,7 @@ class BenevoleController extends Controller
             $url = 'api/points/'.$poste->body->idPoint;
             $point = $this->get('app.restclient')
                 ->get($url, $this->getUser()->getToken());
-              
+
             return $this->redirect('https://www.google.com/maps/dir/'. $point->response->lon .','. $point->response->lat .'/48.814614,-3.4563867');
         }
 

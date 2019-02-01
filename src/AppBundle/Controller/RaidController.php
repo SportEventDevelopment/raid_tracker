@@ -31,6 +31,10 @@ class RaidController extends Controller
 
             $raid_data =$this->get('app.serialize')->entityToArray($form->getData());
             $date = $form->getData()->getDate()->format('Y/m/d H:i');
+          //  var_dump($date);die();
+
+            if($date > date("Y/m/d H:i") ) {
+
             $raid_data['date'] = $date;
             array_pop($raid_data);
 
@@ -51,6 +55,11 @@ class RaidController extends Controller
             );
 
             return $this->redirectToRoute('landing');
+            }
+            else {
+              $this->addFlash('notice','La date du raid doit être aprés la date du jour !');
+
+            }
         }
 
         return $this->render('raid/new.html.twig', array(
@@ -71,7 +80,7 @@ class RaidController extends Controller
         $url = 'api/organisateurs/raids/'.$request->get('id').'/users/'. $this->getUser()->getIdUser();
         $est_organisateur = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
-            
+
         $url = 'api/parcours/raids/'.$request->get('id');
         $all_parcours = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());

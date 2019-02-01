@@ -4,6 +4,13 @@
 <div class='vertical-center'>
     <div class='container col col-md-4'>
         <div class="card default-color-dark ">
+
+        {% for message in app.flashes('info') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
             <form class=" border border-light p-5" role="form" method="POST" action="{{ path('login_check') }}">
                 <p class="h4 mb-4 text-center">Connexion</p>
 
@@ -14,7 +21,7 @@
                 <input type="password" id="password" class="form-control mb-4" placeholder="Mot de passe" name="_password">
 
                 {% if error %}
-                    <div> 
+                    <div>
                         <b style="color:red">{{ error.messageKey|trans(error.messageData, 'security') }}</b>
                     </div>
                 {% endif %}
@@ -41,7 +48,7 @@
                 </p>
             </form>
         </div>
-        
+
         <h2>RAIDS à venir</h2>
         <ul class="list-group flexcolumn">
         {% if raids_visibles != null %}

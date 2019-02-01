@@ -5,6 +5,7 @@ class UserRegistration
 {
     protected $username;
     protected $email;
+
     protected $plainPassword;
 
     public function getUsername()

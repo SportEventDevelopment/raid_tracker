@@ -129,6 +129,9 @@ class GestionController extends Controller
                   'form' => $form->createView()
               ));
           }
+          else {
+            $this->addFlash('notice',"L'utilisateur a été bien ajouté comme organisateur!");
+          }
 
           return $this->redirectToRoute('gestion_raid_organisateurs', array('id_raid' => $request->get('id_raid')));
         }

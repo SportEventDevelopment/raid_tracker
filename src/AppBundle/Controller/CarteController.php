@@ -17,6 +17,7 @@ class CarteController extends Controller
      */
     public function editCarte(Request $request)
     {
+
         $est_organisateur = null;
         $url = 'api/raids/parcours/'.$request->get('id_parcours');
         $raid = $this->get('app.restclient')
@@ -27,12 +28,14 @@ class CarteController extends Controller
             $est_organisateur = $this->get('app.restclient')
                 ->get($url, $this->getUser()->getToken());
         }
-
+        $idRaid = $raid[0]->id;
+        //var_dump($raid[0]->id);die();
         $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
             'user' => $this->getUser(),
             'est_organisateur' => $est_organisateur,
             'idparcours' => $request->get('id_parcours'),
-            'token' => $this->getUser()->getToken()
+            'token' => $this->getUser()->getToken(),
+            'idraid' =>$idRaid
         ));
         return new Response($content);
     }
