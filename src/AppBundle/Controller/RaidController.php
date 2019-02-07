@@ -128,12 +128,17 @@ class RaidController extends Controller
           $posteRepartis = false;
         }
 
-       return $this->render('raid/postes_benevoles.html.twig', array(
+        $url = 'api/prefpostes/raids/'. $request->get('id_raid') .'/users/'. $this->getUser()->getIdUser();
+        $all_prefpostes = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        return $this->render('raid/postes_benevoles.html.twig', array(
             'user' => $this->getUser(),
             'all_repartitions' => $all_repartitions,
+            'all_prefpostes' => $all_prefpostes,
             'raid' => $raid,
             'posteRepartis' => $posteRepartis
-       ));
+        ));
     }
 
 

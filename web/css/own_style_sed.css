@@ -49,3 +49,19 @@
 .leaflet-popup-content {
     width:300px;
 }
+
+.sortable_item {
+    cursor : move;
+    width : 100%;
+    border: grey 1px solid;
+    border-radius: 5px;
+    margin:0.2rem;
+    list-style : none;
+}
+
+.ul_style {
+        
+    list-style-type : none;
+    margin : 0;
+    padding : 0;
+}

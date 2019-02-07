@@ -1,15 +1,31 @@
 {% extends 'base.html.twig' %}
 
 {% block javascripts %}    
-    {{ parent() }}
+        {{ parent() }}
+        <script
+                src="https://code.jquery.com/jquery-migrate-3.0.1.min.js"
+                integrity="sha256-F0O1TmEa4I8N24nY0bya59eP6svWcshqX1uzwaWC4F4="
+                crossorigin="anonymous">
+        </script>
+        <script src="{{asset('js/interface/interface.js')}}"></script>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-
-        <h1>Description du RAID : {{raid.nom}}</h1>
+        {% for message in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">
+                        {{ message }}
+                </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                </div>
+        {% endfor %}
+        
+        <h2>Description du RAID : {{raid.nom}}</h2>
         {% if posteRepartis %}
-                <h2>Vous êtes affectés aux postes suivants</h2>
+                <h3>Vous êtes affectés aux postes suivants</h3>
                 <ul class="list-group">
                 {% for repartition in all_repartitions %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -20,9 +36,61 @@
                                 </div>
                         </li>
                 {% endfor %}
+                </ul>
         {% else %}
-                Vous n'êtes pas encore choisi pour un poste
-                <a href="{{ path('landing') }}">Retour à la page d'accueil </a>
+                <p>
+                        Vous n'êtes pas encore choisi pour un poste
+                        <a href="{{ path('landing') }}">Retour à la page d'accueil </a>
+                </p>
         {% endif %}
+
+        <h2>Mes préférences de postes</h2>
+        {% if all_prefpostes %}
+                <ul id="sortlist" class="list-group ul_style">
+                {% for preference in all_prefpostes %}
+                        <li class="sortable_item">
+                               {{ preference.idPoste.type }}
+                        </li>
+                {% endfor %}
+                </ul>
+        {% else %}
+                <p>Vous n'avez pas renseigné de préférence pour un poste.</p>
+        {% endif %}
+        <a href="{{ path('ajouter_preference', {'id_raid': raid.id}) }}">Ajouter une préférence</a>
 </div>
+
+<script type="text/javascript">
+        jQuery.browser = {};
+        (function () {
+                jQuery.browser.msie = false;
+                jQuery.browser.version = 0;
+                if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
+                        jQuery.browser.msie = true;
+                        jQuery.browser.version = RegExp.$1;
+                }
+        })();
+
+        $( "#sortlist" ).Sortable( {
+                accept : 'sortable_item',
+                axis : 'vertically',
+                opacity : 0.6,
+                onchange : function ( sorted ) {
+                        serial = $.SortSerialize( 'sortlist' );
+                         // requète Ajax pour l'enregistrement des positions
+                        $.ajax ( {
+                                //url : "set_position.php",
+                                //type : "post",
+                                //data : serial.hash,
+                
+                                // Si vous avez besoin d'un feedback de la requête vous
+                                // pouvez utiliser ces fonctions ci dessous.
+                
+                                //complete: function(data){alert(data);},
+                                //success: function(feedback){ $('#data').html(feedback); }
+                                //error: function(){alert('Erreur lors du déplacement ');}
+                        });
+                }
+        });
+
+</script>
 {% endblock %}
