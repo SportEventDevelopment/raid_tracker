@@ -74,14 +74,13 @@ class BenevoleController extends Controller
                 $prefposte_search = $this->get('app.restclient')->get($url, $this->getUser()->getToken());
                 
                 if(empty($prefposte_search)){
-                    $this->addFlash("error", "Ce poste est déjà dans vos préférences");
-                }
-                else{
                     // Ajout de la préférence du poste du bénévole
                     $prefposte = array(
                         'idPoste' => $form->getData()->getIdPoste()->id,
-                        'idBenevole' => $benevole->id
+                        'idBenevole' => $benevole->id,
+                        'priority' => 0
                     );
+                    
                     $reponse = $this->get('app.restclient')->post(
                         'api/prefpostes',
                         $prefposte,
@@ -91,8 +90,10 @@ class BenevoleController extends Controller
                     if($reponse){
                         $this->addFlash("success", "Votre préférence a bien été ajoutée");
                     } else {
-                        $this->addFlash("error", "Le choix de ce poste est déjà dans votre liste de préférence !");
+                        $this->addFlash("error", "Erreur d'enregistrement dans la base de données de votre préférence");
                     }
+                } else {
+                    $this->addFlash("error", "Le choix de ce poste est déjà dans votre liste de préférence !");
                 }
             }
             
