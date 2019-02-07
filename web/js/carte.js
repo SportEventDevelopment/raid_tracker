@@ -40,7 +40,7 @@ window.onload = function init(){
     posteIcon = L.icon({
         iconUrl: asset_images+'/poste.png',
         iconSize: [40, 60],
-        iconAnchor: [0, 60],
+        iconAnchor: [20, 60],
     });
 
     mymap.on('load', function(e){
@@ -63,9 +63,7 @@ window.onload = function init(){
 
         markers = L.layerGroup().addTo(this);
 
-        $.when(dessinerParcours().done(function(data, textStatus, jqXHR){                
-            console.log('Parcours dessiné avec succès');   
-        }));
+        dessinerParcours(idparcours);
     });
  
     mymap.on('draw:created', function(e) {
@@ -89,7 +87,30 @@ window.onload = function init(){
             drawnItems.addLayer(layer);
         }
         else if (type === 'marker') {
-            creerPoste();
+
+            // layer.setIcon(posteIcon);
+            // layer.bindPopup(
+            //     '<form id="form_poste" data-id-point="" onsubmit="configurerPoste(event)">'+
+            //         '<div class="form-group row">'+
+            //             '<label class="col-sm-4 col-form-label" for="type_poste">Objectif du poste</label>'+
+            //             '<input type="text" class="col-sm-8" id="type_poste" placeholder="Stand buvette">'+
+            //         '</div>'+
+            //         '<div class="form-group row">'+
+            //             '<label class="col-sm-4 col-form-label" for="nombre_poste">Nombre de participants</label>'+
+            //             '<input type="text" class="col-sm-8" id="nombre_poste" placeholder="5">'+
+            //         '</div>'+
+            //         '<div class="form-group row">'+
+            //             '<label class="col-sm-4 col-form-label" for="heure_debut">Heure de début</label>'+
+            //             '<input type="text" class="col-sm-8" id="heure_debut" placeholder="30/12/2019 10:00">'+
+            //         '</div>'+
+            //         '<div class="form-group row">'+
+            //             '<label class="col-sm-4 col-form-label" for="heure_fin">Heure de fin</label>'+
+            //             '<input type="text" class="col-sm-8" id="heure_fin" placeholder="30/12/2019 12:00">'+
+            //         '</div>'+
+            //         '<button type="submit" class="btn btn-primary">Enregistrer</button>'+
+            //     '</form>'
+            // );
+            
             drawnItems.addLayer(layer);
         }
         else if (type === 'circlemarker') {
@@ -134,6 +155,7 @@ window.onload = function init(){
     });
 
     mymap.on('draw:deleted', function(e) {
+
         e.layers.eachLayer(function(layer){
 
             let markers_to_remove = [];
@@ -219,23 +241,24 @@ function traduireToolbar(){
     console.log('Fin de traduction...');
 }
 
-function dessinerParcours(){
+function dessinerParcours(id){
 
     return $.ajax({  
-        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/' + idparcours,  
+        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/' + id,  
         type: 'GET',
         dataType: 'json',  
         headers: {"X-Auth-Token": token},
         beforeSend: function(){
             $("#loader").show();
         },
-        success: function(data){
+        success: function(data){            
             for (let i = 0; i < data.length; i++) {
                 recupererTrace(data[i].id)
             }
+            console.log("Parcours ["+ id +"] dessiné avec succès!")
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la récupération du parcours ['+ idparcours + ']');  
+            console.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -256,7 +279,7 @@ function supprimerParcours(id) {
             console.log('Parcours supprimé ['+ data.id +']')
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de l\'enregistrement du point');  
+            console.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -309,7 +332,7 @@ function creerTrace(trace, points){
             console.log('Nouveau tracé créé ['+ data.id +']');
         },  
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(textStatus);
+            console.log(xhr.responseJSON.message);
         },
         complete:function(data){   
             $("#loader").hide();
@@ -357,7 +380,7 @@ function recupererTrace(id){
             drawnItems.addLayer(polylines);
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la récupération des points du tracé [' + id + ']');  
+            console.log(xhr.responseJSON.message+" ["+id+"]");
         },
         complete:function(data){   
             $("#loader").hide();
@@ -377,10 +400,10 @@ function supprimerTrace(id){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Tracé supprimé [' + id + ']');
+            console.log('Tracé supprimé [' + id + '] avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la suppression du tracé ['+ id +']');  
+            console.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -402,7 +425,7 @@ function creerPoint(point){
             console.log(data)
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de l\'enregistrement du point');  
+            console.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -410,17 +433,7 @@ function creerPoint(point){
     });
 }
 
-function creerPoste(poste=null){
-    if(poste == null){
-
-        poste = {
-            "idPoint": 7708,
-            "type": "Buvette",
-            "nombre": 5,
-            "heureDebut": "29/01/2019 10:00",
-            "heureFin": "29/01/2019 12:00"
-        }
-    }
+function creerPoste(poste){
 
     return $.ajax({  
         url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/postes',  
@@ -435,7 +448,7 @@ function creerPoste(poste=null){
             console.log('Nouveau poste créé ['+ data.id +']');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de l\'enregistrement du poste');  
+            console.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -485,6 +498,19 @@ function importGPX(){
             }
         }
     })
+}
+
+function configurerPoste(e){
+    e.preventDefault();
+    
+    let poste = [];
+    poste["idPoint"] = e.target[0].value;
+    poste["type"] = e.target[1].value;
+    poste["nombre"] = e.target[2].value;
+    poste["heureDebut"] = e.target[3].value;
+    poste["heureFin"] = e.target[4].value;
+    
+    return poste;
 }
 
 function addDrawControl(drawnItems){

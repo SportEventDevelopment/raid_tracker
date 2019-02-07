@@ -45,3 +45,7 @@
     left: 50%;
     margin: -60px 0 0 -60px;
 }
+
+.leaflet-popup-content {
+    width:300px;
+}
