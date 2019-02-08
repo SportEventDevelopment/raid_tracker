@@ -137,6 +137,7 @@ class RaidController extends Controller
             'all_repartitions' => $all_repartitions,
             'all_prefpostes' => $all_prefpostes,
             'raid' => $raid,
+            'token' => $this->getUser()->getToken(),
             'posteRepartis' => $posteRepartis
         ));
     }

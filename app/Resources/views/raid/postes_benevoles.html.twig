@@ -2,12 +2,7 @@
 
 {% block javascripts %}    
         {{ parent() }}
-        <script
-                src="https://code.jquery.com/jquery-migrate-3.0.1.min.js"
-                integrity="sha256-F0O1TmEa4I8N24nY0bya59eP6svWcshqX1uzwaWC4F4="
-                crossorigin="anonymous">
-        </script>
-        <script src="{{asset('js/interface/interface.js')}}"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -43,10 +38,16 @@
 
         <h2>Mes préférences de postes</h2>
         {% if all_prefpostes %}
-                <ul id="sortlist" class="list-group ul_style">
+                <ul id="sortlist" 
+                        data-token= {{ token }}
+                        data-id-raid= {{ raid.id }}
+                        data-id-user= {{ user.idUser }}
+                        class="list-group ul_style">
                 {% for preference in all_prefpostes %}
-                        <li class="sortable_item">
-                               {{ preference.idPoste.type }}
+                        <li 
+                                data-id-poste = {{ preference.idPoste.id }}
+                                data-id-benevole = {{ preference.idBenevole.id }}
+                                class="sortable_item">{{ preference.idPoste.type }}
                                <a href={{ path('gestion_preferences_remove', {
                                        'id_raid' : preference.idBenevole.idRaid.id,
                                        'id_preference': preference.id}
@@ -61,41 +62,67 @@
 </div>
 
 <script type="text/javascript">
-        jQuery.browser = {};
-        (function () {
-                jQuery.browser.msie = false;
-                jQuery.browser.version = 0;
-                if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
-                        jQuery.browser.msie = true;
-                        jQuery.browser.version = RegExp.$1;
-                }
-        })();
 
-        $( "#sortlist" ).Sortable( {
+        var token = $("#sortlist").data('token');
+        var id_raid = $("#sortlist").data('idRaid');
+        var id_user = $("#sortlist").data('idUser');
+
+        $("#sortlist").sortable( {
                 accept : 'sortable_item',
                 axis : 'vertically',
                 opacity : 0.6,
-                onchange : function ( sorted ) {
-                        serial = $.SortSerialize( 'sortlist' );
+                change: function(event, ui){
                         
-                        // requète Ajax pour l'enregistrement des positions
-                        $.ajax ( {
-                                //url : "set_position.php",
-                                //type : "post",
-                                //data : serial.hash,
-                
-                                // Si vous avez besoin d'un feedback de la requête vous
-                                // pouvez utiliser ces fonctions ci dessous.
-                
-                                //complete: function(data){alert(data);},
-                                //success: function(feedback){ $('#data').html(feedback); }
-                                //error: function(){alert('Erreur lors du déplacement ');}
-                        });
-                },
-                oncomplete: function(){
-                        console.log("oui")
+                        let all_prefs = this.getElementsByTagName("li");
+                        $.when(supprimerPreferences(id_raid, id_user).done(function(data, textStatus, jqXHR){
+                                let count = 1;
+
+                                for(let i = 0; i < all_prefs.length; i++){
+                                        let id_poste = $(all_prefs[i]).data('idPoste');
+                                        let id_benevole = $(all_prefs[i]).data('idBenevole');
+                                        let priority = i+1;
+                                        
+                                        let preference = {
+                                                "idPoste": id_poste,
+                                                "idBenevole": id_benevole,
+                                                "priority": priority,
+                                        }
+                                        
+                                        creerPreference(preference);
+                                }
+                        }));
                 }
         });
 
+        function supprimerPreferences(id_raid, id_user){
+                return $.ajax({
+                        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/prefpostes/raids/' + id_raid + '/users/'+ id_user,  
+                        type: 'DELETE',
+                        dataType: 'json',
+                        headers: {"X-Auth-Token": token},
+                        success: function(data){
+                                console.log('Preferences supprimées avec succès!');
+                        },
+                        error: function (xhr, textStatus, errorThrown) {  
+                                console.log(xhr.responseJSON.message);  
+                        }
+                });
+        }
+
+        function creerPreference(preference){
+                return $.ajax({
+                        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/prefpostes',  
+                        type: 'POST',
+                        dataType: 'json',
+                        headers: {"X-Auth-Token": token},
+                        data: { ...preference },
+                        success: function(data){
+                                console.log('Preference ajoutée avec succès!');
+                        },
+                        error: function (xhr, textStatus, errorThrown) {  
+                                console.log(xhr.responseJSON.message);  
+                        }
+                });
+        }
 </script>
 {% endblock %}
