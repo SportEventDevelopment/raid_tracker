@@ -32,10 +32,7 @@
 
 {% block content %}
 
- <div class="text-center">
-<a href= {{ path('edit_raid', {'id' : idraid }) }}>  <input class="btn btn-primary btn-sx" type="button" name="Retour" value="Retour"/></a>
-<br/> <br/>
-</div>
+
 {# class="btn btn-info my-4 btn-block" #}
     {% if est_organisateur %}
         <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}>
@@ -43,6 +40,9 @@
             <div id='loader'>
                 <img src={{asset('images/loader.gif')}}>
             </div>
+            <a href= {{ path('edit_raid', {'id' : idraid }) }} class="retour_map">
+                <input class="btn btn-primary btn-sx" type="button" value="Retour"/>
+            </a>
         </div>
     {% else %}
         <div class="alert alert-danger" role="alert">

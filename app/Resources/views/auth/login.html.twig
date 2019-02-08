@@ -2,16 +2,21 @@
 
 {% block content %}
 <div class='vertical-center'>
-    <div class='container col col-md-4'>
+    <div class='container col col-sm-8 col-md-6 col-xl-4'>
         <div class="card default-color-dark ">
 
-        {% for message in app.flashes('info') %}
-            <div class="alert alert-success">
-                {{ message }}
-            </div>
-        {% endfor %}
-
-            <form class=" border border-light p-5" role="form" method="POST" action="{{ path('login_check') }}">
+             {% for message in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">
+                        {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                    </div>
+            {% endfor %}
+            
+            <form class="border border-light p-5" role="form" method="POST" action="{{ path('login_check') }}">
                 <p class="h4 mb-4 text-center">Connexion</p>
 
                 <!-- Email -->
@@ -25,19 +30,6 @@
                         <b style="color:red">{{ error.messageKey|trans(error.messageData, 'security') }}</b>
                     </div>
                 {% endif %}
-                <div class="d-flex justify-content-around">
-                    <div>
-                        <!-- Remember me -->
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="defaultLoginFormRemember">
-                            <label class="custom-control-label" for="defaultLoginFormRemember">Se souvenir de moi</label>
-                        </div>
-                    </div>
-                    <div>
-                        <!-- Forgot password -->
-                        <a href="">Mot de passe oublié ?</a>
-                    </div>
-                </div>
 
                 <!-- Sign in button -->
                 <button class="btn btn-info btn-block my-4" type="submit">Connexion</button>
