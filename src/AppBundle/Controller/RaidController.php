@@ -31,7 +31,6 @@ class RaidController extends Controller
 
             $raid_data =$this->get('app.serialize')->entityToArray($form->getData());
             $date = $form->getData()->getDate()->format('Y/m/d H:i');
-          //  var_dump($date);die();
 
             if($date > date("Y/m/d H:i") ) {
 

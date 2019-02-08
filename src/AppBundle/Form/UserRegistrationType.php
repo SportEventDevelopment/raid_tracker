@@ -25,28 +25,6 @@ class UserRegistrationType extends AbstractType
                 'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmer mot de passe'],
             ]);
-          
-
-          /*  ->add('plainPassword', RepeatedType::class, [
-
-              'type' => PasswordType::class,
-              'first_options' => ['label' => 'Mot de passe'],
-              'second_options' => ['label' => 'Confirmer mot de passe'],
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
-                    new Length([
-                        'min' => 8,
-                        'minMessage' => 'Votre mot de passe doit être composé de 8 caractéres.',
-                      //  'max' => 4096
-                    ]),
-                ],
-            ])
-            ;*/
     }
 
     public function configureOptions(OptionsResolver $resolver)

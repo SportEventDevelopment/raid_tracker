@@ -29,7 +29,7 @@ class CarteController extends Controller
                 ->get($url, $this->getUser()->getToken());
         }
         $idRaid = $raid[0]->id;
-        //var_dump($raid[0]->id);die();
+        
         $content = $this->get('templating')->render('default/map_interactive.html.twig',array(
             'user' => $this->getUser(),
             'est_organisateur' => $est_organisateur,
