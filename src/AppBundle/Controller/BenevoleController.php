@@ -122,19 +122,27 @@ class BenevoleController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $message = (new \Swift_Message('Invitation pour bénévolat raid'))
-                ->setFrom('sporteventdevelopment@gmail.com')
-                ->setTo($form->getData()->getEmail())
-                ->setBody(
-                    $this->renderView('gestion/invitationRaid.html.twig',
-                        array('link' => 'http://raidtracker.ddns.net/raid_tracker/web/app.php/benevoles/raids/'.$request->get('id_raid').'/join')),
-                    'text/html'
-                );
-
-            $mailer->send($message);
-
-            $this->addFlash('notice'," L'invitation a été transmise !");
+            
+            $url = 'api/users/emails/'.$form->getData()->getEmail();
+            $user_exist = $this->get('app.restclient')
+                ->get($url, $this->getUser()->getToken());
+            
+            if($user_exist){
+                $message = (new \Swift_Message('Invitation pour bénévolat raid'))
+                    ->setFrom('sporteventdevelopment@gmail.com')
+                    ->setTo($form->getData()->getEmail())
+                    ->setBody(
+                        $this->renderView('gestion/invitationRaid.html.twig',
+                            array('link' => 'http://raidtracker.ddns.net/raid_tracker/web/app.php/benevoles/raids/'.$request->get('id_raid').'/join')),
+                        'text/html'
+                    );
+    
+                $mailer->send($message);
+    
+                $this->addFlash('success'," L'invitation a été transmise !");
+            } else{
+                $this->addFlash('error',"L'invitation n'a pas pu être envoyée. L'invité a-t-il un compte ?");
+            }
 
             return $this->redirectToRoute('inviter_benevole', array('id_raid' => $request->get('id_raid')) );
         }

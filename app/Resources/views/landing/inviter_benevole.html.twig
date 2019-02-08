@@ -3,14 +3,20 @@
 {% block content %}
 <div class='vertical-center'>
 
-{% for message in app.flashes('notice') %}
-    <div class="alert alert-success">
-        {{ message }}
-    </div>
-{% endfor %}
     {% if est_organisateur %}
-        <div class="container col col-md-4">
+        <div class="container col col-sm-8 col-md-4">
             <div class="card default-color-dark ">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
                 {{ form_start(form, {'attr': {'class': 'center border border-light p-5'}}) }}
                     <p class="h4 mb-2 text-center">Inviter des bénévoles</p>
 
