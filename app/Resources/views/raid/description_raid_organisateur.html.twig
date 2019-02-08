@@ -3,6 +3,17 @@
 {% block content %}
 
 <div class="container" data-token={{token}}>
+    {% for message in app.flashes('success') %}
+            <div class="alert alert-success" role="alert">
+                    {{ message }}
+            </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+            <div class="alert alert-danger" role="alert">
+                    {{ message }}
+            </div>
+    {% endfor %}
+    
     {% if est_organisateur %}
         <h1>Edition du RAID : {{raid.nom}}</h1>
         <h2>Liste des parcours</h2>

@@ -38,9 +38,7 @@
                 {% endfor %}
                 </ul>
         {% else %}
-                <p>
-                        L'organisateur ne vous a pas encore affecté à un poste.
-                </p>
+                <p>L'organisateur ne vous a pas encore affecté à un poste.</p>
         {% endif %}
 
         <h2>Mes préférences de postes</h2>
@@ -49,6 +47,10 @@
                 {% for preference in all_prefpostes %}
                         <li class="sortable_item">
                                {{ preference.idPoste.type }}
+                               <a href={{ path('gestion_preferences_remove', {
+                                       'id_raid' : preference.idBenevole.idRaid.id,
+                                       'id_preference': preference.id}
+                                )}}>Retirer</a>
                         </li>
                 {% endfor %}
                 </ul>
@@ -75,7 +77,8 @@
                 opacity : 0.6,
                 onchange : function ( sorted ) {
                         serial = $.SortSerialize( 'sortlist' );
-                         // requète Ajax pour l'enregistrement des positions
+                        
+                        // requète Ajax pour l'enregistrement des positions
                         $.ajax ( {
                                 //url : "set_position.php",
                                 //type : "post",
@@ -88,6 +91,9 @@
                                 //success: function(feedback){ $('#data').html(feedback); }
                                 //error: function(){alert('Erreur lors du déplacement ');}
                         });
+                },
+                oncomplete: function(){
+                        console.log("oui")
                 }
         });
 

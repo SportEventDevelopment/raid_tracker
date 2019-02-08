@@ -172,4 +172,21 @@ class GestionController extends Controller
         return $this->redirectToRoute('gestion_raid_organisateurs', array('id_raid' => $request->get('id_raid')));
     }
 
+
+    /**
+     * @Route("/gestion/raids/{id_raid}/preferences/{id_preference}/remove", name="gestion_preferences_remove")
+     */
+    public function gestionPreferencesRemove(Request $request)
+    {
+        $id_preference = $request->get('id_preference');
+        $id_raid = $request->get('id_raid');
+
+        $url = 'api/prefpostes/'.$id_preference;
+        $preference = $this->get('app.restclient')
+            ->delete($url, $this->getUser()->getToken());
+  
+        $this->addFlash("success", "Votre préférence a bien été retirée");
+
+        return $this->redirectToRoute('postes_benevole_raid', array('id_raid' => $id_raid));
+    }
 }
