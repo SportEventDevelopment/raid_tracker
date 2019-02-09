@@ -23,7 +23,7 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{parcours.nom}}
                         <div>
-                            <a href= {{ path('carte_edit', {'id_parcours': parcours.id} ) }}>Editer</a>
+                            <a href= {{ path('carte_edit', {'id_raid': parcours.idRaid.id,'id_parcours': parcours.id} ) }}>Editer</a>
                             <button id={{parcours.id}} type="submit" class="btn btn-primary">Exporter</button>         
                         </div>
                     </li>                

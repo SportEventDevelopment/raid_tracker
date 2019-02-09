@@ -32,16 +32,51 @@
 
 {% block content %}
 
-
-{# class="btn btn-info my-4 btn-block" #}
     {% if est_organisateur %}
         <div id="mapid" data-token={{token}} data-idparcours={{idparcours}}>
             <!-- Image loader -->
             <div id='loader'>
                 <img src={{asset('images/loader.gif')}}>
             </div>
-            <a href= {{ path('edit_raid', {'id' : idraid }) }} class="retour_map">
-                <input class="btn btn-primary btn-sx" type="button" value="Retour"/>
+
+            <form class="form-poste">
+                <div class="form-group row">
+                    <label for="choix-trace" class="col-sm-4 col-form-label">Choix du tracé</label>
+                    <select id="choix-trace" class="form-control col-sm-8"></select>
+                </div>
+                <div class="form-group row">
+                    <label for="name-poste" class="col-sm-4 col-form-label">Intitulé du poste</label>
+                    <input type="text" class="form-control col-sm-8" id="name-poste">
+                </div>
+                <div class="form-group row">
+                    <label for="nb-benevole" class="col-sm-4 col-form-label">Nombre de bénévoles</label>
+                    <input type="number" class="form-control col-sm-8" id="nb-benevole">
+                </div>
+                <div class="form-group row">
+                    <label for="heure-debut" class="col-sm-4 col-form-label">Heure de début</label>
+                    <input  type="datetime-local"
+                            class="form-control col-sm-8"
+                            value={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
+                            min={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
+                            max={{ raid.date|date_modify("+1 day")|date("Y-m-d\\TH:i", "Europe/Paris") }}
+                            id="heure-debut">
+                </div>
+                
+                <div class="form-group row">
+                    <label for="heure-fin" class="col-sm-4 col-form-label">Heure de fin</label>
+                    <input  type="datetime-local"
+                            class="form-control col-sm-8"
+                            value={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
+                            min={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
+                            max={{ raid.date|date_modify("+1 day")|date("Y-m-d\\TH:i", "Europe/Paris") }}
+                            id="heure-fin">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block creer-poste">Créer le poste</button>
+                <button class="btn btn-block annuler-poste">Annuler</button>
+            </form>
+
+            <a href= {{ path('edit_raid', {'id' : raid.id }) }} class="retour_map">
+                <button class="btn btn-primary btn-sx"/>Retour</button>
             </a>
         </div>
     {% else %}

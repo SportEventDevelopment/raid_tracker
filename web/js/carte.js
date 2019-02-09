@@ -43,7 +43,9 @@ window.onload = function init(){
         iconAnchor: [20, 60],
     });
 
+    
     mymap.on('load', function(e){
+        $(".form-poste").hide();
         
         let zoomControl = addZoom();
         this.addControl(zoomControl);
@@ -63,9 +65,26 @@ window.onload = function init(){
 
         markers = L.layerGroup().addTo(this);
 
+        // Event pour la création de poste
+        $(".leaflet-draw-draw-marker").click(function(e){
+            afficherFormulairePoste();
+        });
+
+        $(".creer-poste").click(function(e){
+            e.preventDefault();
+
+            $(".form-poste").hide();
+        });
+
+        $(".annuler-poste").click(function(e){
+            e.preventDefault();
+            $(".form-poste").hide();
+        });
+        // --- --- ---
+        
         dessinerParcours(idparcours);
     });
- 
+
     mymap.on('draw:created', function(e) {
         type = e.layerType;
         layer = e.layer;
@@ -239,6 +258,60 @@ function traduireToolbar(){
     L.drawLocal.edit.handlers.remove.tooltip.text = "Cliquez sur un élément pour le supprimer";
     
     console.log('Fin de traduction...');
+}
+
+function afficherFormulairePoste(){
+
+    $(".form-poste").show();
+    controlMapInteractions(false);
+
+    $.when(recupererTraces(idparcours).done(function(data, textStatus, jqXHR){
+
+        let select = document.querySelector("#choix-trace");
+        let count = 1;
+
+        var length = select.options.length;
+        for (i = 0; i < length; i++) {
+            select.options[i] = null;
+        }
+
+        data.forEach((trace) => {
+            let opt = document.createElement('option');
+            opt.value = trace.id;
+            opt.innerHTML = "Tracé n°"+count;
+            select.appendChild(opt);
+            count++;
+        });
+    }));
+}
+
+function controlMapInteractions(enable){
+    if(enable){
+        mymap.dragging.enable();
+    } else {
+        mymap.dragging.disable();
+    }
+}
+
+function recupererTraces(id){
+    return $.ajax({  
+        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/' + id,  
+        type: 'GET',
+        dataType: 'json',  
+        headers: {"X-Auth-Token": token},
+        beforeSend: function(){
+            $("#loader").show();
+        },
+        success: function(data){            
+            console.log("Parcours ["+ id +"] récupéré avec succès!")
+        },
+        error: function (xhr, textStatus, errorThrown) {  
+            console.log(xhr.responseJSON.message);  
+        },
+        complete:function(data){   
+            $("#loader").hide();
+        }
+    }); 
 }
 
 function dessinerParcours(id){
@@ -530,6 +603,7 @@ function addDrawControl(drawnItems){
             circle: false,
             polygon: false,
             marker: {
+                icon: posteIcon,
                 repeatMode:true
             },
             circlemarker: false,
