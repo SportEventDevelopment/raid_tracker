@@ -3,6 +3,17 @@
 {% block content %}
 
 <div class="container">
+  {% for message in app.flashes('success') %}
+    <div class="alert alert-success" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+  {% for message in app.flashes('error') %}
+    <div class="alert alert-danger" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+  
   <h2 class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.username}}</h2>
   {% if raids_organisateurs %}
   

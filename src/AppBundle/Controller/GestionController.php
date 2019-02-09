@@ -58,6 +58,12 @@ class GestionController extends Controller
             }
             $edit_raid = $this->get('app.restclient')->post($url, $t_raid, $this->getUser()->getToken());
 
+            if ($edit_raid){
+                $this->addFlash('success','Raid édité avec succès !');
+            } else {
+                $this->addFlash('error',"Erreur lors de la sauvegarde de l'édition du RAID");
+            }
+            
             return $this->redirectToRoute('landing_gerer_raid');
         }
 
