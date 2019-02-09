@@ -81,10 +81,10 @@ class GestionController extends Controller
         $url = 'api/organisateurs/raids/'.$request->get('id_raid');
         $organisateurs = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
-            $orgaEmail = [];
-                foreach ($organisateurs as $key => $value) {
-                array_push($orgaEmail,$value->idUser->email);
-                }
+        $orgaEmail = [];
+        foreach ($organisateurs as $key => $value) {
+            array_push($orgaEmail, $value->idUser->email);
+        }
 
         $form = $this->createForm('AppBundle\Form\InviterBenevoleType');
         $form->handleRequest($request);
@@ -93,55 +93,37 @@ class GestionController extends Controller
 
             $url_email = 'api/users/emails/'.$form->getData()->getEmail();
             if (in_array($form->getData()->getEmail(), $orgaEmail)) {
-              return $this->render('gestion/edit_organisateurs.html.twig', array(
-                  'user'=>$this->getUser(),
-                  'est_organisateur' => $est_organisateur,
-                  'organisateurs' => $organisateurs,
-                  'errors' => "L'email rentré est déja organisateur de ce raid.",
-                  'form' => $form->createView()
-      ));
-      }
-        else {
-          $userSearch = $this->get('app.restclient')->get($url_email, $this->getUser()->getToken());
-          if(empty($userSearch)){
-              return $this->render('gestion/edit_organisateurs.html.twig', array(
-                  'user'=>$this->getUser(),
-                  'est_organisateur' => $est_organisateur,
-                  'organisateurs' => $organisateurs,
-                  'errors' => "L'utilisateur que vous souhaitez ajouter n'existe pas!",
-                  'form' => $form->createView()
-              ));
-          }
+                $this->addFlash('error',"Cet utilisateur est déja organisateur de ce raid");
+            }
+            else {
+                $userSearch = $this->get('app.restclient')->get($url_email, $this->getUser()->getToken());
+                if(empty($userSearch)){
+                    $this->addFlash('error',"L'utilisateur que vous souhaitez ajouter n'existe pas !");
+                } else {
 
-          $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'.$userSearch->id;
-          $orga_data = array(
-              'idUser' => $userSearch->id,
-              'idRaid' => $request->get('id_raid')
-          );
+                    $url = 'api/organisateurs/raids/'.$request->get('id_raid').'/users/'.$userSearch->id;
+                    $orga_data = array(
+                        'idUser' => $userSearch->id,
+                        'idRaid' => $request->get('id_raid')
+                    );
+    
+                    $new_orga = $this->get('app.restclient')->post($url, $orga_data, $this->getUser()->getToken());
+                    if(empty($new_orga)){
+                        $this->addFlash('error',"Problème rencontré lors de l'enregistrement du nouvel organisateur");
+                    }
+                    else {
+                        $this->addFlash('success',"L'utilisateur a été bien ajouté comme organisateur!");
+                    }
+                }
+            }
 
-          $new_orga = $this->get('app.restclient')->post($url, $orga_data, $this->getUser()->getToken());
-          if(empty($new_orga)){
-              return $this->render('gestion/edit_organisateurs.html.twig', array(
-                  'user'=>$this->getUser(),
-                  'est_organisateur' => $est_organisateur,
-                  'organisateurs' => $organisateurs,
-                  'errors' => "Problème rencontré lors de l'enregistrement du nouvel organisateur",
-                  'form' => $form->createView()
-              ));
-          }
-          else {
-            $this->addFlash('notice',"L'utilisateur a été bien ajouté comme organisateur!");
-          }
-
-          return $this->redirectToRoute('gestion_raid_organisateurs', array('id_raid' => $request->get('id_raid')));
-        }
+            return $this->redirectToRoute('gestion_raid_organisateurs', array('id_raid' => $request->get('id_raid')));
       }
 
         return $this->render('gestion/edit_organisateurs.html.twig', array(
             'user'=>$this->getUser(),
             'est_organisateur' => $est_organisateur,
             'organisateurs' => $organisateurs,
-            'errors' => null,
             'form' => $form->createView()
         ));
     }
@@ -163,6 +145,7 @@ class GestionController extends Controller
             ->get($url_raids, $this->getUser()->getToken());
 
         if(count($organisateurs) == 1){
+            $this->addFlash("error", "Vous devez conserver au moins un organisateur dans votre raid");
             return $this->redirectToRoute('gestion_raid_organisateurs', array(
                 'id_raid' => $request->get('id_raid')
             ));
@@ -171,6 +154,8 @@ class GestionController extends Controller
         $url = 'api/organisateurs/raids/'.$id_raid.'/users/'.$id_user;
         $organisateur = $this->get('app.restclient')
             ->delete($url, $this->getUser()->getToken());
+
+        $this->addFlash("success", "L'organisateur a bien été retiré");
 
         return $this->redirectToRoute('gestion_raid_organisateurs', array('id_raid' => $request->get('id_raid')));
     }

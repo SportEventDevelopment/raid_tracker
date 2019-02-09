@@ -3,11 +3,17 @@
 {% block content %}
 
 <div class="container col col-md-6">
-{% for message in app.flashes('notice') %}
-    <div class="alert alert-success">
-        {{ message }}
-    </div>
-{% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+  
     {% if est_organisateur %}
         <h2>Membres organisateurs du RAID :</h2>
         <ul class="list-group">
@@ -35,18 +41,12 @@
                         {{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}
                     </div>
                 </div>
-
-                {% if errors %}
-                    <div>
-                        <b style="color:red">{{ errors }}</b>
-                    </div>
-                {% endif %}
                 <div class="form-row mb-4">
                     <div class="col">
                         <button class="btn btn-info my-4 btn-block" type="submit">Confirmer</button>
                     </div>
                     <div class="col">
-                        <button class="btn btn-info my-4 btn-block" type="reset">Réinitialiser</button>
+                        <button class="btn my-4 btn-block" type="reset">Réinitialiser</button>
                     </div>
                 </div>
             {{ form_end(form) }}
