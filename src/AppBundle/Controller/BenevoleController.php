@@ -74,24 +74,35 @@ class BenevoleController extends Controller
                 $prefposte_search = $this->get('app.restclient')->get($url, $this->getUser()->getToken());
                 
                 if(empty($prefposte_search)){
-                    // Ajout de la préférence du poste du bénévole
-                    $prefposte = array(
-                        'idPoste' => $form->getData()->getIdPoste()->id,
-                        'idBenevole' => $benevole->id,
-                        'priority' => 0
-                    );
-                    
-                    $reponse = $this->get('app.restclient')->post(
-                        'api/prefpostes',
-                        $prefposte,
-                        $this->getUser()->getToken()
-                    );
-        
-                    if($reponse){
-                        $this->addFlash("success", "Votre préférence a bien été ajoutée");
+
+                    $url = 'api/prefpostes/raids/'. $request->get('id_raid') .'/users/'. $this->getUser()->getIdUser() .'/count';
+                    $request_nb_pref = $this->get('app.restclient')->get($url, $this->getUser()->getToken());
+
+                    if($request_nb_pref){
+
+                        $nb_preferences = $request_nb_pref[0]->nb_preferences;
+
+                        $prefposte = array(
+                            'idPoste' => $form->getData()->getIdPoste()->id,
+                            'idBenevole' => $benevole->id,
+                            'priority' => $nb_preferences + 1
+                        );
+                        
+                        $reponse = $this->get('app.restclient')->post(
+                            'api/prefpostes',
+                            $prefposte,
+                            $this->getUser()->getToken()
+                        );
+            
+                        if($reponse){
+                            $this->addFlash("success", "Votre préférence a bien été ajoutée");
+                        } else {
+                            $this->addFlash("error", "Erreur d'enregistrement dans la base de données de votre préférence");
+                        }
                     } else {
-                        $this->addFlash("error", "Erreur d'enregistrement dans la base de données de votre préférence");
+                        $this->addFlash("error", "Erreur lors de la récupération du nombre de préférences");
                     }
+
                 } else {
                     $this->addFlash("error", "Le choix de ce poste est déjà dans votre liste de préférence !");
                 }
@@ -123,26 +134,18 @@ class BenevoleController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            $url = 'api/users/emails/'.$form->getData()->getEmail();
-            $user_exist = $this->get('app.restclient')
-                ->get($url, $this->getUser()->getToken());
-            
-            if($user_exist){
-                $message = (new \Swift_Message('Invitation pour bénévolat raid'))
-                    ->setFrom('sporteventdevelopment@gmail.com')
-                    ->setTo($form->getData()->getEmail())
-                    ->setBody(
-                        $this->renderView('gestion/invitationRaid.html.twig',
-                            array('link' => 'http://raidtracker.ddns.net/raid_tracker/web/app.php/benevoles/raids/'.$request->get('id_raid').'/join')),
-                        'text/html'
-                    );
-    
-                $mailer->send($message);
-    
-                $this->addFlash('success'," L'invitation a été transmise !");
-            } else{
-                $this->addFlash('error',"L'invitation n'a pas pu être envoyée. L'invité a-t-il un compte ?");
-            }
+            $message = (new \Swift_Message('Invitation pour bénévolat raid'))
+                ->setFrom('sporteventdevelopment@gmail.com')
+                ->setTo($form->getData()->getEmail())
+                ->setBody(
+                    $this->renderView('gestion/invitationRaid.html.twig',
+                        array('link' => 'http://raidtracker.ddns.net/raid_tracker/web/app.php/benevoles/raids/'.$request->get('id_raid').'/join')),
+                    'text/html'
+                );
+
+            $mailer->send($message);
+
+            $this->addFlash('success'," L'invitation a été transmise !");
 
             return $this->redirectToRoute('inviter_benevole', array('id_raid' => $request->get('id_raid')) );
         }
