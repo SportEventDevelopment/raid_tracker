@@ -32,33 +32,43 @@ class RaidController extends Controller
             $raid_data =$this->get('app.serialize')->entityToArray($form->getData());
             $date = $form->getData()->getDate()->format('Y/m/d H:i');
 
-            if($date > date("Y/m/d H:i") ) {
+            if($date > date("Y/m/d H:i")) {
 
-            $raid_data['date'] = $date;
-            array_pop($raid_data);
+                $raid_data['date'] = $date;
+                array_pop($raid_data);
 
-            $response = $this->get('app.restclient')->post(
-                'api/raids',
-                $raid_data,
-                $this->getUser()->getToken()
-            );
+                $response = $this->get('app.restclient')->post(
+                    'api/raids',
+                    $raid_data,
+                    $this->getUser()->getToken()
+                );
 
-            $organisateur_data = array(
-                'idUser' => $this->getUser()->getIdUser(),
-                'idRaid' => $response->body->id
-            );
-            $response = $this->get('app.restclient')->post(
-                'api/organisateurs/raids/'. $organisateur_data['idRaid'].'/users/'. $organisateur_data['idUser'],
-                $organisateur_data,
-                $this->getUser()->getToken()
-            );
+                if($response){
+                    $this->addFlash('success','Nouveau RAID créé avec succès !');
 
-            return $this->redirectToRoute('landing');
+                    $organisateur_data = array(
+                        'idUser' => $this->getUser()->getIdUser(),
+                        'idRaid' => $response->body->id
+                    );
+                    $response = $this->get('app.restclient')->post(
+                        'api/organisateurs/raids/'. $organisateur_data['idRaid'].'/users/'. $organisateur_data['idUser'],
+                        $organisateur_data,
+                        $this->getUser()->getToken()
+                    );
+
+                    if($response){
+                        $this->addFlash('success','Vous êtes maintenant organisateur du RAID');
+                    } else {
+                        $this->addFlash('error',"Erreur lors de l'enregistrement de l'organisateur");
+                    }
+                }
             }
             else {
-              $this->addFlash('notice','La date du raid doit être aprés la date du jour !');
-
+                $this->addFlash('error','Vous ne pouvez pas créer un RAID dans le passé...');
+                return $this->redirectToRoute('create_raid');
             }
+
+            return $this->redirectToRoute('landing');
         }
 
         return $this->render('raid/new.html.twig', array(
