@@ -2,7 +2,9 @@ var mymap;
 var token;
 var idparcours;
 var drawnItems;
-var drawControl;
+var drawControlFull;
+var drawControlCreatePoste;
+var controlImport;
 var type;
 var layer;
 var points;
@@ -50,39 +52,30 @@ window.onload = function init(){
         let zoomControl = addZoom();
         this.addControl(zoomControl);
 
-        let controlImport = importGPX();
-        controlImport.addTo(mymap);
-        
         L.Control.geocoder().addTo(this);
-
+        
         traduireToolbar();
         
         drawnItems = new L.FeatureGroup();
         this.addLayer(drawnItems);
-    
-        drawControl = addDrawControl(drawnItems);
-        this.addControl(drawControl);
+        
+        controlImport = importGPX();
+        controlImport.addTo(this);
+
+        drawControlCreatePoste = addDrawControlCreatePoste();
+        
+        drawControlFull = addDrawControlFull(drawnItems);
+        this.addControl(drawControlFull);
 
         markers = L.layerGroup().addTo(this);
 
-        // Event pour la création de poste
-        $(".leaflet-draw-draw-marker").click(function(e){
-            afficherFormulairePoste();
-        });
-
-        $(".creer-poste").click(function(e){
-            e.preventDefault();
-
-            $(".form-poste").hide();
-        });
-
-        $(".annuler-poste").click(function(e){
-            e.preventDefault();
-            $(".form-poste").hide();
-        });
-        // --- --- ---
-        
         dessinerParcours(idparcours);
+    });
+
+    mymap.on('draw:drawstart', function (e) {
+        if(e.layerType =='marker'){
+            afficherFormulairePoste();
+        }
     });
 
     mymap.on('draw:created', function(e) {
@@ -265,21 +258,33 @@ function afficherFormulairePoste(){
     $(".form-poste").show();
     controlMapInteractions(false);
 
+    $(".creer-poste").click(function(e){
+        e.preventDefault();
+
+        $(".form-poste").hide();
+    });
+
+    $(".annuler-poste").click(function(e){
+        e.preventDefault();
+
+        $(".form-poste").hide();
+        controlMapInteractions(true);
+    });    
+    
+    $('#choix-trace')
+        .find('option')
+        .remove()
+        .end()
+
     $.when(recupererTraces(idparcours).done(function(data, textStatus, jqXHR){
 
-        let select = document.querySelector("#choix-trace");
         let count = 1;
-
-        var length = select.options.length;
-        for (i = 0; i < length; i++) {
-            select.options[i] = null;
-        }
 
         data.forEach((trace) => {
             let opt = document.createElement('option');
             opt.value = trace.id;
             opt.innerHTML = "Tracé n°"+count;
-            select.appendChild(opt);
+            $('#choix-trace').append(opt);
             count++;
         });
     }));
@@ -288,8 +293,15 @@ function afficherFormulairePoste(){
 function controlMapInteractions(enable){
     if(enable){
         mymap.dragging.enable();
+        drawControlCreatePoste.remove();
+        controlImport.addTo(mymap);
+        drawControlFull.addTo(mymap);
+    
     } else {
         mymap.dragging.disable();
+        drawControlFull.remove();
+        controlImport.remove();
+        drawControlCreatePoste.addTo(mymap);
     }
 }
 
@@ -586,8 +598,15 @@ function configurerPoste(e){
     return poste;
 }
 
-function addDrawControl(drawnItems){
-    let drawControl = new L.Control.Draw({
+function addDrawControlCreatePoste(){
+    return new L.Control.Draw({
+        draw: false,
+        edit: false
+    });
+}
+
+function addDrawControlFull(drawnItems){
+    let drawControlFull = new L.Control.Draw({
         position:'topleft',
         edit: {
             featureGroup: drawnItems,
@@ -610,7 +629,8 @@ function addDrawControl(drawnItems){
             rectangle: false,
         },
     });
-    return drawControl;
+
+    return drawControlFull;
 }
 
 function positionUser() {
