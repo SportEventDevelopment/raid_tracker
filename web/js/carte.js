@@ -258,9 +258,7 @@ function afficherFormulairePoste(){
     $(".form-poste").show();
     controlMapInteractions(false);
 
-    $(".form-poste").submit(function(e){
-        e.preventDefault();
-    }).validate({
+    $(".form-poste").validate({
         rules : {
             'choix-trace' : {
                 required : true
@@ -277,11 +275,13 @@ function afficherFormulairePoste(){
             "name-poste" : "Veuillez entrer l'intitulé du poste",
             "nb-benevole": "Veuillez renseigner le nombre de bénévoles pour ce poste (1 à 150)"
         },
-        submitHandler: function(form) {
-            let data_poste = $(form).serializeArray();
+        submitHandler: function(form, event) {
+            event.preventDefault();
+
+            let form_data = $(form).serializeArray();
             
             let new_point = {
-                "idTrace": data_poste[0].value,
+                "idTrace": form_data[0].value,
                 "lon": 0,
                 "lat": 0,
                 "ordre": 0,
@@ -290,20 +290,22 @@ function afficherFormulairePoste(){
             
             $.when(creerPoint(new_point).done(function(data, textStatus, jqXHR){
 
-                data_poste[3].value;
-                data_poste[4].value;
-                hd_reformat = "";
-                hf_reformat = "";
+                let date1 = form_data[3].value.split(/-|T|:/);
+                let date2 = form_data[4].value.split(/-|T|:/);
+
+                hd_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
+                hf_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
+
                 let new_poste = {
                     "idPoint": data.id,
-                    "type": data_poste[1].value,
-                    "nombre": data_poste[2].value,
+                    "type": form_data[1].value,
+                    "nombre": form_data[2].value,
                     "heureDebut": hf_reformat,
                     "heureFin": hd_reformat
                 };
 
                 $.when(creerPoste(new_poste).done(function(data, textStatus, jqXHR){
-                    $('.form-poste').show();
+                    $('.form-poste').hide();
                     controlMapInteractions(true);
                 }));
             }));
