@@ -72,12 +72,6 @@ window.onload = function init(){
         dessinerParcours(idparcours);
     });
 
-    mymap.on('draw:drawstart', function (e) {
-        if(e.layerType =='marker'){
-            afficherFormulairePoste();
-        }
-    });
-
     mymap.on('draw:created', function(e) {
         type = e.layerType;
         layer = e.layer;
@@ -99,7 +93,8 @@ window.onload = function init(){
             drawnItems.addLayer(layer);
         }
         else if (type === 'marker') {
-
+            
+            afficherFormulairePoste(layer.getLatLng());
             // layer.setIcon(posteIcon);
             // layer.bindPopup(
             //     '<form id="form_poste" data-id-point="" onsubmit="configurerPoste(event)">'+
@@ -253,7 +248,7 @@ function traduireToolbar(){
     console.log('Fin de traduction...');
 }
 
-function afficherFormulairePoste(){
+function afficherFormulairePoste(coords){
 
     $(".form-poste").show();
     controlMapInteractions(false);
@@ -277,24 +272,23 @@ function afficherFormulairePoste(){
         },
         submitHandler: function(form, event) {
             event.preventDefault();
-
             let form_data = $(form).serializeArray();
             
             let new_point = {
                 "idTrace": form_data[0].value,
-                "lon": 0,
-                "lat": 0,
+                "lat": coords.lat,
+                "lon": coords.lng,
                 "ordre": 0,
                 "type": 3
             };
-            
+
             $.when(creerPoint(new_point).done(function(data, textStatus, jqXHR){
 
                 let date1 = form_data[3].value.split(/-|T|:/);
                 let date2 = form_data[4].value.split(/-|T|:/);
 
                 hd_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
-                hf_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
+                hf_reformat = date2[2] +"/"+date2[1]+"/"+ date2[0]+" "+date2[3]+":"+date2[4];
 
                 let new_poste = {
                     "idPoint": data.id,
@@ -671,7 +665,7 @@ function addDrawControlFull(drawnItems){
             polygon: false,
             marker: {
                 icon: posteIcon,
-                repeatMode:true
+                repeatMode: false
             },
             circlemarker: false,
             rectangle: false,
