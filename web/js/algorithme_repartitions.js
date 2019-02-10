@@ -1,4 +1,7 @@
+import SED from './utils.js';
+
 var id_raid;
+
 $(".Algorithme").click( function() {
 
     id_raid = this.getAttribute('id');
@@ -44,10 +47,10 @@ function recuperer_prefpostes_raid(id){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Récupération des préférences de postes du raid réussie');
+            SED.log('Récupération des préférences de postes du raid réussie');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la récupération des préférences de postes du raid');  
+            SED.log('Erreur lors de la récupération des préférences de postes du raid');  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -65,10 +68,10 @@ function recuperer_benevoles_raid(id){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Récupération des bénévoles du raid réussie');
+            SED.log('Récupération des bénévoles du raid réussie');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors des bénévoles du raid');  
+            SED.log('Erreur lors des bénévoles du raid');  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -86,10 +89,10 @@ function recuperer_postes_raid(id){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Récupération des postes du raid réussie');
+            SED.log('Récupération des postes du raid réussie');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors des postes du raid');  
+            SED.log('Erreur lors de la récupération des postes du raid');  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -326,10 +329,10 @@ function envoi_repartitions_api(repartition){
             $("#loader").show();
         },
         success: function(data){
-            console.log(data);
+            SED.log(data);
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la création des répartitions');  
+            SED.log('Erreur lors de la création des répartitions');  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -347,10 +350,10 @@ function supprimerRepartitions(id) {
             $("#loader").show();
         },
         success: function(data){
-            console.log('Toutes les répartitions du raid ont été suprimmées')
+            SED.log('Toutes les répartitions du raid ont été suprimmées')
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la suppression des répartitions');  
+            SED.log('Erreur lors de la suppression des répartitions');  
         },
         complete:function(data){   
             $("#loader").hide();

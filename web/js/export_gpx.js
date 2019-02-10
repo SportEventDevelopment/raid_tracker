@@ -1,3 +1,5 @@
+import SED from './utils.js'
+
 var token = $('.container').data('token');
 var tous_points_traces;
 var tab_traces_points = [];
@@ -9,7 +11,6 @@ $(".btn-primary").click( function() {
     $.when(recuperer_points_parcours(id_parcours).done(function(data, textStatus, jqXHR){
 
         let tab_trace = []
-        let count_traces = 0;
 
         data.forEach((point) => {
             tab_trace.push(point);
@@ -30,7 +31,12 @@ $(".attribution-poste").click( function(e){
     open[user_id] = !open[user_id];
     
     if(open[user_id]){
-        $(this).empty();
+        $(this)
+            .find('option')
+            .remove()
+            .end()
+
+        let self = $(this);
 
         $.when(charger_postes_disponibles(raid_id)
             .done(function(data, textStatus, jqXHR){
@@ -38,7 +44,7 @@ $(".attribution-poste").click( function(e){
                 let option = document.createElement('option');
                 option.value = poste_id;
                 option.innerHTML = "Poste actuel : " + poste_name;
-                e.target.append(option);
+                self.append(option);
 
                 for(let i=0; i< data.length;i++){
 
@@ -47,7 +53,7 @@ $(".attribution-poste").click( function(e){
                         let option = document.createElement('option');
                         option.value = data[i].id;
                         option.innerHTML = data[i].type;
-                        e.target.append(option);
+                        self.append(option);
                     }
                 }
             })
@@ -106,10 +112,10 @@ function recuperer_points_parcours(id){
         dataType: 'json',  
         headers: {"X-Auth-Token": token},
         success: function(data){
-            console.log('Points du parcours ['+ id +'] récupérés avec succès!');
+            SED.log('Points du parcours ['+ id +'] récupérés avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         }
     });
 }
@@ -124,10 +130,10 @@ function charger_postes_disponibles(id_raid){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Récupération des postes disponibles effectuée');
+            SED.log('Récupération des postes disponibles effectuée');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la récupération des postes disponibles');  
+            SED.log('Erreur lors de la récupération des postes disponibles');  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -145,10 +151,10 @@ function recuperer_repartition(id_raid, id_user){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Récupération de la répartition utilisateur réussie');
+            SED.log('Récupération de la répartition utilisateur réussie');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la récupération de la répartition utilisateur');  
+            SED.log('Erreur lors de la récupération de la répartition utilisateur');  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -168,10 +174,10 @@ function maj_repartition(repartition, id){
             $("#loader").show();
         },
         success: function(data){
-            console.log(data);
+            SED.log(data);
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log('Erreur lors de la MAJ de la répartition');  
+            SED.log('Erreur lors de la MAJ de la répartition');  
         },
         complete:function(data){   
             $("#loader").hide();

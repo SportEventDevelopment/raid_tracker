@@ -35,7 +35,9 @@ class RaidController extends Controller
             if($date > date("Y/m/d H:i")) {
 
                 $raid_data['date'] = $date;
-                array_pop($raid_data);
+                if(!$raid_data['visibility']){
+                    array_pop($raid_data);
+                }
 
                 $response = $this->get('app.restclient')->post(
                     'api/raids',
@@ -44,7 +46,6 @@ class RaidController extends Controller
                 );
 
                 if($response){
-                    $this->addFlash('success','Nouveau RAID créé avec succès !');
 
                     $organisateur_data = array(
                         'idUser' => $this->getUser()->getIdUser(),
@@ -57,7 +58,7 @@ class RaidController extends Controller
                     );
 
                     if($response){
-                        $this->addFlash('success','Vous êtes maintenant organisateur du RAID');
+                        $this->addFlash('success','RAID créé avec succès !');
                     } else {
                         $this->addFlash('error',"Erreur lors de l'enregistrement de l'organisateur");
                     }

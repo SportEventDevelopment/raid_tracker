@@ -1,3 +1,5 @@
+import SED from './utils.js'
+
 var token = $("#sortlist").data('token');
 var id_raid = $("#sortlist").data('idRaid');
 var id_user = $("#sortlist").data('idUser');
@@ -35,10 +37,10 @@ function supprimerPreferences(id_raid, id_user){
         dataType: 'json',
         headers: {"X-Auth-Token": token},
         success: function(data){
-            console.log('Preferences supprimées avec succès!');
+            SED.log('Preferences supprimées avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         }
     });
 }
@@ -51,10 +53,10 @@ function creerPreference(preference){
         headers: {"X-Auth-Token": token},
         data: { ...preference },
         success: function(data){
-            console.log('Preference ajoutée avec succès!');
+            SED.log('Preference ajoutée avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         }
     });
 }

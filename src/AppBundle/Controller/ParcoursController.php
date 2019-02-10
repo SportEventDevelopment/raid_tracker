@@ -45,7 +45,11 @@ class ParcoursController extends Controller
             );
 
             if($parcours) {
-                return $this->redirectToRoute('carte_edit', array('id_parcours' => $parcours->body->id));
+
+                return $this->redirectToRoute('carte_edit', array(
+                    'id_raid'=> $request->get('id'),
+                    'id_parcours' => $parcours->body->id)
+                );
             } else {
                 $this->addFlash('error','Erreur lors de la création de votre parcours');
                 return $this->redirectToRoute('edit_raid', array('id' => $request->get('id')));

@@ -1,3 +1,5 @@
+import SED from './utils.js'
+
 var mymap;
 var token;
 var idparcours;
@@ -13,6 +15,9 @@ var passageIcon;
 var arriveeIcon;
 var posteIcon;
 var markers;
+var longitude;
+var latitude;
+var echelle;
 
 window.onload = function init(){
     mymap = L.map('mapid',{
@@ -266,7 +271,7 @@ function addZoom(){
 }
 
 function traduireToolbar(){
-    console.log('Début de la traduction barre d\'outils...');
+    SED.log('Début de la traduction barre d\'outils...');
 
     //Toolbar Visible
     L.drawLocal.draw.toolbar.buttons.polyline = 'Créer un parcours';
@@ -311,7 +316,7 @@ function traduireToolbar(){
     //Toolbar Suppression Texte
     L.drawLocal.edit.handlers.remove.tooltip.text = "Cliquez sur un élément pour le supprimer";
     
-    console.log('Fin de traduction...');
+    SED.log('Fin de traduction...');
 }
 
 function afficherFormulairePoste(coords){
@@ -353,8 +358,8 @@ function afficherFormulairePoste(coords){
                 let date1 = form_data[3].value.split(/-|T|:/);
                 let date2 = form_data[4].value.split(/-|T|:/);
 
-                hd_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
-                hf_reformat = date2[2] +"/"+date2[1]+"/"+ date2[0]+" "+date2[3]+":"+date2[4];
+                let hd_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
+                let hf_reformat = date2[2] +"/"+date2[1]+"/"+ date2[0]+" "+date2[3]+":"+date2[4];
 
                 let new_poste = {
                     "idPoint": data.id,
@@ -446,8 +451,8 @@ function sauvegarderPostes(postes, trace_id) {
             let date1 = postes[i].heureDebut.split(/-|T|:|\+/);
             let date2 = postes[i].heureFin.split(/-|T|:|\+/);
     
-            hd_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
-            hf_reformat = date2[2] +"/"+date2[1]+"/"+ date2[0]+" "+date2[3]+":"+date2[4];
+            let hd_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
+            let hf_reformat = date2[2] +"/"+date2[1]+"/"+ date2[0]+" "+date2[3]+":"+date2[4];
     
             let new_poste = {
                 "idPoint": data.id,
@@ -496,10 +501,10 @@ function recupererTraces(id){
             $("#loader").show();
         },
         success: function(data){            
-            console.log("Parcours ["+ id +"] récupéré avec succès!")
+            SED.log("Parcours ["+ id +"] récupéré avec succès!")
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -518,10 +523,10 @@ function recupererTracesParcours(id){
             $("#loader").show();
         },
         success: function(data){            
-            console.log("Tracés du parcours ["+ id +"] récupérés avec succès!")
+            SED.log("Tracés du parcours ["+ id +"] récupérés avec succès!")
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -539,10 +544,10 @@ function supprimerParcours(id) {
             $("#loader").show();
         },
         success: function(data){
-            console.log('Parcours supprimé ['+ id +']')
+            SED.log('Parcours supprimé ['+ id +']')
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -563,10 +568,10 @@ function creerTrace(trace){
             $("#loader").show();
         },
         success: function (data, textStatus, xhr) {  
-            console.log('Nouveau tracé créé ['+ data.id +']');
+            SED.log('Nouveau tracé créé ['+ data.id +']');
         },  
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);
+            SED.log(xhr.responseJSON.message);
         },
         complete:function(data){   
             $("#loader").hide();
@@ -584,10 +589,10 @@ function recupererTrace(id){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Points du tracé ['+ id +'] récupérés avec succès!');
+            SED.log('Points du tracé ['+ id +'] récupérés avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message+" ["+id+"]");
+            SED.log(xhr.responseJSON.message+" ["+id+"]");
         },
         complete:function(data){   
             $("#loader").hide();
@@ -607,10 +612,10 @@ function supprimerTrace(id){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Tracé supprimé [' + id + '] avec succès!');
+            SED.log('Tracé supprimé [' + id + '] avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -629,10 +634,10 @@ function creerPoint(point){
             $("#loader").show();
         },
         success: function(data){
-            console.log(data)
+            SED.log(data)
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -652,10 +657,10 @@ function creerPoste(poste){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Nouveau poste créé ['+ data.id +']');
+            SED.log('Nouveau poste créé ['+ data.id +']');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -674,10 +679,10 @@ function recupererPoste(id){
             $("#loader").show();
         },
         success: function(data){
-            console.log('Récupération du poste ['+ id +'] réussie!');
+            SED.log('Récupération du poste ['+ id +'] réussie!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -695,10 +700,10 @@ function recupererPostesTrace(id) {
             $("#loader").show();
         },
         success: function(data){
-            console.log('Récupération des postes du tracé ['+ id +'] réussie!');
+            SED.log('Récupération des postes du tracé ['+ id +'] réussie!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -717,10 +722,10 @@ function updatePoint(point, id) {
             $("#loader").show();
         },
         success: function(data){
-            console.log('Emplacement du point ['+ id +'] mis à jour');
+            SED.log('Emplacement du point ['+ id +'] mis à jour');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
@@ -740,10 +745,10 @@ function supprimerPoint(id) {
             $("#loader").show();
         },
         success: function(data){
-            console.log('Point supprimé [' + id + '] avec succès!');
+            SED.log('Point supprimé [' + id + '] avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
-            console.log(xhr.responseJSON.message);  
+            SED.log(xhr.responseJSON.message);  
         },
         complete:function(data){   
             $("#loader").hide();
