@@ -69,7 +69,7 @@ window.onload = function init(){
 
         markers = L.layerGroup().addTo(this);
 
-        $.when(dessinerParcours(idparcours).done(function(data, textStatus, jqXHR){
+        $.when(recupererTracesParcours(idparcours).done(function(data, textStatus, jqXHR){
             
             for (let i = 0; i < data.length; i++) {
 
@@ -110,9 +110,10 @@ window.onload = function init(){
                                     .addTo(markers)
                                     .bindPopup("Poste: "+ data.type +"<br>("+ data.nombre+" bénévoles max)",{ offset: new L.Point(0,-50)});
                                 poste.idtrace = save_point.idTrace;
+                                poste.idpoint = save_point.id;
 
                                 drawnItems.addLayer(poste);
-                            }))
+                            }));
                         }
                     }
                     
@@ -171,50 +172,78 @@ window.onload = function init(){
         
         e.layers.eachLayer(function(layer){
 
-            let markers_to_remove = [];
+            if(layer instanceof L.Marker){
 
-            for (let i = 0; i < markers.getLayers().length; i++) {       
-                if( markers.getLayers()[i].idtrace == layer.idtrace 
-                    || markers.getLayers()[i].idtrace.id == layer.idtrace){
-                    markers_to_remove.push(markers.getLayers()[i])
+                let new_point = {
+                    "idTrace": layer.idtrace.id,
+                    "lat": layer.getLatLng().lat,
+                    "lon": layer.getLatLng().lng,
+                    "ordre":0,
+                    "type": 3
+                };
+                updatePoint(new_point, layer.idpoint);
+
+            } else {
+
+                let markers_to_remove = [];
+    
+                for (let i = 0; i < markers.getLayers().length; i++) {       
+                    if( markers.getLayers()[i].idtrace == layer.idtrace 
+                        || markers.getLayers()[i].idtrace.id == layer.idtrace){
+                        markers_to_remove.push(markers.getLayers()[i])
+                    }
                 }
-            }
-            for (let j = 0; j < markers_to_remove.length; j++) {
-                markers.removeLayer(markers_to_remove[j])
-            }
+                for (let j = 0; j < markers_to_remove.length; j++) {
+                    markers.removeLayer(markers_to_remove[j])
+                }
+    
+                $.when(recupererPostesTrace(layer.idtrace).done(function(data, textStatus, jqXHR){
 
-            $.when(supprimerTrace(layer.idtrace).done(function(data, textStatus, jqXHR){
-                points = [];
-                layer.getLatLngs().forEach(function(point) {
-                    points.push(point);
-                });
-                
-                let trace = {"idParcours": idparcours}
-                $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
-                    layer.idtrace = data.id;
-                    sauvegarderTrace(points, data.id);
-                }));
-            }));
+                    let save_postes = data;
+
+                    $.when(supprimerTrace(layer.idtrace).done(function(data, textStatus, jqXHR){
+                        points = [];
+                        layer.getLatLngs().forEach(function(point) {
+                            points.push(point);
+                        });
+                        
+                        let trace = {"idParcours": idparcours}
+                        $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
+                            layer.idtrace = data.id;
+                            sauvegarderTrace(points, data.id);
+                            sauvegarderPostes(save_postes, data.id);
+                        }));
+                    }));
+                }))
+            }
         });
     });
 
     mymap.on('draw:deleted', function(e) {
 
         e.layers.eachLayer(function(layer){
-            console.log(layer)
-            let markers_to_remove = [];
 
-            for (let i = 0; i < markers.getLayers().length; i++) {       
-                if( markers.getLayers()[i].idtrace == layer.idtrace 
-                    || markers.getLayers()[i].idtrace.id == layer.idtrace){
-                    markers_to_remove.push(markers.getLayers()[i])
+            if (layer instanceof L.Marker){
+
+                supprimerPoint(layer.idpoint);
+
+            } else {
+                
+                let markers_to_remove = [];
+    
+                for (let i = 0; i < markers.getLayers().length; i++) {       
+                    if( markers.getLayers()[i].idtrace == layer.idtrace 
+                        || markers.getLayers()[i].idtrace.id == layer.idtrace){
+                        markers_to_remove.push(markers.getLayers()[i])
+                    }
                 }
-            }
-            for (let j = 0; j < markers_to_remove.length; j++) {
-                markers.removeLayer(markers_to_remove[j])
+                for (let j = 0; j < markers_to_remove.length; j++) {
+                    markers.removeLayer(markers_to_remove[j])
+                }
+    
+                supprimerTrace(layer.idtrace);
             }
 
-            supprimerTrace(layer.idtrace);
         });
     });
 
@@ -382,14 +411,14 @@ function sauvegarderTrace(points, trace_id) {
             point["type"] = 1;
             let depart = L.marker([point["lat"], point["lon"]], {icon: departIcon})
                 .addTo(markers)
-                .bindPopup('Point de départ',{ offset: new L.Point(0,-50)});
+                .bindPopup('Point de départ',{ offset: new L.Point(20,-50)});
             depart.idtrace = trace_id;
         }
         else if(i == points.length-1){
             point["type"] = 2;
             let arrivee = L.marker([point["lat"], point["lon"]], {icon: arriveeIcon})
                 .addTo(markers)
-                .bindPopup('Point de d\'arrivée',{ offset: new L.Point(0,-50)});
+                .bindPopup('Point de d\'arrivée',{ offset: new L.Point(20,-50)});
             arrivee.idtrace = trace_id;
         }
         else{
@@ -397,6 +426,48 @@ function sauvegarderTrace(points, trace_id) {
         }
 
         creerPoint(point);
+    }
+}
+
+function sauvegarderPostes(postes, trace_id) {
+
+    for (let i = 0; i < postes.length; i++) {
+    
+        let new_point = {
+            "idTrace": trace_id,
+            "lat": postes[i].idPoint.lat,
+            "lon": postes[i].idPoint.lon,
+            "ordre": 0,
+            "type": 3
+        };
+        
+        $.when(creerPoint(new_point).done(function(data, textStatus, jqXHR){
+    
+            let date1 = postes[i].heureDebut.split(/-|T|:|\+/);
+            let date2 = postes[i].heureFin.split(/-|T|:|\+/);
+    
+            hd_reformat = date1[2] +"/"+date1[1]+"/"+ date1[0]+" "+date1[3]+":"+date1[4];
+            hf_reformat = date2[2] +"/"+date2[1]+"/"+ date2[0]+" "+date2[3]+":"+date2[4];
+    
+            let new_poste = {
+                "idPoint": data.id,
+                "type": postes[i].type,
+                "nombre": postes[i].nombre,
+                "heureDebut": hf_reformat,
+                "heureFin": hd_reformat
+            };
+    
+            $.when(creerPoste(new_poste).done(function(data, textSatus, jqXHR){
+
+                let poste = L.marker([new_point.lat, new_point.lon], {icon: posteIcon})
+                    .addTo(markers)
+                    .bindPopup("Poste: "+ data.type +"<br>("+ data.nombre+" bénévoles max)",{ offset: new L.Point(0,-50)});
+                poste.idtrace = new_point.idTrace;
+                poste.idpoint = new_point.id;
+            
+                drawnItems.addLayer(poste);
+            }));
+        }));
     }
 }
 
@@ -436,7 +507,7 @@ function recupererTraces(id){
     }); 
 }
 
-function dessinerParcours(id){
+function recupererTracesParcours(id){
 
     return $.ajax({  
         url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces/parcours/' + id,  
@@ -447,7 +518,7 @@ function dessinerParcours(id){
             $("#loader").show();
         },
         success: function(data){            
-            console.log("Parcours ["+ id +"] dessiné avec succès!")
+            console.log("Tracés du parcours ["+ id +"] récupérés avec succès!")
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log(xhr.responseJSON.message);  
@@ -604,6 +675,72 @@ function recupererPoste(id){
         },
         success: function(data){
             console.log('Récupération du poste ['+ id +'] réussie!');
+        },
+        error: function (xhr, textStatus, errorThrown) {  
+            console.log(xhr.responseJSON.message);  
+        },
+        complete:function(data){   
+            $("#loader").hide();
+        }
+    });
+}
+
+function recupererPostesTrace(id) {
+    return $.ajax({  
+        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/postes/traces/'+ id,  
+        type: 'GET',
+        dataType: 'json',  
+        headers: {"X-Auth-Token": token}, 
+        beforeSend: function(){
+            $("#loader").show();
+        },
+        success: function(data){
+            console.log('Récupération des postes du tracé ['+ id +'] réussie!');
+        },
+        error: function (xhr, textStatus, errorThrown) {  
+            console.log(xhr.responseJSON.message);  
+        },
+        complete:function(data){   
+            $("#loader").hide();
+        }
+    });
+}
+
+function updatePoint(point, id) {
+    return $.ajax({  
+        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points/'+ id,  
+        type: 'POST',
+        dataType: 'json',  
+        headers: {"X-Auth-Token": token}, 
+        data: point,
+        beforeSend: function(){
+            $("#loader").show();
+        },
+        success: function(data){
+            console.log('Emplacement du point ['+ id +'] mis à jour');
+        },
+        error: function (xhr, textStatus, errorThrown) {  
+            console.log(xhr.responseJSON.message);  
+        },
+        complete:function(data){   
+            $("#loader").hide();
+        }
+    });
+}
+
+function supprimerPoint(id) {
+    return $.ajax({
+        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/points/' + id,  
+        type: 'DELETE',
+        dataType: 'json',
+        headers: {
+            "X-Auth-Token": token
+        },
+        beforeSend: function(){
+            $("#loader").show();
+        },
+        success: function(data){
+            console.log('Point supprimé [' + id + '] avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log(xhr.responseJSON.message);  
