@@ -13,7 +13,7 @@
                         {{parcours.nom}}
                         <div>
                             <a href= {{ path('carte_edit', {'id_parcours': parcours.id} ) }}>Editer</a>
-                            <button id={{parcours.id}} type="submit" class="btn btn-primary">Exporter</button>         
+                            <button id={{parcours.id}} type="submit" class="btn btn-primary export_class">Exporter</button>         
                         </div>
                     </li>                
                 {% endfor %}
@@ -48,6 +48,7 @@
         {% else %}
             <p>Aucun bénévole n'a été affecté à un poste pour le moment</p>
         {% endif %}
+        <button id={{raid.id}} type="submit" class="btn Algorithme">Répartir automatiquement les bénévoles</button>
     {% else %}
         <div class="alert alert-danger" role="alert">
             Vous n'êtes pas organisateur de ce RAID.<br>
@@ -61,8 +62,10 @@
     var tous_points_traces;
     var tab_traces_points = [];
     var open = [];
+    var prefpostes = [];
+    var postes = [];
 
-    $(".btn-primary").click( function() {
+    $(".export_class").click( function() {
         var id_parcours = this.getAttribute('id');
         
         $.when(recuperer_points_traces(id_parcours).done(function(data, textStatus, jqXHR){
@@ -248,4 +251,5 @@
         });
     }
 </script>
+<script src={{asset("js/algorithme_repartitions.js")}}></script>
 {% endblock %}
