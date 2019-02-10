@@ -69,7 +69,55 @@ window.onload = function init(){
 
         markers = L.layerGroup().addTo(this);
 
-        dessinerParcours(idparcours);
+        $.when(dessinerParcours(idparcours).done(function(data, textStatus, jqXHR){
+            
+            for (let i = 0; i < data.length; i++) {
+
+                let trace_id = data[i].id;
+
+                $.when(recupererTrace(trace_id).done(function(data, textStatus, jqXHR){
+
+                    let tab_points= [];
+
+                    for (let i = 0; i < data.length; i++) {
+                        let point = []
+                        point.push(data[i]['lat']);
+                        point.push(data[i]['lon']);
+
+                        if(data[i]['type'] == 0){
+                            tab_points.push(point);
+                        }
+                        else if(data[i]['type'] == 1){
+                            let depart = L.marker([data[i]['lat'], data[i]['lon']], {icon: departIcon})
+                                .addTo(markers)
+                                .bindPopup('Point de départ');
+                            depart.idtrace = data[i]['idTrace']  
+                            tab_points.push(point);
+                        } 
+                        else if(data[i]['type'] == 2){
+                            let arrivee = L.marker([data[i]['lat'], data[i]['lon']], {icon: arriveeIcon})
+                                .addTo(markers)
+                                .bindPopup('Point d\'arrivée');
+                            arrivee.idtrace = data[i]['idTrace']
+                            tab_points.push(point);
+                        }
+                        else if(data[i]['type'] == 3){
+                            let poste = L.marker([data[i]['lat'], data[i]['lon']], {icon: posteIcon})
+                                .addTo(markers)
+                                .bindPopup('Poste');
+                            poste.idtrace = data[i]['idTrace']
+                        }
+                    }
+                    
+                    let polylines = L.polyline(tab_points, {
+                        color:'green',
+                        weight: 10
+                    });
+                    polylines.idtrace = trace_id;
+                    drawnItems.addLayer(polylines);
+                }));
+            }
+        }));
     });
 
     mymap.on('draw:created', function(e) {
@@ -85,8 +133,8 @@ window.onload = function init(){
             
             let trace = {"idParcours": idparcours}
             $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
-                layer.idtrace = data.id
-                sauvegarderTrace(points, data.id)                
+                layer.idtrace = data.id;
+                sauvegarderTrace(points, data.id);          
             }));
 
             drawnItems.addLayer(layer);
@@ -391,9 +439,6 @@ function dessinerParcours(id){
             $("#loader").show();
         },
         success: function(data){            
-            for (let i = 0; i < data.length; i++) {
-                recupererTrace(data[i].id)
-            }
             console.log("Parcours ["+ id +"] dessiné avec succès!")
         },
         error: function (xhr, textStatus, errorThrown) {  
@@ -460,34 +505,7 @@ function recupererTrace(id){
             $("#loader").show();
         },
         success: function(data){
-            let tab_points= [];
-
-            for (let i = 0; i < data.length; i++) {
-                let point = []
-                point.push(data[i]['lat']);
-                point.push(data[i]['lon']);
-
-                if(data[i]['type'] == 1){
-                    let depart = L.marker([data[i]['lat'], data[i]['lon']], {icon: departIcon})
-                        .addTo(markers)
-                        .bindPopup('Point de départ');
-                    depart.idtrace = data[i]['idTrace']  
-                }
-                else if(data[i]['type'] == 2){
-                    let arrivee = L.marker([data[i]['lat'], data[i]['lon']], {icon: arriveeIcon})
-                        .addTo(markers)
-                        .bindPopup('Point d\'arrivée');
-                    arrivee.idtrace = data[i]['idTrace']
-                }
-                tab_points.push(point);
-            }
             
-            let polylines = L.polyline(tab_points, {
-                color:'green',
-                weight: 10
-            });
-            polylines.idtrace = id;
-            drawnItems.addLayer(polylines);
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log(xhr.responseJSON.message+" ["+id+"]");
@@ -574,7 +592,12 @@ function importGPX(){
     return L.Control.fileLayerLoad({
         fitBounds: true,
         layerOptions: {
-            style: style,
+            style: {
+                color: 'red',
+                weight: 10,
+                opacity: 1,
+                clickable:true
+            },
             pointToLayer: function (data, latlng){
                 return L.circleMarker(latlng, {
                     style: {
@@ -589,40 +612,20 @@ function importGPX(){
             onEachFeature: function (data, layer) {
                 let tab_points_import_gpx = [];
                 
-                layer.editing.latlngs.forEach(function(element) {
+                layer.getLatLngs().forEach(function(element) {
                     tab_points_import_gpx.push(element);
                 });
-                
-                layer.setStyle({
-                    color: 'red',
-                    weight: 10,
-                    opacity: 1,
-                    clickable:true
-                })
                 
                 let trace = {"idParcours": idparcours}
                 $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
                     layer.idtrace = data.id;
-                    sauvegarderTrace(tab_points_import_gpx[0], data.id);
+                    sauvegarderTrace(tab_points_import_gpx, data.id);
                 }));
                 
                 drawnItems.addLayer(layer);
             }
         }
     })
-}
-
-function configurerPoste(e){
-    e.preventDefault();
-    
-    let poste = [];
-    poste["idPoint"] = e.target[0].value;
-    poste["type"] = e.target[1].value;
-    poste["nombre"] = e.target[2].value;
-    poste["heureDebut"] = e.target[3].value;
-    poste["heureFin"] = e.target[4].value;
-    
-    return poste;
 }
 
 function addDrawControlCreatePoste(){
