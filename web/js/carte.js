@@ -78,16 +78,18 @@ window.onload = function init(){
         points = [];
 
         if (type === 'polyline') {
-            drawnItems.addLayer(layer);
 
             layer.getLatLngs().forEach(function(point) {
                 points.push(point);
             });
             
             let trace = {"idParcours": idparcours}
-            $.when(creerTrace(trace, points).done(function(data, textStatus, jqXHR){
+            $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
                 layer.idtrace = data.id
+                sauvegarderTrace(points, data.id)                
             }));
+
+            drawnItems.addLayer(layer);
         }
         else if ( type === 'polygon') {
             drawnItems.addLayer(layer);
@@ -95,28 +97,6 @@ window.onload = function init(){
         else if (type === 'marker') {
             
             afficherFormulairePoste(layer.getLatLng());
-            // layer.setIcon(posteIcon);
-            // layer.bindPopup(
-            //     '<form id="form_poste" data-id-point="" onsubmit="configurerPoste(event)">'+
-            //         '<div class="form-group row">'+
-            //             '<label class="col-sm-4 col-form-label" for="type_poste">Objectif du poste</label>'+
-            //             '<input type="text" class="col-sm-8" id="type_poste" placeholder="Stand buvette">'+
-            //         '</div>'+
-            //         '<div class="form-group row">'+
-            //             '<label class="col-sm-4 col-form-label" for="nombre_poste">Nombre de participants</label>'+
-            //             '<input type="text" class="col-sm-8" id="nombre_poste" placeholder="5">'+
-            //         '</div>'+
-            //         '<div class="form-group row">'+
-            //             '<label class="col-sm-4 col-form-label" for="heure_debut">Heure de début</label>'+
-            //             '<input type="text" class="col-sm-8" id="heure_debut" placeholder="30/12/2019 10:00">'+
-            //         '</div>'+
-            //         '<div class="form-group row">'+
-            //             '<label class="col-sm-4 col-form-label" for="heure_fin">Heure de fin</label>'+
-            //             '<input type="text" class="col-sm-8" id="heure_fin" placeholder="30/12/2019 12:00">'+
-            //         '</div>'+
-            //         '<button type="submit" class="btn btn-primary">Enregistrer</button>'+
-            //     '</form>'
-            // );
             
             drawnItems.addLayer(layer);
         }
@@ -154,8 +134,9 @@ window.onload = function init(){
                 });
                 
                 let trace = {"idParcours": idparcours}
-                $.when(creerTrace(trace, points).done(function(data, textStatus, jqXHR){
-                    layer.idtrace = data.id
+                $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
+                    layer.idtrace = data.id;
+                    sauvegarderTrace(points, data.id);
                 }));
             }));
         });
@@ -332,6 +313,37 @@ function afficherFormulairePoste(coords){
     }));
 }
 
+function sauvegarderTrace(points, trace_id) {
+    let point = [];
+                
+    for (let i = 0; i < points.length; i++) {
+        point["idTrace"] = trace_id;
+        point["ordre"] = i;
+        point["lat"] = points[i].lat;
+        point["lon"] = points[i].lng;
+
+        if(i == 0){
+            point["type"] = 1;
+            let depart = L.marker([point["lat"], point["lon"]], {icon: departIcon})
+                .addTo(markers)
+                .bindPopup('Point de départ');
+            depart.idtrace = trace_id;
+        }
+        else if(i == points.length-1){
+            point["type"] = 2;
+            let arrivee = L.marker([point["lat"], point["lon"]], {icon: arriveeIcon})
+                .addTo(markers)
+                .bindPopup('Point de d\'arrivée');
+            arrivee.idtrace = trace_id;
+        }
+        else{
+            point["type"] = 0;
+        }
+
+        creerPoint(point);
+    }
+}
+
 function controlMapInteractions(enable){
     if(enable){
         mymap.dragging.enable();
@@ -414,7 +426,7 @@ function supprimerParcours(id) {
     });
 }
 
-function creerTrace(trace, points){
+function creerTrace(trace){
     return $.ajax({  
         url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/traces',  
         type: 'POST',
@@ -427,35 +439,6 @@ function creerTrace(trace, points){
             $("#loader").show();
         },
         success: function (data, textStatus, xhr) {  
-            let point = [];
-            let sizeTabPoints = points.length;
-            
-            for (let i = 0; i < sizeTabPoints; i++) {
-                point["idTrace"] = data['id'];
-                point["ordre"] = i;
-                point["lat"] = points[i].lat;
-                point["lon"] = points[i].lng;
-
-                if(i == 0){
-                    point["type"] = 1;
-                    let depart = L.marker([point["lat"], point["lon"]], {icon: departIcon})
-                        .addTo(markers)
-                        .bindPopup('Point de départ');
-                    depart.idtrace = point['idTrace'];
-                }
-                else if(i == sizeTabPoints-1){
-                    point["type"] = 2;
-                    let arrivee = L.marker([point["lat"], point["lon"]], {icon: arriveeIcon})
-                        .addTo(markers)
-                        .bindPopup('Point de d\'arrivée');
-                    arrivee.idtrace = point['idTrace'];
-                }
-                else{
-                    point["type"] = 0;
-                }
-
-                creerPoint(point);
-            }
             console.log('Nouveau tracé créé ['+ data.id +']');
         },  
         error: function (xhr, textStatus, errorThrown) {  
@@ -585,13 +568,6 @@ function creerPoste(poste){
 
 function importGPX(){
 
-    let style = {
-        color:'purple',
-        opacity: 0,
-        fillOpacity: 0.5,
-        weight: 1,
-        clickable: false
-    };
     L.Control.FileLayerLoad.TITLE = 'Importer parcours (GPX, GeoJSON)';
     L.Control.FileLayerLoad.LABEL = '<img class="icon" src="/raid_tracker/web/images/folder.png">';
 
@@ -600,7 +576,15 @@ function importGPX(){
         layerOptions: {
             style: style,
             pointToLayer: function (data, latlng){
-                return L.circleMarker(latlng, {style: style});
+                return L.circleMarker(latlng, {
+                    style: {
+                        color:'purple',
+                        opacity: 0,
+                        fillOpacity: 0.5,
+                        weight: 1,
+                        clickable: false
+                    }
+                });
             },
             onEachFeature: function (data, layer) {
                 let tab_points_import_gpx = [];
@@ -617,8 +601,9 @@ function importGPX(){
                 })
                 
                 let trace = {"idParcours": idparcours}
-                $.when(creerTrace(trace, tab_points_import_gpx[0]).done(function(data, textStatus, jqXHR){
-                    layer.idtrace = data.id
+                $.when(creerTrace(trace).done(function(data, textStatus, jqXHR){
+                    layer.idtrace = data.id;
+                    sauvegarderTrace(tab_points_import_gpx[0], data.id);
                 }));
                 
                 drawnItems.addLayer(layer);
