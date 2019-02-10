@@ -66,7 +66,7 @@
                     <label for="heure-fin" class="col-sm-4 col-form-label">Heure de fin</label>
                     <input  type="datetime-local" name="heure-fin"
                             class="form-control col-sm-8"
-                            value={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
+                            value={{ raid.date|date_modify("+2 hour")|date("Y-m-d\\TH:i", "Europe/Paris") }}
                             min={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
                             max={{ raid.date|date_modify("+1 day")|date("Y-m-d\\TH:i", "Europe/Paris") }}
                             id="heure-fin">

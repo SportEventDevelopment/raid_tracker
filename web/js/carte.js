@@ -258,7 +258,9 @@ function afficherFormulairePoste(){
     $(".form-poste").show();
     controlMapInteractions(false);
 
-    $(".form-poste").validate({
+    $(".form-poste").submit(function(e){
+        e.preventDefault();
+    }).validate({
         rules : {
             'choix-trace' : {
                 required : true
@@ -276,11 +278,35 @@ function afficherFormulairePoste(){
             "nb-benevole": "Veuillez renseigner le nombre de bénévoles pour ce poste (1 à 150)"
         },
         submitHandler: function(form) {
-            console.log(form)
+            let data_poste = $(form).serializeArray();
             
-            // $.when(creerPoint().done(function(data, textStatus, jqXHR){
+            let new_point = {
+                "idTrace": data_poste[0].value,
+                "lon": 0,
+                "lat": 0,
+                "ordre": 0,
+                "type": 3
+            };
+            
+            $.when(creerPoint(new_point).done(function(data, textStatus, jqXHR){
 
-            // }));
+                data_poste[3].value;
+                data_poste[4].value;
+                hd_reformat = "";
+                hf_reformat = "";
+                let new_poste = {
+                    "idPoint": data.id,
+                    "type": data_poste[1].value,
+                    "nombre": data_poste[2].value,
+                    "heureDebut": hf_reformat,
+                    "heureFin": hd_reformat
+                };
+
+                $.when(creerPoste(new_poste).done(function(data, textStatus, jqXHR){
+                    $('.form-poste').show();
+                    controlMapInteractions(true);
+                }));
+            }));
         }
     });
 
