@@ -59,6 +59,7 @@
         {% else %}
             <p>Aucun bénévole n'a été affecté à un poste pour le moment</p>
         {% endif %}
+        <button id={{raid.id}} type="submit" class="btn Algorithme">Répartir automatiquement les bénévoles</button>
     {% else %}
         <div class="alert alert-danger" role="alert">
             Vous n'êtes pas organisateur de ce RAID.<br>
