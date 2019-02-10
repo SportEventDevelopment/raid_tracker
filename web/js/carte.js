@@ -90,23 +90,29 @@ window.onload = function init(){
                         else if(data[i]['type'] == 1){
                             let depart = L.marker([data[i]['lat'], data[i]['lon']], {icon: departIcon})
                                 .addTo(markers)
-                                .bindPopup('Point de départ');
+                                .bindPopup('Point de départ',{ offset: new L.Point(20,-50)});
                             depart.idtrace = data[i]['idTrace']  
                             tab_points.push(point);
                         } 
                         else if(data[i]['type'] == 2){
                             let arrivee = L.marker([data[i]['lat'], data[i]['lon']], {icon: arriveeIcon})
                                 .addTo(markers)
-                                .bindPopup('Point d\'arrivée');
+                                .bindPopup('Point d\'arrivée',{ offset: new L.Point(20,-50)});
                             arrivee.idtrace = data[i]['idTrace']
                             tab_points.push(point);
                         }
                         else if(data[i]['type'] == 3){
-                            let poste = L.marker([data[i]['lat'], data[i]['lon']], {icon: posteIcon})
-                                .addTo(markers)
-                                .bindPopup('Poste');
-                            poste.idtrace = data[i]['idTrace']
-                            drawnItems.addLayer(poste);
+                            let save_point = data[i];
+
+                            $.when(recupererPoste(save_point.id).done(function(data, textStatus, jqXHR){
+
+                                let poste = L.marker([save_point.lat, save_point.lon], {icon: posteIcon})
+                                    .addTo(markers)
+                                    .bindPopup("Poste: "+ data.type +"<br>("+ data.nombre+" bénévoles max)",{ offset: new L.Point(0,-50)});
+                                poste.idtrace = save_point.idTrace;
+
+                                drawnItems.addLayer(poste);
+                            }))
                         }
                     }
                     
@@ -376,14 +382,14 @@ function sauvegarderTrace(points, trace_id) {
             point["type"] = 1;
             let depart = L.marker([point["lat"], point["lon"]], {icon: departIcon})
                 .addTo(markers)
-                .bindPopup('Point de départ');
+                .bindPopup('Point de départ',{ offset: new L.Point(0,-50)});
             depart.idtrace = trace_id;
         }
         else if(i == points.length-1){
             point["type"] = 2;
             let arrivee = L.marker([point["lat"], point["lon"]], {icon: arriveeIcon})
                 .addTo(markers)
-                .bindPopup('Point de d\'arrivée');
+                .bindPopup('Point de d\'arrivée',{ offset: new L.Point(0,-50)});
             arrivee.idtrace = trace_id;
         }
         else{
@@ -462,7 +468,7 @@ function supprimerParcours(id) {
             $("#loader").show();
         },
         success: function(data){
-            console.log('Parcours supprimé ['+ data.id +']')
+            console.log('Parcours supprimé ['+ id +']')
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log(xhr.responseJSON.message);  
@@ -576,6 +582,28 @@ function creerPoste(poste){
         },
         success: function(data){
             console.log('Nouveau poste créé ['+ data.id +']');
+        },
+        error: function (xhr, textStatus, errorThrown) {  
+            console.log(xhr.responseJSON.message);  
+        },
+        complete:function(data){   
+            $("#loader").hide();
+        }
+    });
+}
+
+function recupererPoste(id){
+
+    return $.ajax({  
+        url: 'http://raidtracker.ddns.net/raid_tracker_api/web/app.php/api/postes/points/'+ id,  
+        type: 'GET',
+        dataType: 'json',  
+        headers: {"X-Auth-Token": token}, 
+        beforeSend: function(){
+            $("#loader").show();
+        },
+        success: function(data){
+            console.log('Récupération du poste ['+ id +'] réussie!');
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log(xhr.responseJSON.message);  
