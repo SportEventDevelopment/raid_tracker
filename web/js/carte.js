@@ -106,6 +106,7 @@ window.onload = function init(){
                                 .addTo(markers)
                                 .bindPopup('Poste');
                             poste.idtrace = data[i]['idTrace']
+                            drawnItems.addLayer(poste);
                         }
                     }
                     
@@ -114,6 +115,7 @@ window.onload = function init(){
                         weight: 10
                     });
                     polylines.idtrace = trace_id;
+
                     drawnItems.addLayer(polylines);
                 }));
             }
@@ -193,7 +195,7 @@ window.onload = function init(){
     mymap.on('draw:deleted', function(e) {
 
         e.layers.eachLayer(function(layer){
-
+            console.log(layer)
             let markers_to_remove = [];
 
             for (let i = 0; i < markers.getLayers().length; i++) {       
@@ -505,7 +507,7 @@ function recupererTrace(id){
             $("#loader").show();
         },
         success: function(data){
-            
+            console.log('Points du tracé ['+ id +'] récupérés avec succès!');
         },
         error: function (xhr, textStatus, errorThrown) {  
             console.log(xhr.responseJSON.message+" ["+id+"]");
