@@ -22,6 +22,7 @@
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://unpkg.com/togeojson@0.16.0"></script>
     <script src="https://unpkg.com/leaflet-filelayer@1.2.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js" integrity="sha256-bu/BP02YMudBc96kI7yklc639Mu4iKGUNNcam8D2nLc=" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
         var asset_images = "{{asset('images')}}";
@@ -42,29 +43,28 @@
             <form class="form-poste">
                 <div class="form-group row">
                     <label for="choix-trace" class="col-sm-4 col-form-label">Choix du tracé</label>
-                    <select id="choix-trace" class="form-control col-sm-8"></select>
+                    <select id="choix-trace" name="choix-trace" class="form-control col-sm-8"></select>
                 </div>
                 <div class="form-group row">
                     <label for="name-poste" class="col-sm-4 col-form-label">Intitulé du poste</label>
-                    <input type="text" class="form-control col-sm-8" id="name-poste">
+                    <input type="text" name="name-poste" placeholder="Ex: Stand crêpes" class="form-control col-sm-8" id="name-poste">
                 </div>
                 <div class="form-group row">
                     <label for="nb-benevole" class="col-sm-4 col-form-label">Nombre de bénévoles</label>
-                    <input type="number" class="form-control col-sm-8" id="nb-benevole">
+                    <input type="number" name="nb-benevole" min="1" max="150" placeholder="Ex: 10" class="form-control col-sm-8" id="nb-benevole">
                 </div>
                 <div class="form-group row">
                     <label for="heure-debut" class="col-sm-4 col-form-label">Heure de début</label>
-                    <input  type="datetime-local"
+                    <input  type="datetime-local" name="heure-debut"
                             class="form-control col-sm-8"
                             value={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
                             min={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
                             max={{ raid.date|date_modify("+1 day")|date("Y-m-d\\TH:i", "Europe/Paris") }}
                             id="heure-debut">
                 </div>
-                
                 <div class="form-group row">
                     <label for="heure-fin" class="col-sm-4 col-form-label">Heure de fin</label>
-                    <input  type="datetime-local"
+                    <input  type="datetime-local" name="heure-fin"
                             class="form-control col-sm-8"
                             value={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}
                             min={{ raid.date|date("Y-m-d\\TH:i", "Europe/Paris") }}

@@ -258,10 +258,30 @@ function afficherFormulairePoste(){
     $(".form-poste").show();
     controlMapInteractions(false);
 
-    $(".creer-poste").click(function(e){
-        e.preventDefault();
+    $(".form-poste").validate({
+        rules : {
+            'choix-trace' : {
+                required : true
+            },
+            'name-poste' : {
+                required: true
+            },
+            'nb-benevole' : {
+                required: true
+            }
+        },
+        messages : {
+            "choix-trace" : "Veuillez sélectionner un tracé",
+            "name-poste" : "Veuillez entrer l'intitulé du poste",
+            "nb-benevole": "Veuillez renseigner le nombre de bénévoles pour ce poste (1 à 150)"
+        },
+        submitHandler: function(form) {
+            console.log(form)
+            
+            // $.when(creerPoint().done(function(data, textStatus, jqXHR){
 
-        $(".form-poste").hide();
+            // }));
+        }
     });
 
     $(".annuler-poste").click(function(e){
