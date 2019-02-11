@@ -3,7 +3,17 @@
 {% block content %}
 
 <div class="container">
-
+  {% for message in app.flashes('success') %}
+    <div class="alert alert-success" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+  {% for message in app.flashes('error') %}
+    <div class="alert alert-danger" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+  
   <section>
     <button type="button" class="btn btn-secondary btn-lg btn-block">Vos raids en tant qu'organisateur {{user.username}}</button>
     <ul class="list-group">
@@ -21,7 +31,7 @@
     {% endif %}
 
       <a href= {{ path('create_raid') }}>
-        Créer mon RAID
+        Créer un nouveau RAID
         <i class="fas fa-2x fa-plus-circle"></i>
       </a>
     </ul>

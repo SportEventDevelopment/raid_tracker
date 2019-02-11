@@ -44,20 +44,15 @@ class ParcoursController extends Controller
                 $this->getUser()->getToken()
             );
 
-            if($parcours){
-                $trace_data = array(
-                    'idParcours' => $parcours->body->id,
-                );
-                
-                $trace = $this->get('app.restclient')->post(
-                    'api/traces',
-                    $trace_data,
-                    $this->getUser()->getToken()
-                );
+            if($parcours) {
 
-                if($trace){
-                    return $this->redirectToRoute('carte_edit', array('id_parcours' => $parcours->body->id));
-                }
+                return $this->redirectToRoute('carte_edit', array(
+                    'id_raid'=> $request->get('id'),
+                    'id_parcours' => $parcours->body->id)
+                );
+            } else {
+                $this->addFlash('error','Erreur lors de la création de votre parcours');
+                return $this->redirectToRoute('edit_raid', array('id' => $request->get('id')));
             }
         }
 

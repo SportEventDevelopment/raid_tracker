@@ -1,15 +1,26 @@
 {% extends 'base.html.twig' %}
 
 {% block javascripts %}    
-    {{ parent() }}
+        {{ parent() }}
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-
-        <h1>Description du RAID : {{raid.nom}}</h1>
+        {% for message in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">
+                        {{ message }}
+                </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                </div>
+        {% endfor %}
+        
+        <h2>Description du RAID : {{raid.nom}}</h2>
         {% if posteRepartis %}
-                <h2>Vous êtes affectés aux postes suivants</h2>
+                <h3>Vous êtes affectés aux postes suivants</h3>
                 <ul class="list-group">
                 {% for repartition in all_repartitions %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -20,9 +31,35 @@
                                 </div>
                         </li>
                 {% endfor %}
+                </ul>
         {% else %}
-                Vous n'êtes pas encore choisi pour un poste
-                <a href="{{ path('landing') }}">Retour à la page d'accueil </a>
+                <p>L'organisateur ne vous a pas encore affecté à un poste.</p>
         {% endif %}
+
+        <h2>Mes préférences de postes</h2>
+        {% if all_prefpostes %}
+                <ul id="sortlist" 
+                        data-token= {{ token }}
+                        data-id-raid= {{ raid.id }}
+                        data-id-user= {{ user.idUser }}
+                        class="list-group ul_style">
+                {% for preference in all_prefpostes %}
+                        <li 
+                                data-id-poste = {{ preference.idPoste.id }}
+                                data-id-benevole = {{ preference.idBenevole.id }}
+                                class="sortable_item">{{ preference.idPoste.type }}
+                               <a href={{ path('gestion_preferences_remove', {
+                                       'id_raid' : preference.idBenevole.idRaid.id,
+                                       'id_preference': preference.id}
+                                )}}>Retirer</a>
+                        </li>
+                {% endfor %}
+                </ul>
+        {% else %}
+                <p>Vous n'avez pas renseigné de préférence pour un poste.</p>
+        {% endif %}
+        <a href="{{ path('ajouter_preference', {'id_raid': raid.id}) }}">Ajouter une préférence</a>
 </div>
+
+<script type="module" src={{ asset('js/preferences_benevoles.js') }}></script>
 {% endblock %}

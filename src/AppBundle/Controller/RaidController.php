@@ -31,24 +31,43 @@ class RaidController extends Controller
 
             $raid_data =$this->get('app.serialize')->entityToArray($form->getData());
             $date = $form->getData()->getDate()->format('Y/m/d H:i');
-            $raid_data['date'] = $date;
-            array_pop($raid_data);
 
-            $response = $this->get('app.restclient')->post(
-                'api/raids',
-                $raid_data,
-                $this->getUser()->getToken()
-            );
+            if($date > date("Y/m/d H:i")) {
 
-            $organisateur_data = array(
-                'idUser' => $this->getUser()->getIdUser(),
-                'idRaid' => $response->body->id
-            );
-            $response = $this->get('app.restclient')->post(
-                'api/organisateurs/raids/'. $organisateur_data['idRaid'].'/users/'. $organisateur_data['idUser'],
-                $organisateur_data,
-                $this->getUser()->getToken()
-            );
+                $raid_data['date'] = $date;
+                if(!$raid_data['visibility']){
+                    array_pop($raid_data);
+                }
+
+                $response = $this->get('app.restclient')->post(
+                    'api/raids',
+                    $raid_data,
+                    $this->getUser()->getToken()
+                );
+
+                if($response){
+
+                    $organisateur_data = array(
+                        'idUser' => $this->getUser()->getIdUser(),
+                        'idRaid' => $response->body->id
+                    );
+                    $response = $this->get('app.restclient')->post(
+                        'api/organisateurs/raids/'. $organisateur_data['idRaid'].'/users/'. $organisateur_data['idUser'],
+                        $organisateur_data,
+                        $this->getUser()->getToken()
+                    );
+
+                    if($response){
+                        $this->addFlash('success','RAID créé avec succès !');
+                    } else {
+                        $this->addFlash('error',"Erreur lors de l'enregistrement de l'organisateur");
+                    }
+                }
+            }
+            else {
+                $this->addFlash('error','Vous ne pouvez pas créer un RAID dans le passé...');
+                return $this->redirectToRoute('create_raid');
+            }
 
             return $this->redirectToRoute('landing');
         }
@@ -71,7 +90,7 @@ class RaidController extends Controller
         $url = 'api/organisateurs/raids/'.$request->get('id').'/users/'. $this->getUser()->getIdUser();
         $est_organisateur = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
-            
+
         $url = 'api/parcours/raids/'.$request->get('id');
         $all_parcours = $this->get('app.restclient')
             ->get($url, $this->getUser()->getToken());
@@ -128,12 +147,18 @@ class RaidController extends Controller
           $posteRepartis = false;
         }
 
-       return $this->render('raid/postes_benevoles.html.twig', array(
+        $url = 'api/prefpostes/raids/'. $request->get('id_raid') .'/users/'. $this->getUser()->getIdUser();
+        $all_prefpostes = $this->get('app.restclient')
+            ->get($url, $this->getUser()->getToken());
+
+        return $this->render('raid/postes_benevoles.html.twig', array(
             'user' => $this->getUser(),
             'all_repartitions' => $all_repartitions,
+            'all_prefpostes' => $all_prefpostes,
             'raid' => $raid,
+            'token' => $this->getUser()->getToken(),
             'posteRepartis' => $posteRepartis
-       ));
+        ));
     }
 
 

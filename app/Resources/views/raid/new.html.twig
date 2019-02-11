@@ -4,7 +4,26 @@
 <div class='vertical-center'>
     <div class="container col col-md-4">
             <div class="card default-color-dark ">
+
+              {% for message in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
                 {{ form_start(raid, {'attr': {'class': 'center border border-light p-5'}}) }}
+
+                {% for message in app.flashes('notice') %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                
                     <p class="h4 mb-4 text-center">Création de Raid</p>
 
                     <div class="form-row mb-4">

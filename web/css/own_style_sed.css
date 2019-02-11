@@ -46,6 +46,35 @@
     margin: -60px 0 0 -60px;
 }
 
-.leaflet-popup-content {
-    width:300px;
+.sortable_item {
+    cursor : move;
+    text-align:center;
+    border-radius: 5px;
+    border: grey 1px solid;
+    list-style : none;
+    padding:2rem;
+    margin:0.2rem;
+    width : 100%;
+}
+
+.ul_style {
+    list-style-type : none;
+    margin : 0;
+    padding : 0;
+}
+
+.retour_map{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.form-poste {
+    position: absolute;
+    background-color: white;
+    padding:2rem;
+    top: 20%;
+    left: 40%;
+    z-index: 1000;
 }
