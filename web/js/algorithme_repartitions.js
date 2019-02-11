@@ -320,7 +320,8 @@ function ecrire_repartitions(couple, concordances_benevoles, concordances_postes
         repartitions.forEach(function(element,key) {
             let repartition = {
                 "idPoste":element,
-                "idBenevole":key
+                "idBenevole":key,
+                "estConfirme": true
             };
             envoi_repartitions_api(repartition); 
         })
