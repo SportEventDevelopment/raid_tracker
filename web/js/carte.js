@@ -375,14 +375,7 @@ function afficherFormulairePoste(coords){
                 }));
             }));
         }
-    });
-
-    $(".annuler-poste").click(function(e){
-        e.preventDefault();
-
-        $(".form-poste").hide();
-        controlMapInteractions(true);
-    });    
+    });   
     
     $('#choix-trace')
         .find('option')
