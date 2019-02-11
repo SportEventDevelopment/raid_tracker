@@ -11,10 +11,12 @@ $(".btn-primary").click( function() {
         let tab_trace = []
 
         data.forEach((point) => {
-            tab_trace.push(point);
-            if(point.type == 2){
-                telechargerGeoJSON(tab_trace, id_parcours);
-                tab_trace = [];
+            if(point.type != 3){
+                tab_trace.push(point);
+                if(point.type == 2){
+                    telechargerGeoJSON(tab_trace, id_parcours);
+                    tab_trace = [];
+                }
             }
         });
     }));
