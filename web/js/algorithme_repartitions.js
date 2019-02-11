@@ -1,10 +1,12 @@
 import SED from './utils.js';
 
 var id_raid;
+var token;
 
 $(".Algorithme").click( function() {
 
     id_raid = this.getAttribute('id');
+    token = $(".container").data('token');
     
     $.when(recuperer_prefpostes_raid(id_raid),recuperer_benevoles_raid(id_raid),recuperer_postes_raid(id_raid)).done(function(data_prefpostes,data_benevoles,data_postes){
         
@@ -155,6 +157,7 @@ function creation_concordances_postes_algo(all_postes_raid) {
     let boucle_y = 0;
     let postes = [];
     let concordances_postes = [];
+
     all_postes_raid.forEach(function(element) {
         let loop = element.nb_benevoles;
         let tmp = [];
@@ -172,6 +175,7 @@ function creation_concordances_benevoles_algo(all_benevoles_raid) {
     let boucle_z = 0;
     let liste_benevoles = [];
     let concordances_benevoles = [];
+
     all_benevoles_raid.forEach(function(element) {
         let tmp = [];
         tmp["idBenevole"] = element.idBenevole;
@@ -187,6 +191,7 @@ function remplir_prefpostes_algo(concordances_benevoles) {
         let new_prefpostes = [];
         let value = -1;
         let size  = concordances_benevoles.length;
+
         new_prefpostes = Array.apply(null,{length: size}).map(function() { return value; });
 
         return new_prefpostes;
@@ -198,6 +203,7 @@ function creation_preferences_postes_algo(all_preferences_raid, concordances_ben
         let idBenevole_algo = concordances_benevoles.indexOf(element.idBenevole);
         let idPoste_algo = concordances_postes[element.idPoste];
         let tmp = [];
+
         for(let i = 0 ; i < idPoste_algo.length ; i++) {
             tmp.push(idPoste_algo[i]);
         }
@@ -231,6 +237,7 @@ function creation_preferences_benevoles_pour_postes(liste_benevoles, postes) {
     let pref_benevoles = [];
     let couple = [];
     let nouveau_tirage = [];
+
     nouveau_tirage = liste_benevoles;
     for(let boucle_i=0 ; boucle_i < postes.length ; boucle_i++){
         nouveau_tirage = shuffle(nouveau_tirage);
@@ -258,6 +265,8 @@ function shuffle(array) {
 function attribution_automatique(couple, prefpostes, pref_benevoles, liste_benevoles) {
     let benevoles_non_attribue = liste_benevoles;
     let i = 0;
+    let test;
+
     while(benevoles_non_attribue.length > 0) {
         if(couple[i] == -1) {
             test = couple.indexOf(prefpostes[i][0]);
@@ -329,7 +338,7 @@ function envoi_repartitions_api(repartition){
             $("#loader").show();
         },
         success: function(data){
-            SED.log(data);
+            SED.log("Nouvelle répartition créée");
         },
         error: function (xhr, textStatus, errorThrown) {  
             SED.log('Erreur lors de la création des répartitions');  

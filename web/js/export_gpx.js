@@ -1,8 +1,6 @@
 import SED from './utils.js'
 
 var token = $('.container').data('token');
-var tous_points_traces;
-var tab_traces_points = [];
 var open = [];
 
 $(".btn-primary").click( function() {
