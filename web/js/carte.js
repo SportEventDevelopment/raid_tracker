@@ -67,7 +67,7 @@ window.onload = function init(){
         controlImport = importGPX();
         controlImport.addTo(this);
 
-        drawControlCreatePoste = addDrawControlCreatePoste();
+        //drawControlCreatePoste = addDrawControlCreatePoste();
         
         drawControlFull = addDrawControlFull(drawnItems);
         this.addControl(drawControlFull);
@@ -472,7 +472,7 @@ function sauvegarderPostes(postes, trace_id) {
 function controlMapInteractions(enable){
     if(enable){
         mymap.dragging.enable();
-        drawControlCreatePoste.remove();
+        //drawControlCreatePoste.remove();
         controlImport.addTo(mymap);
         drawControlFull.addTo(mymap);
     
@@ -480,7 +480,7 @@ function controlMapInteractions(enable){
         mymap.dragging.disable();
         drawControlFull.remove();
         controlImport.remove();
-        drawControlCreatePoste.addTo(mymap);
+        //drawControlCreatePoste.addTo(mymap);
     }
 }
 
